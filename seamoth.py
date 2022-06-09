@@ -102,6 +102,8 @@ class Motor:
 
 #uses open cv, this entire class is really easy to use and read
 class Camera:
+    frame = ''
+    
     def __init__(self):
         self.capture = VideoCapture(0)
 
@@ -111,10 +113,7 @@ class Camera:
     
     def close(self):
         self.capture.release()
-        destroyAllWindows()     
-
-    def displayCameraData(data):
-        imshow('View', data)
+        destroyAllWindows()
 
 #black magic voodo, dont really feel like commenting all of it
 class DataConnection:
