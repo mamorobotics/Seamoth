@@ -1,8 +1,9 @@
 from http import server
 from inputs import get_gamepad, devices
 from threading import Thread
-from cv2 import VideoCapture, imshow, destroyAllWindows
-import socket
+import cv2, socket
+from tkinter import *
+from PIL import Image, ImageTk
 
 motorThreads = []
 
@@ -102,10 +103,8 @@ class Motor:
 
 #uses open cv, this entire class is really easy to use and read
 class Camera:
-    frame = ''
-    
     def __init__(self):
-        self.capture = VideoCapture(0)
+        self.capture = cv2.VideoCapture(0)
 
     def readCameraData(self):
         ret, frame = self.capture.read()
@@ -113,7 +112,35 @@ class Camera:
     
     def close(self):
         self.capture.release()
-        destroyAllWindows()
+        cv2.destroyAllWindows()
+
+#all the GUI stuff
+class UI:
+    def _ui(self):
+        win = Tk()
+        win.title("Seamoth Homebase")
+        settings = Frame(win)
+        settings.grid(row=0, column=1)
+        #settings things go here if we need any
+
+        video = Label(win)
+        video.grid(row=0, column=0)
+        
+        def show_frames():
+            cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image = img)
+            video.imgtk = imgtk
+            video.configure(image=imgtk)
+            video.after(20, show_frames)
+
+        show_frames()
+        win.mainloop()
+
+    def __init__(self, frame):
+        self.frame = frame
+        motorThread = Thread(target=self._ui, args=())
+        motorThread.start()
 
 #black magic voodo, dont really feel like commenting all of it
 class DataConnection:
