@@ -1,12 +1,15 @@
 import seamoth
+import cv2
 
 def main():
-    video = seamoth.Camera()
-    ui = seamoth.UI(video.readCameraData())
+    conn = seamoth.DataConnection()
+    ui = seamoth.UI("staticImage.png")
+
+    conn.serverStart(1951)
+    print(conn.IP)
 
     while True:
-        ui.frame = video.readCameraData()
-
+        ui.frame = conn.output
 
 if __name__ == "__main__":
     main()
