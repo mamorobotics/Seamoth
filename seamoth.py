@@ -115,10 +115,10 @@ class Camera:
         cv2.destroyAllWindows()
 
     def encode(image):
-        return numpy.array(cv2.imencode('.jpg', image), dtype=object).tobytes()
+        return cv2.imencode('.jpg', image)[1].tobytes()
 
     def decode(image):
-        return cv2.imdecode(numpy.asarray(bytearray(image, encoding="utf-8"), dtype="uint8"), cv2.IMREAD_COLOR)
+        return cv2.imdecode(numpy.fromstring(image, numpy.uint8).reshape(1, -1), cv2.IMREAD_COLOR)
 
 #all the GUI stuff
 class UI:
