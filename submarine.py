@@ -1,12 +1,13 @@
-import seamoth, time
+from http import client
+import seamoth
 
 def main():
-    connection = seamoth.DataConnection()
-    connection.clientStart('192.168.56.1', 25565)
+    camera = seamoth.Camera()
+    conn = seamoth.DataConnection()
 
-    time.sleep(2)
-
-    connection.send('Hello')
+    conn.clientStart("192.168.86.42", 1951)
+    while True:
+        conn.send(camera.readCameraData())
 
 if __name__ == "__main__":
     main()
