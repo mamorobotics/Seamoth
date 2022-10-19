@@ -1,4 +1,4 @@
-from http import server
+import numpy
 from inputs import get_gamepad, devices
 from threading import Thread
 import cv2, socket
@@ -114,6 +114,12 @@ class Camera:
         self.capture.release()
         cv2.destroyAllWindows()
 
+    def encode(image):
+        return numpy.array(cv2.imencode('.jpg', image), dtype=object).tobytes()
+
+    def decode(image):
+        return cv2.imdecode(numpy.asarray(bytearray(image, encoding="utf-8"), dtype="uint8"), cv2.IMREAD_COLOR)
+
 #all the GUI stuff
 class UI:
     def _ui(self):
@@ -146,6 +152,7 @@ class UI:
 #black magic voodo, dont really feel like commenting all of it
 class DataConnection:
     output = ''
+    connected = False
 
     def __init__(self):
         self.IP = socket.gethostbyname(socket.gethostname())
@@ -157,24 +164,29 @@ class DataConnection:
                 self.output = self.connection.recv(int(msg_len)).decode('utf-8')
 
     def clientStart(self, ip, port):
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect((ip, port))
+        print("Connection Succesfull")
 
 
     def serverStart(self, port):
         print(self.IP)
         self.PORT = int(port)
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((self.IP, self.PORT))
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((self.IP, self.PORT))
 
-        server.listen()
-        self.connection, self.connectionAddress = server.accept()
+        self.server.listen()
+        print("listening for connections")
+        self.connection, self.connectionAddress = self.server.accept()
+
+        self.connected = True
+        print("Connection Successfull")
 
         thread = Thread(target=self._listen, args=())
         thread.start()
 
     def send(self, msg):
-        msg = msg.encode('utf-8')
+        msg = str(msg).encode('utf-8')
         send_length = str(len(msg)).encode('utf-8')
         send_length += b' ' * (64 - len(send_length))
         self.connection.send(send_length)

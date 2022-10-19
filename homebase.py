@@ -6,10 +6,10 @@ def main():
     ui = seamoth.UI("staticImage.png")
 
     conn.serverStart(1951)
-    print(conn.IP)
 
     while True:
-        ui.frame = conn.output
+        if conn.connected and len(conn.output) > 3:
+            ui.frame = seamoth.Camera.decode(conn.output)
 
 if __name__ == "__main__":
     main()
