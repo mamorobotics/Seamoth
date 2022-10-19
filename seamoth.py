@@ -119,7 +119,6 @@ class UI:
     def _ui(self):
         win = Tk()
         win.title("Seamoth Homebase")
-        win.config(bg="#323232") 
         settings = Frame(win)
         settings.grid(row=0, column=1)
         #settings things go here if we need any
@@ -138,10 +137,10 @@ class UI:
         show_frames()
         win.mainloop()
 
-    def __init__(self, path):
-        self.frame = cv2.imread(path)
-        uiThread = Thread(target=self._ui, args=())
-        uiThread.start()
+    def __init__(self, frame):
+        self.frame = frame
+        motorThread = Thread(target=self._ui, args=())
+        motorThread.start()
 
 #black magic voodo, dont really feel like commenting all of it
 class DataConnection:
@@ -170,7 +169,7 @@ class DataConnection:
         server.listen()
         self.connection, self.connectionAddress = server.accept()
 
-        thread = Thread(target=self._listen, args=(server))
+        thread = Thread(target=self._listen, args=())
         thread.start()
 
     def send(self, msg):
