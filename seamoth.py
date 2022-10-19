@@ -157,7 +157,7 @@ class DataConnection:
                 self.output = self.connection.recv(int(msg_len)).decode('utf-8')
 
     def clientStart(self, ip, port):
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.connection.connect((ip, port))
 
 
@@ -170,7 +170,7 @@ class DataConnection:
         server.listen()
         self.connection, self.connectionAddress = server.accept()
 
-        thread = Thread(target=self._listen, args=(server))
+        thread = Thread(target=self._listen, args=())
         thread.start()
 
     def send(self, msg):
