@@ -114,12 +114,6 @@ class Camera:
         self.capture.release()
         cv2.destroyAllWindows()
 
-    def encode(image):
-        return cv2.imencode('.jpg', image)[1].tobytes()
-
-    def decode(image):
-        return cv2.imdecode(numpy.fromstring(image, numpy.uint8).reshape(1, -1), cv2.IMREAD_COLOR)
-
 #all the GUI stuff
 class UI:
     def _ui(self):

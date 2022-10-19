@@ -9,7 +9,7 @@ def main():
 
     while True:
         if conn.connected and len(conn.output) > 3:
-            ui.frame = seamoth.Camera.decode(conn.output)
+            ui.frame = conn.output
 
 if __name__ == "__main__":
     main()
