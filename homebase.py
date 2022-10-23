@@ -1,6 +1,4 @@
 import seamoth
-import cv2
-import sys
 
 def main():
     conn = seamoth.DataConnection()
