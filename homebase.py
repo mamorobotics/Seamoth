@@ -1,5 +1,6 @@
 import seamoth
 import cv2
+import sys
 
 def main():
     conn = seamoth.DataConnection()
@@ -9,7 +10,8 @@ def main():
 
     while True:
         if conn.connected and len(conn.output) > 3:
-            ui.frame = conn.output
+            ui.frame = seamoth.Camera.decode(conn.output)
+        
 
 if __name__ == "__main__":
     main()

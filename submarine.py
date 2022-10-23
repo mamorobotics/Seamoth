@@ -8,7 +8,7 @@ def main():
     conn.clientStart("192.168.86.42", 1951)
 
     while True:
-        conn.send(camera.readCameraData())
+        conn.send(seamoth.Camera.encode(camera.readCameraData()))
 
 if __name__ == "__main__":
     main()

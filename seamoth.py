@@ -108,11 +108,19 @@ class Camera:
 
     def readCameraData(self):
         ret, frame = self.capture.read()
+        while not ret:
+            ret, frame = self.capture.read()
         return frame
     
     def close(self):
         self.capture.release()
-        cv2.destroyAllWindows()
+
+    def encode(image):
+        return cv2.imencode('.jpg', image)[1].tobytes()
+
+    def decode(image):
+        nparr = numpy.frombuffer(image, numpy.uint8)
+        return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
 #all the GUI stuff
 class UI:
@@ -120,26 +128,34 @@ class UI:
         win = Tk()
         win.title("Seamoth Homebase")
         win.config(bg="#323232") 
-        settings = Frame(win)
-        settings.grid(row=0, column=1)
-        #settings things go here if we need any
+        settings = Frame(win, bg="#323232")
+        settings.grid(row=0, column=1, sticky=N)
+        
+        connStatusLabel = Label(settings, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff")
+        connStatusLabel.pack()
+
+        connStatus = Label(settings, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
+        connStatus.pack()
 
         video = Label(win)
         video.grid(row=0, column=0)
         
-        def show_frames():
+        def updateFrame():
+            connStatus.configure(text=self.connectionStatus)
+
             cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)
             imgtk = ImageTk.PhotoImage(image = img)
             video.imgtk = imgtk
             video.configure(image=imgtk)
-            video.after(20, show_frames)
+            video.after(20, updateFrame)
 
-        show_frames()
+        updateFrame()
         win.mainloop()
 
     def __init__(self, path):
         self.frame = cv2.imread(path)
+        self.connectionStatus = "Starting"
         uiThread = Thread(target=self._ui, args=())
         uiThread.start()
 
@@ -155,7 +171,7 @@ class DataConnection:
         while True:
             msg_len = self.connection.recv(64).decode('utf-8')
             if msg_len:
-                self.output = self.connection.recv(int(msg_len)).decode('utf-8')
+                self.output = self.connection.recv(int(msg_len))
 
     def clientStart(self, ip, port):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -180,7 +196,6 @@ class DataConnection:
         thread.start()
 
     def send(self, msg):
-        msg = str(msg).encode('utf-8')
         send_length = str(len(msg)).encode('utf-8')
         send_length += b' ' * (64 - len(send_length))
         self.connection.send(send_length)

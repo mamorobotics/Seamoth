@@ -1,18 +1,13 @@
-Exception in Tkinter callback
+[ WARN:1@29.213] global D:\a\opencv-python\opencv-python\opencv\modules\videoio\src\cap_msmf.cpp (464) `anonymous-namespace'::SourceReaderCB::OnReadSample videoio(MSMF): OnReadSample() is called with error status: -1072873822
+[ WARN:1@29.289] global D:\a\opencv-python\opencv-python\opencv\modules\videoio\src\cap_msmf.cpp (476) `anonymous-namespace'::SourceReaderCB::OnReadSample videoio(MSMF): async ReadSample() call is failed with error status: -1072873822
+[ WARN:0@29.318] global D:\a\opencv-python\opencv-python\opencv\modules\videoio\src\cap_msmf.cpp (1752) CvCapture_MSMF::grabFrame videoio(MSMF): can't grab frame. Error: -1072873822
 Traceback (most recent call last):
-  File "C:\Users\Miles Contopoulos\AppData\Local\Programs\Python\Python39\lib\tkinter\__init__.py", line 1892, in __call__
-    return self.func(*args)
-  File "C:\Users\Miles Contopoulos\AppData\Local\Programs\Python\Python39\lib\tkinter\__init__.py", line 814, in callit 
-    func(*args)
-  File "g:\Seamoth\seamoth.py", line 137, in show_frames
-    cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
-cv2.error: OpenCV(4.5.5) D:\a\opencv-python\opencv-python\opencv\modules\imgproc\src\color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cv::cvtColor'
-
-Traceback (most recent call last):
-  File "g:\Seamoth\homebase.py", line 15, in <module>
+  File "g:\Seamoth\submarine.py", line 14, in <module>
     main()
-  File "g:\Seamoth\homebase.py", line 12, in main
-    ui.frame = seamoth.Camera.decode(conn.output)
-  File "g:\Seamoth\seamoth.py", line 121, in decode
-    return cv2.imdecode(numpy.asarray(bytearray(image, encoding="utf-8"), dtype="uint8"), cv2.IMREAD_COLOR)
-KeyboardInterrupt
+  File "g:\Seamoth\submarine.py", line 11, in main
+    conn.send(seamoth.Camera.encode(camera.readCameraData()))
+  File "g:\Seamoth\seamoth.py", line 118, in encode
+    return cv2.imencode('.jpg', image)[1].tobytes()
+cv2.error: OpenCV(4.5.5) D:\a\opencv-python\opencv-python\opencv\modules\imgcodecs\src\loadsave.cpp:976: error: (-215:Assertion failed) !image.empty() in function 'cv::imencode'
+
+[ WARN:0@29.359] global D:\a\opencv-python\opencv-python\opencv\modules\videoio\src\cap_msmf.cpp (539) `anonymous-namespace'::SourceReaderCB::~SourceReaderCB terminating async callback
