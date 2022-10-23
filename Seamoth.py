@@ -1,3 +1,5 @@
+from multiprocessing.util import ForkAwareThreadLock
+from os import W_OK
 import numpy
 from inputs import get_gamepad, devices
 from threading import Thread
@@ -128,17 +130,18 @@ class UI:
         win = Tk()
         win.title("Seamoth Homebase")
         win.config(bg="#323232") 
+
+        video = Label(win)
+        video.grid(row=0, column=0)
+
         settings = Frame(win, bg="#323232")
         settings.grid(row=0, column=1, sticky=N)
         
         connStatusLabel = Label(settings, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff")
-        connStatusLabel.pack()
+        connStatusLabel.pack(fill=X, anchor=W)
 
         connStatus = Label(settings, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
-        connStatus.pack()
-
-        video = Label(win)
-        video.grid(row=0, column=0)
+        connStatus.pack(fill=X, anchor=W)
         
         def updateFrame():
             connStatus.configure(text=self.connectionStatus)
@@ -176,7 +179,7 @@ class DataConnection:
     def clientStart(self, ip, port):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect((ip, port))
-        print("Connection Succesfull")
+        self.send("seamoth!calibrate".encode("utf-8"))
 
 
     def serverStart(self, port):
