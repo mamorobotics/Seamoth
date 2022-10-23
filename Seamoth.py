@@ -179,7 +179,6 @@ class DataConnection:
     def clientStart(self, ip, port):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect((ip, port))
-        self.send("seamoth!calibrate".encode("utf-8"))
 
 
     def serverStart(self, port):
