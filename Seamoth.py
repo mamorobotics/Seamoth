@@ -192,20 +192,19 @@ class DataConnection:
 
 
     def serverStart(self, port):
-        print(self.IP)
         self.PORT = int(port)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((self.IP, self.PORT))
 
         self.server.listen()
-        print("listening for connections")
         self.connection, self.connectionAddress = self.server.accept()
 
         self.connected = True
-        print("Connection Successfull")
 
         thread = Thread(target=self._listen, args=())
         thread.start()
+
+        return self.IP
 
     def send(self, msg):
         send_length = str(len(msg)).encode('utf-8')
