@@ -2,7 +2,7 @@ import Seamoth
 
 def main():
     conn = Seamoth.DataConnection()
-    ui = Seamoth.UI("staticImage.png")
+    ui = Seamoth.UI("G:\Seamoth\staticImage.png")
 
     ui.connectionStatus = "Waiting for Connection"
     conn.serverStart(1951)
