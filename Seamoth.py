@@ -1,5 +1,3 @@
-from multiprocessing.util import ForkAwareThreadLock
-from os import W_OK
 import numpy
 from inputs import get_gamepad, devices
 from threading import Thread

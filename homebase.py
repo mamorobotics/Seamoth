@@ -4,11 +4,7 @@ def main():
     conn = Seamoth.DataConnection()
     ui = Seamoth.UI("staticImage.png")
 
-<<<<<<< Updated upstream
-    ui.connectionStatus = "Searching for connection..."
-=======
     ui.connectionStatus = "Waiting for Connection"
->>>>>>> Stashed changes
     conn.serverStart(1951)
     
     while True:
