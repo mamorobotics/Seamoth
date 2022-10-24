@@ -132,19 +132,6 @@ class UI:
         win.title("Seamoth Homebase")
         win.config(bg="#323232") 
 
-<<<<<<< Updated upstream
-        video = Label(win)
-        video.grid(row=0, column=0)
-
-        settings = Frame(win, bg="#323232")
-        settings.grid(row=0, column=1, sticky=N)
-        
-        connStatusLabel = Label(settings, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff")
-        connStatusLabel.pack(fill=X, anchor=W)
-
-        connStatus = Label(settings, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
-        connStatus.pack(fill=X, anchor=W)
-=======
         #settings
         settings = Frame(win, bg="#323232")
         settings.grid(row=0, column=1, sticky=N)
@@ -159,7 +146,6 @@ class UI:
         #video
         video = Label(win)
         video.grid(row=0, column=0)
->>>>>>> Stashed changes
         
         def updateFrame():
             connStatus.configure(text=self.connectionStatus)
