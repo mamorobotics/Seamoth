@@ -117,8 +117,9 @@ class Camera:
     def close(self):
         self.capture.release()
 
-    def encode(image):
-        return cv2.imencode('.jpg', image)[1].tobytes()
+    def encode(image, quality):
+        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), int(quality)]
+        return cv2.imencode('.jpg', image, encode_param)[1].tobytes()
 
     def decode(image):
         nparr = numpy.frombuffer(image, numpy.uint8)
@@ -131,6 +132,7 @@ class UI:
         win.title("Seamoth Homebase")
         win.config(bg="#323232") 
 
+<<<<<<< Updated upstream
         video = Label(win)
         video.grid(row=0, column=0)
 
@@ -142,6 +144,22 @@ class UI:
 
         connStatus = Label(settings, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
         connStatus.pack(fill=X, anchor=W)
+=======
+        #settings
+        settings = Frame(win, bg="#323232")
+        settings.grid(row=0, column=1, sticky=N)
+
+        connStatusFrame = Frame(settings, bg="#323232")
+        connStatusFrame.grid(row=0, column=0, sticky=N, ipadx=10, pady=5, padx=5)
+        connStatusLabel = Label(connStatusFrame, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff")
+        connStatusLabel.pack(side=TOP, anchor=W)
+        connStatus = Label(connStatusFrame, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
+        connStatus.pack(side=TOP, anchor=W)
+
+        #video
+        video = Label(win)
+        video.grid(row=0, column=0)
+>>>>>>> Stashed changes
         
         def updateFrame():
             connStatus.configure(text=self.connectionStatus)
@@ -172,13 +190,21 @@ class DataConnection:
 
     def _listen(self):
         while True:
-            msg_len = self.connection.recv(64).decode('utf-8')
-            if msg_len:
-                self.output = self.connection.recv(int(msg_len))
+            msg_len = None
+            while not msg_len:
+                try:
+                    msg_len = self.connection.recv(64).decode('utf-8')
+                except:
+                    pass
+
+            self.output = self.connection.recv(int(msg_len))
 
     def clientStart(self, ip, port):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect((ip, port))
+
+        thread = Thread(target=self._listen, args=())
+        thread.start()
 
 
     def serverStart(self, port):
