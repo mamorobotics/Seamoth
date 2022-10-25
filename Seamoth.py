@@ -14,32 +14,12 @@ class Controller():
     MAX_TRIG_VAL = float(256)
     MAX_JOY_VAL = float(32768)
 
+    controllerValues = {'LeftJoystickY' : 0,'LeftJoystickX' : 0,'RightJoystickY' : 0,'RightJoystickX' : 0,'LeftTrigger' : 0,'RightTrigger' : 0,'LeftBumper' : 0,'RightBumper' : 0,'A' : 0,'X' : 0,'Y' : 0,'B' : 0,'LeftThumb' : 0,'RightThumb' : 0,'Menu' : 0,'Start' : 0,'DpadY' : 0,'DpadX' : 0}
+
     def __init__(self):
         #checking to make sure that controllers exist befor initiated
         if(len(devices.gamepads) < 1):
             raise RuntimeError("No Gamepad connection found")
-        
-        #controller values
-        self.controllerValues = {
-            'LeftJoystickY' : 0,
-            'LeftJoystickX' : 0,
-            'RightJoystickY' : 0,
-            'RightJoystickX' : 0,
-            'LeftTrigger' : 0,
-            'RightTrigger' : 0,
-            'LeftBumper' : 0,
-            'RightBumper' : 0,
-            'A' : 0,
-            'X' : 0,
-            'Y' : 0,
-            'B' : 0,
-            'LeftThumb' : 0,
-            'RightThumb' : 0,
-            'Menu' : 0,
-            'Start' : 0,
-            'DpadY' : 0,
-            'DpadX' : 0
-        }
 
         #controller value monitor thread start
         self._monitor_thread = Thread(target=self._monitor_controller, args=())
@@ -130,6 +110,8 @@ class Camera:
 
 #all the GUI stuff
 class UI:
+    controllerValues = Controller.controllerValues
+
     def _ui(self):
         win = Tk()
         win.title("Seamoth Homebase")
@@ -160,13 +142,26 @@ class UI:
         #input settings
         inputDetailsFrame = Frame(settings, bg="#323232")
         inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-        Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
+        Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
 
-        inputOneXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
-        inputOneYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
-        inputTwoXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
-        inputTwoYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputDetailsJoyFrame = Frame(inputDetailsFrame, bg="#323232")
+        inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+        inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+        inputJoyLeftX.pack(side=TOP, anchor=W)
+        inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+        inputJoyLeftY.pack(side=TOP, anchor=W)
+        inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+        inputJoyRightX.pack(side=TOP, anchor=W)
+        inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+        inputJoyRightY.pack(side=TOP, anchor=W)
 
+        inputDetailsTrigFrame = Frame(inputDetailsFrame, bg="#323232")
+        inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
+        inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+        inputTrigRight.pack(side=TOP, anchor=W)
+        inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+        inputTrigLeft.pack(side=TOP, anchor=W)
+        
         #video
         video = Label(win)
         video.grid(row=0, column=0)
@@ -175,6 +170,13 @@ class UI:
             connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
             connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
             connStatus.configure(text=self.connectionStatus)
+
+            inputJoyLeftX.set(float(self.controllerValues.get("LeftJoystickX")))
+            inputJoyLeftY.set(float(self.controllerValues.get("LeftJoystickY")))
+            inputJoyRightX.set(float(self.controllerValues.get("RightJoystickX")))
+            inputJoyRightY.set(float(self.controllerValues.get("RightJoystickY")))
+            inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
+            inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
 
             cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)

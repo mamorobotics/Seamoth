@@ -3,6 +3,7 @@ import Seamoth
 def main():
     conn = Seamoth.DataConnection()
     ui = Seamoth.UI("staticImage.png")
+    input = Seamoth.Controller()
 
     ui.connInfo = (conn.IP, 1951)
     ui.connectionStatus = "Waiting for Connection"
@@ -13,6 +14,7 @@ def main():
             ui.connectionStatus = f"Connected with {conn.connectionAddress[0]} on port {conn.PORT}"
             ui.frame = Seamoth.Camera.decode(conn.output)
             ui.connectionStatus = "Connected to Sub"
+            ui.controllerValues = input.controllerValues
         
 
 if __name__ == "__main__":
