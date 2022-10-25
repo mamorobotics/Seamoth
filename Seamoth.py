@@ -1,9 +1,9 @@
-import numpy
+import cv2, socket, json, numpy
 from inputs import get_gamepad, devices
 from threading import Thread
-import cv2, socket
 from tkinter import *
 from PIL import Image, ImageTk
+from gpiozero import Motor as gpMotor
 
 motorThreads = []
 
@@ -87,19 +87,17 @@ class Controller():
                     self.controllerValues['DpadX'] = event.state
 
 class Motor:
-    speed = 0
-    connectionId = 0
+    def __init__(self, name):
+        hardwareMap = json.loads(open("hardwareMap.txt", "r").read())
+        self.motor = gpMotor(hardwareMap.get(name)[0], hardwareMap.get(name)[1])
 
-    def __init__(self, connectionId):
-        self.connectionId = connectionId
-
-        #main motor function thread start
-        motorThread = Thread(target=self._motorThread, args=())
-        motorThread.start()
-
-    #main motor function thread
-    def _motorThread(self):
-        print(f"Motor Connected on Port: {self.connectionId}")
+    def setSpeed(self, speed):
+        if speed > 0:
+            self.motor.forward(speed)
+        if speed < 0:
+            self.motor.backward(speed)
+        if speed == 0:
+            self.motor.stop()
 
 #uses open cv, this entire class is really easy to use and read
 class Camera:
