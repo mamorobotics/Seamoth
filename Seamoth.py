@@ -1,3 +1,5 @@
+import random
+import re
 import cv2, socket, json, numpy
 from inputs import get_gamepad, devices
 from threading import Thread
@@ -132,18 +134,41 @@ class UI:
         settings = Frame(win, bg="#323232")
         settings.grid(row=0, column=1, sticky=N)
 
+        #conn details settings
+        connDetailsFrame = Frame(settings, bg="#323232")
+        connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+        Label(connDetailsFrame, text="CONNECTION DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
+
+        connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg="#323232", foreground="#ffffff")
+        connDetailsIP.pack(side=TOP, anchor=W)
+        connDetailsPORT = Label(connDetailsFrame, text="1111", bg="#323232", foreground="#ffffff")
+        connDetailsPORT.pack(side=TOP, anchor=W)
+
+        #conn status settings
         connStatusFrame = Frame(settings, bg="#323232")
-        connStatusFrame.grid(row=0, column=0, sticky=N, ipadx=10, pady=5, padx=5)
-        connStatusLabel = Label(connStatusFrame, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff")
-        connStatusLabel.pack(side=TOP, anchor=W)
+        connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+        Label(connStatusFrame, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
+
         connStatus = Label(connStatusFrame, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
         connStatus.pack(side=TOP, anchor=W)
+
+        #input settings
+        inputDetailsFrame = Frame(settings, bg="#323232")
+        inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+        Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
+
+        inputOneXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 1 X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputOneYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 1 Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputTwoXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 2 X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputTwoYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 2 Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
 
         #video
         video = Label(win)
         video.grid(row=0, column=0)
         
         def updateFrame():
+            connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
+            connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
             connStatus.configure(text=self.connectionStatus)
 
             cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
@@ -159,6 +184,7 @@ class UI:
     def __init__(self, path):
         self.frame = cv2.imread(path)
         self.connectionStatus = "Starting"
+        self.connInfo = ("1.1.1.1", "1111")
         uiThread = Thread(target=self._ui, args=())
         uiThread.start()
 
