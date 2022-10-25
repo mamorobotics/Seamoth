@@ -89,9 +89,14 @@ class Controller():
                     self.controllerValues['DpadX'] = event.state
 
 class Motor:
-    def __init__(self, name):
-        hardwareMap = json.loads(open("hardwareMap.txt", "r").read())
+    def __init__(self, name, hardwareMap):
         self.motor = gpMotor(hardwareMap.get(name)[0], hardwareMap.get(name)[1])
+
+    def getHardwareMap(path):
+        return open(path, "r").read()
+    
+    def getHardwareMapObject(hardwareMap):
+        return json.loads(hardwareMap)
 
     def setSpeed(self, speed):
         if speed > 0:
@@ -157,10 +162,10 @@ class UI:
         inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
         Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
 
-        inputOneXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 1 X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
-        inputOneYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 1 Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
-        inputTwoXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 2 X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
-        inputTwoYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Joy 2 Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputOneXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputOneYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputTwoXSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
+        inputTwoYSlide = Scale(inputDetailsFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0, state=DISABLED).pack(side=TOP, anchor=W)
 
         #video
         video = Label(win)
