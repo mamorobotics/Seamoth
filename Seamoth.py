@@ -1,8 +1,14 @@
+from turtle import left
 import cv2, socket, json, numpy
 from inputs import get_gamepad, devices
 from threading import Thread
 from tkinter import *
 from PIL import Image, ImageTk
+
+try:
+    import RPi.GPIO
+except ModuleNotFoundError:
+    print("RPi.GIO module not found, motor control disabled")
 
 motorThreads = []
 
@@ -100,6 +106,7 @@ class Camera:
 #all the GUI stuff
 class UI:
     controllerValues = Controller.controllerValues
+    menus = {}
 
     def _ui(self):
         win = Tk()
@@ -111,61 +118,68 @@ class UI:
         settings.grid(row=0, column=1, sticky=N)
 
         #conn details settings
-        connDetailsFrame = Frame(settings, bg="#323232")
-        connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-        Label(connDetailsFrame, text="CONNECTION DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
+        if self.menus.get("connDetails", True):
+            connDetailsFrame = Frame(settings, bg="#323232")
+            connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
 
-        connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg="#323232", foreground="#ffffff")
-        connDetailsIP.pack(side=TOP, anchor=W)
-        connDetailsPORT = Label(connDetailsFrame, text="1111", bg="#323232", foreground="#ffffff")
-        connDetailsPORT.pack(side=TOP, anchor=W)
+            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg="#323232", foreground="#ffffff")
+            connDetailsIP.pack(side=TOP, anchor=W)
+            connDetailsPORT = Label(connDetailsFrame, text="1111", bg="#323232", foreground="#ffffff")
+            connDetailsPORT.pack(side=TOP, anchor=W)
 
         #conn status settings
-        connStatusFrame = Frame(settings, bg="#323232")
-        connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-        Label(connStatusFrame, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
+        if self.menus.get("connStatus", True):
+            connStatusFrame = Frame(settings, bg="#323232")
+            connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+            Label(connStatusFrame, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff").pack(side=TOP, anchor=W)
 
-        connStatus = Label(connStatusFrame, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
-        connStatus.pack(side=TOP, anchor=W)
+            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
+            connStatus.pack(side=TOP, anchor=W)
 
         #input settings
-        inputDetailsFrame = Frame(settings, bg="#323232")
-        inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-        Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
+        if self.menus.get("input", True):
+            inputDetailsFrame = Frame(settings, bg="#323232")
+            inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+            Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
 
-        inputDetailsJoyFrame = Frame(inputDetailsFrame, bg="#323232")
-        inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-        inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
-        inputJoyLeftX.pack(side=TOP, anchor=W)
-        inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
-        inputJoyLeftY.pack(side=TOP, anchor=W)
-        inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
-        inputJoyRightX.pack(side=TOP, anchor=W)
-        inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
-        inputJoyRightY.pack(side=TOP, anchor=W)
+            inputDetailsJoyFrame = Frame(inputDetailsFrame, bg="#323232")
+            inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
+            inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputJoyLeftX.pack(side=TOP, anchor=W)
+            inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputJoyLeftY.pack(side=TOP, anchor=W)
+            inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputJoyRightX.pack(side=TOP, anchor=W)
+            inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputJoyRightY.pack(side=TOP, anchor=W)
 
-        inputDetailsTrigFrame = Frame(inputDetailsFrame, bg="#323232")
-        inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
-        inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
-        inputTrigRight.pack(side=TOP, anchor=W)
-        inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
-        inputTrigLeft.pack(side=TOP, anchor=W)
+            inputDetailsTrigFrame = Frame(inputDetailsFrame, bg="#323232")
+            inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
+            inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Trig X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputTrigRight.pack(side=TOP, anchor=W)
+            inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Trig Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputTrigLeft.pack(side=TOP, anchor=W)
         
         #video
         video = Label(win)
         video.grid(row=0, column=0)
         
         def updateFrame():
-            connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
-            connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
-            connStatus.configure(text=self.connectionStatus)
+            if self.menus.get("connDetails", True):
+                connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
+                connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
 
-            inputJoyLeftX.set(float(self.controllerValues.get("LeftJoystickX")))
-            inputJoyLeftY.set(float(self.controllerValues.get("LeftJoystickY")))
-            inputJoyRightX.set(float(self.controllerValues.get("RightJoystickX")))
-            inputJoyRightY.set(float(self.controllerValues.get("RightJoystickY")))
-            inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
-            inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
+            if self.menus.get("connStatus", True):
+                connStatus.configure(text=self.connectionStatus)
+
+            if self.menus.get("input", True):
+                inputJoyLeftX.set(float(self.controllerValues.get("LeftJoystickX")))
+                inputJoyLeftY.set(float(self.controllerValues.get("LeftJoystickY")))
+                inputJoyRightX.set(float(self.controllerValues.get("RightJoystickX")))
+                inputJoyRightY.set(float(self.controllerValues.get("RightJoystickY")))
+                inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
+                inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
 
             cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)
@@ -177,7 +191,8 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, path):
+    def __init__(self, path, menus={}):
+        self.menus = menus
         self.frame = cv2.imread(path)
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
