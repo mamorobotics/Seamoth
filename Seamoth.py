@@ -1,4 +1,3 @@
-from turtle import left
 import cv2, socket, json, numpy
 from inputs import get_gamepad, devices
 from threading import Thread
@@ -86,19 +85,23 @@ class Camera:
     def __init__(self):
         self.capture = cv2.VideoCapture(0)
 
+    #reads the data from the camera
     def readCameraData(self):
         ret, frame = self.capture.read()
         while not ret:
             ret, frame = self.capture.read()
         return frame
     
+    #closes the camera, this isnt really needed
     def close(self):
         self.capture.release()
 
+    #encodes the camera array
     def encode(image, quality):
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), int(quality)]
         return cv2.imencode('.jpg', image, encode_param)[1].tobytes()
 
+    #decodes the camera array
     def decode(image):
         nparr = numpy.frombuffer(image, numpy.uint8)
         return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -160,11 +163,28 @@ class UI:
             inputTrigRight.pack(side=TOP, anchor=W)
             inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Trig Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
+
+        #custom values
+        if self.menus.get("custom", True):
+            Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
+            customSettingsFrame = Frame(win, bg="#323232")
+            customSettingsFrame.grid(row=2, column=0, sticky=W, pady=5, padx=5)
+            customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1", bg="#323232", foreground="#ffffff", highlightthickness=0)
+            customOne.pack(side=LEFT, anchor=W)
+            customTwo = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2", bg="#323232", foreground="#ffffff", highlightthickness=0)
+            customTwo.pack(side=LEFT, anchor=W)
+            customThree = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="3", bg="#323232", foreground="#ffffff", highlightthickness=0)
+            customThree.pack(side=LEFT, anchor=W)
+            customFour = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="4", bg="#323232", foreground="#ffffff", highlightthickness=0)
+            customFour.pack(side=LEFT, anchor=W)
+            customFive = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="5", bg="#323232", foreground="#ffffff", highlightthickness=0)
+            customFive.pack(side=LEFT, anchor=W)
         
         #video
         video = Label(win)
         video.grid(row=0, column=0)
         
+        #main loop
         def updateFrame():
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
