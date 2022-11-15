@@ -116,9 +116,11 @@ class UI:
         win.title("Seamoth Homebase")
         win.config(bg="#323232") 
 
+        data = Label(win, text="Good luck MHS", bg="#323232", foreground="#ffffff")
+
         #settings
         settings = Frame(win, bg="#323232")
-        settings.grid(row=0, column=1, sticky=N)
+        settings.grid(row=1, column=1, sticky=N)
 
         #conn details settings
         if self.menus.get("connDetails", True):
@@ -168,7 +170,7 @@ class UI:
         if self.menus.get("custom", True):
             Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
             customSettingsFrame = Frame(win, bg="#323232")
-            customSettingsFrame.grid(row=2, column=0, sticky=W, pady=5, padx=5)
+            customSettingsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
             customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1", bg="#323232", foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
             customTwo = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2", bg="#323232", foreground="#ffffff", highlightthickness=0)
@@ -182,10 +184,13 @@ class UI:
         
         #video
         video = Label(win)
-        video.grid(row=0, column=0)
+        video.grid(row=1, column=0)
         
         #main loop
         def updateFrame():
+            if connDetailsPORT == 1951:
+                data.grid(row=0, column=0, sticky=N)
+
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
                 connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
