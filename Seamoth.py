@@ -3,11 +3,12 @@ from inputs import get_gamepad, devices
 from threading import Thread
 from tkinter import *
 from PIL import Image, ImageTk
+import gpiozero
 
-try:
-    import RPi.GPIO
-except ModuleNotFoundError:
-    print("RPi.GIO module not found, motor control disabled")
+PATH = "hardwareMap.txt"
+
+global logs
+logs = []
 
 motorThreads = []
 
@@ -21,12 +22,12 @@ class Controller():
     def __init__(self):
         #checking to make sure that controllers exist befor initiated
         if(len(devices.gamepads) < 1):
-            raise RuntimeError("No Gamepad connection found")
-
-        #controller value monitor thread start
-        self._monitor_thread = Thread(target=self._monitor_controller, args=())
-        self._monitor_thread.daemon = True
-        self._monitor_thread.start()
+            logs.append("[ERROR] Cannot find a connected controller.\n")
+        else:
+            #controller value monitor thread start
+            self._monitor_thread = Thread(target=self._monitor_controller, args=())
+            self._monitor_thread.daemon = True
+            self._monitor_thread.start()
 
     #Following code is a modified version the tensorkart projects inplementation of controllor input detection by kevinhughes27 on github
     def _monitor_controller(self):
@@ -72,13 +73,21 @@ class Controller():
 
 class Motor:
     def __init__(self):
-        pass
+        self.hardwareMap = json.loads(open(PATH, "r").read())
 
-    def getHardwareMap(path):
-        return open(path, "r").read()
-    
-    def getHardwareMapObject(hardwareMap):
-        return json.loads(hardwareMap)
+    def setMotor(self, name):
+        if name in self.hardwareMap:
+            self.motor = gpiozero.Motor(self.hardwareMap[name][0], self.hardwareMap[name][1])
+        else:
+            logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
+
+    def setSpeed(self, speed):
+        if(speed > 0):
+            self.motor.forward(speed)
+        if(speed < 0):
+            self.motor.backward(speed)
+        if(speed == 0):
+            self.motor.stop()
 
 #uses open cv, this entire class is really easy to use and read
 class Camera:
@@ -161,16 +170,24 @@ class UI:
 
             inputDetailsTrigFrame = Frame(inputDetailsFrame, bg="#323232")
             inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
-            inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Trig X", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Left Trigger", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
             inputTrigRight.pack(side=TOP, anchor=W)
-            inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Trig Y", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
+            inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL, label="Right Trigger", showvalue=0, bg="#323232", foreground="#ffffff", highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
+
+        #errors
+        if self.menus.get("output", True):
+            logDetailsFrame = Frame(settings, bg="#323232")
+            logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
+            Label(logDetailsFrame, text="OUTPUT:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
+            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=9, width=60)
+            logBox.grid(row=1, column=0, sticky=W)
 
         #custom values
         if self.menus.get("custom", True):
             Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
             customSettingsFrame = Frame(win, bg="#323232")
-            customSettingsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
+            customSettingsFrame.grid(row=4, column=0, sticky=W, pady=5, padx=5)
             customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1", bg="#323232", foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
             customTwo = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2", bg="#323232", foreground="#ffffff", highlightthickness=0)
@@ -206,6 +223,11 @@ class UI:
                 inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
                 inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
 
+            if self.menus.get("output", True):
+                logBox.delete("1.0","end")
+                for log in logs:
+                    logBox.insert(INSERT, log)
+
             cv2image = cv2.cvtColor(self.frame,cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)
             imgtk = ImageTk.PhotoImage(image = img)
@@ -216,9 +238,9 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, path, menus={}):
+    def __init__(self, menus={}):
         self.menus = menus
-        self.frame = cv2.imread(path)
+        self.frame = cv2.imread("staticImage.png")
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
         self.uiThread = Thread(target=self._ui, args=())
