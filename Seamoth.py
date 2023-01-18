@@ -1,16 +1,16 @@
-import cv2, socket, json, numpy
+import cv2, socket, json, numpy, gpiozero, sys
 from inputs import get_gamepad, devices
 from threading import Thread
 from tkinter import *
 from PIL import Image, ImageTk
-import gpiozero
+from ctypes import windll
+
+windll.shcore.SetProcessDpiAwareness(1)
 
 PATH = "hardwareMap.txt"
 
 global logs
 logs = []
-
-motorThreads = []
 
 class Controller():
     #dont touch these values, no idea why these work
@@ -19,20 +19,25 @@ class Controller():
 
     controllerValues = {'LeftJoystickY' : 0,'LeftJoystickX' : 0,'RightJoystickY' : 0,'RightJoystickX' : 0,'LeftTrigger' : 0,'RightTrigger' : 0,'LeftBumper' : 0,'RightBumper' : 0,'A' : 0,'X' : 0,'Y' : 0,'B' : 0,'LeftThumb' : 0,'RightThumb' : 0,'Menu' : 0,'Start' : 0,'DpadY' : 0,'DpadX' : 0}
 
-    def __init__(self):
-        #checking to make sure that controllers exist befor initiated
+    def __init__(self, controllerPort):
+        self.controllerPort = controllerPort
+
+        #checking to make sure that controllers exist before initiated
         if(len(devices.gamepads) < 1):
             logs.append("[ERROR] Cannot find a connected controller.\n")
+        
         else:
             #controller value monitor thread start
-            self._monitor_thread = Thread(target=self._monitor_controller, args=())
-            self._monitor_thread.daemon = True
-            self._monitor_thread.start()
+            self.thread = Thread(target=self._monitor_controller, args=())
+            self.thread.daemon = True
+            self.thread.start()
 
     #Following code is a modified version the tensorkart projects inplementation of controllor input detection by kevinhughes27 on github
     def _monitor_controller(self):
+        gamepad = devices.gamepads[self.controllerPort]
+
         while True:
-            events = get_gamepad()
+            events = gamepad.read()
             for event in events:
                 if event.code == 'ABS_Y':
                     self.controllerValues['LeftJoystickY'] = event.state / Controller.MAX_JOY_VAL # normalize between -1 and 1
@@ -117,7 +122,8 @@ class Camera:
 
 #all the GUI stuff
 class UI:
-    controllerValues = Controller.controllerValues
+    controllerValues = {'LeftJoystickY' : 0,'LeftJoystickX' : 0,'RightJoystickY' : 0,'RightJoystickX' : 0,'LeftTrigger' : 0,'RightTrigger' : 0,'LeftBumper' : 0,'RightBumper' : 0,'A' : 0,'X' : 0,'Y' : 0,'B' : 0,'LeftThumb' : 0,'RightThumb' : 0,'Menu' : 0,'Start' : 0,'DpadY' : 0,'DpadX' : 0}
+
     menus = {}
 
     def _ui(self):
@@ -233,18 +239,20 @@ class UI:
             imgtk = ImageTk.PhotoImage(image = img)
             video.imgtk = imgtk
             video.configure(image=imgtk)
-            video.after(20, updateFrame)
+            if (self.running):
+                video.after(10, updateFrame)
 
         updateFrame()
         win.mainloop()
 
-    def __init__(self, menus={}):
+    def __init__(self, videoSize=(640, 480), menus={}):
+        self.running = True
         self.menus = menus
-        self.frame = cv2.imread("staticImage.png")
+        self.frame = numpy.array(Image.new(mode="RGB", size=videoSize, color = (82, 82, 82))) 
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
-        self.uiThread = Thread(target=self._ui, args=())
-        self.uiThread.start()
+        self.thread = Thread(target=self._ui, args=())
+        self.thread.start()
 
 #black magic voodo, dont really feel like commenting all of it
 class DataConnection:
@@ -269,8 +277,8 @@ class DataConnection:
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.connect((ip, port))
 
-        thread = Thread(target=self._listen, args=())
-        thread.start()
+        self.thread = Thread(target=self._listen, args=())
+        self.thread.start()
 
 
     def serverStart(self, port):
@@ -283,8 +291,8 @@ class DataConnection:
 
         self.connected = True
 
-        thread = Thread(target=self._listen, args=())
-        thread.start()
+        self.thread = Thread(target=self._listen, args=())
+        self.thread.start()
 
         return self.IP
 
