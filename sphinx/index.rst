@@ -21,10 +21,10 @@ Seamoth Documentation
    camera
    ui
    dataconnection
+   motor
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
