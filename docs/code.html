@@ -125,6 +125,10 @@
 <p>These values are returned as a dictionary with the following values:</p>
 <p><cite>LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B</cite></p>
 <p><cite>Some code is modified from the tensorkart project’s inplementation of controllor input detection by kevinhughes27 on github</cite></p>
+<p>The controller class can later be referenced to access or set:</p>
+<ul class="simple">
+<li><p><strong>Controller Values</strong> : <code class="docutils literal notranslate"><span class="pre">controller.controllerValues</span></code> = most recent values of the controller</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>controllerPort</strong> – Controller identifier number</p>
@@ -174,7 +178,7 @@
 <li><p>output</p></li>
 <li><p>custom</p></li>
 </ul>
-<p>The ui class can later be refrenced to set:</p>
+<p>The ui class can later be referenced to access or set:</p>
 <ul class="simple">
 <li><p><strong>Video Frame</strong> : <code class="docutils literal notranslate"><span class="pre">ui.frame</span></code> = most recent frame of video, the ui class reads this every 20ms</p></li>
 <li><p><strong>Connection Status</strong> : <code class="docutils literal notranslate"><span class="pre">ui.connectionStatus</span></code> = status where status is a string representing the current status</p></li>

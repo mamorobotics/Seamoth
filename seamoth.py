@@ -25,6 +25,10 @@ class Controller:
 
     `Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
 
+    The controller class can later be referenced to access or set:
+
+    * **Controller Values** : ``controller.controllerValues`` = most recent values of the controller
+
     :param controllerPort: Controller identifier number
     """
 
@@ -184,7 +188,7 @@ class UI:
     * output
     * custom
 
-    The ui class can later be refrenced to set:
+    The ui class can later be referenced to access or set:
 
     * **Video Frame** : ``ui.frame`` = most recent frame of video, the ui class reads this every 20ms
     * **Connection Status** : ``ui.connectionStatus`` = status where status is a string representing the current status
