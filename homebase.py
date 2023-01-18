@@ -3,6 +3,7 @@ import seamoth
 
 def main():
     conn = seamoth.DataConnection()
+    motor = seamoth.Motor()
 
     controller1 = seamoth.Controller(0)
 

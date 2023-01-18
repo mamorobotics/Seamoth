@@ -104,17 +104,37 @@ class Controller:
 
 
 class Motor:
+    """
+    The motor class represents a motor. It takes no inputs and has two functions, ``setMotor()`` and ``setSpeed()``.
+
+    To set a motor you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected motors. This file should follow the format of:
+
+    ``{ "name": [port1, port2], "name": [port1, port2] }``
+    """
+
     def __init__(self):
         self.motor = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
 
     def setMotor(self, name):
+        """
+        Assigns the motor to ports specified in the hardware map
+
+        :param name: The name of the motor in the hardware map
+        """
+
         if name in self.hardwareMap:
             self.motor = gpiozero.Motor(self.hardwareMap[name][0], self.hardwareMap[name][1])
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
 
     def setSpeed(self, speed):
+        """
+        Sets the speed of the motor the function is called on.
+
+        :param speed: speed of motor
+        """
+
         if speed > 0:
             self.motor.forward(speed)
         if speed < 0:
