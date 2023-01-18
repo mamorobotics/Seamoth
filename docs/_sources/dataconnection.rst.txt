@@ -1,4 +1,4 @@
-Controller
+Data Connection
 ==================
 
 .. autoclass:: seamoth.DataConnection
