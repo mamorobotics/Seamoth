@@ -17,8 +17,10 @@ Seamoth Documentation
 .. toctree::
    :maxdepth: 2
 
-   code
-
+   controller
+   camera
+   ui
+   dataconnection
 
 Indices and tables
 ==================

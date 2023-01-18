@@ -4,7 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Search - Seamoth  documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Controller &#8212; Seamoth  documentation</title>
   
   
   
@@ -37,12 +39,11 @@
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'search';</script>
-<script src="_static/searchtools.js"></script>
-<script src="_static/language_data.js"></script>
-<script src="searchindex.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'controller';</script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Camera" href="camera.html" />
+    <link rel="prev" title="Seamoth Documentation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
   </head>
@@ -67,7 +68,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
       
-<form class="bd-search d-flex align-items-center" action="#" method="get">
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
@@ -115,8 +116,8 @@
     </p>
     <ul id="navbar-main-elements" class="navbar-nav">
         
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="controller.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Controller
                       </a>
                     </li>
@@ -212,8 +213,8 @@
     </p>
     <ul id="navbar-main-elements" class="navbar-nav">
         
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="controller.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Controller
                       </a>
                     </li>
@@ -290,43 +291,53 @@
             </div>
             
             
-<div class="bd-search-container">
-  <h1>Search</h1>
+            <article class="bd-article" role="main">
+              
+  <section id="controller">
+<h1>Controller<a class="headerlink" href="#controller" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.Controller">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerPort</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Controller" title="Permalink to this definition">#</a></dt>
+<dd><p>Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:</p>
+<p><code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">controller.controllerValues</span></code></p>
+<p>These values are returned as a dictionary with the following values:</p>
+<p><cite>LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B</cite></p>
+<p><cite>Some code is modified from the tensorkart project’s inplementation of controllor input detection by kevinhughes27 on github</cite></p>
+<p>The controller class can later be referenced to access or set:</p>
+<ul class="simple">
+<li><p><strong>Controller Values</strong> : <code class="docutils literal notranslate"><span class="pre">controller.controllerValues</span></code> = most recent values of the controller</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>controllerPort</strong> – Controller identifier number</p>
+</dd>
+</dl>
+</dd></dl>
 
-  <noscript>
-    <div class="admonition error">
-      <p class="admonition-title">Error</p>
-      <p>
-        Please activate JavaScript to enable the search functionality.
-      </p>
-    </div>
-  </noscript>
+</section>
 
-  
-<form class="bd-search d-flex align-items-center" action="#" method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
 
-  <div id="search-results"></div>
-</div>
-
-<script>
-// Activate the search field on page load
-let searchInput = document.querySelector("form.bd-search input");
-if (searchInput) {
-  searchInput.focus();
-  searchInput.select();
-  console.log("[PST]: Set focus on search field.");
-}
-</script>
-
+            </article>
+            
             
             
             <footer class="bd-footer-article">
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Seamoth Documentation</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="camera.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Camera</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
 </div>
             </footer>
             
@@ -338,6 +349,27 @@ if (searchInput) {
               
 <div class="toc-item">
   
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#seamoth.Controller">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Controller
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
 <div id="searchbox"></div>
 </div>
 
@@ -347,6 +379,12 @@ if (searchInput) {
 
 <div class="toc-item">
   
+<div class="tocsection sourcelink">
+    <a href="_sources/controller.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
 </div>
 
             </div>

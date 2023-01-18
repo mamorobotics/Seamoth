@@ -4,7 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Search - Seamoth  documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Camera &#8212; Seamoth  documentation</title>
   
   
   
@@ -37,12 +39,11 @@
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'search';</script>
-<script src="_static/searchtools.js"></script>
-<script src="_static/language_data.js"></script>
-<script src="searchindex.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'camera';</script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="UI" href="ui.html" />
+    <link rel="prev" title="Controller" href="controller.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
   </head>
@@ -67,7 +68,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
       
-<form class="bd-search d-flex align-items-center" action="#" method="get">
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
@@ -122,8 +123,8 @@
                     </li>
                 
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="camera.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Camera
                       </a>
                     </li>
@@ -219,8 +220,8 @@
                     </li>
                 
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="camera.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Camera
                       </a>
                     </li>
@@ -290,43 +291,67 @@
             </div>
             
             
-<div class="bd-search-container">
-  <h1>Search</h1>
+            <article class="bd-article" role="main">
+              
+  <section id="camera">
+<h1>Camera<a class="headerlink" href="#camera" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.Camera">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><a class="headerlink" href="#seamoth.Camera" title="Permalink to this definition">#</a></dt>
+<dd><p>The controller class takes in no inputs, and instead reads from the first camera that it finds. The class stores the active camera connection and reads on a function call. Reading the camera data in your main loop is as simple as calling the read function such as:</p>
+<p><code class="docutils literal notranslate"><span class="pre">image</span> <span class="pre">=</span> <span class="pre">camera.readCameraData()</span></code></p>
+<p>Which returns a Cv2 image array</p>
+<p>The class also includes two functions for encoding and decoding the above image for transmission, aptly named <code class="docutils literal notranslate"><span class="pre">encode()</span></code> and <code class="docutils literal notranslate"><span class="pre">decode()</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Camera.decode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.decode" title="Permalink to this definition">#</a></dt>
+<dd><p>Decodes and decompresses an image encoded with <em>encode()</em>
+:param image: Compressed byte array representation of image
+:return: Cv2 image object</p>
+</dd></dl>
 
-  <noscript>
-    <div class="admonition error">
-      <p class="admonition-title">Error</p>
-      <p>
-        Please activate JavaScript to enable the search functionality.
-      </p>
-    </div>
-  </noscript>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Camera.encode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.encode" title="Permalink to this definition">#</a></dt>
+<dd><p>Encodes and compressed a Cv2 image to make it posssible to send over the internet
+:param image: Cv2 image object
+:param quality: Quality of Jpeg compression
+:return: Compressed byte array representation of input image</p>
+</dd></dl>
 
-  
-<form class="bd-search d-flex align-items-center" action="#" method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Camera.readCameraData">
+<span class="sig-name descname"><span class="pre">readCameraData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.readCameraData" title="Permalink to this definition">#</a></dt>
+<dd><p>Reads the current camera image
+:return: Cv2 image object</p>
+</dd></dl>
 
-  <div id="search-results"></div>
-</div>
+</dd></dl>
 
-<script>
-// Activate the search field on page load
-let searchInput = document.querySelector("form.bd-search input");
-if (searchInput) {
-  searchInput.focus();
-  searchInput.select();
-  console.log("[PST]: Set focus on search field.");
-}
-</script>
+</section>
 
+
+            </article>
+            
             
             
             <footer class="bd-footer-article">
                 <!-- Previous / next buttons -->
 <div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="controller.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Controller</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="ui.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">UI</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
 </div>
             </footer>
             
@@ -338,6 +363,56 @@ if (searchInput) {
               
 <div class="toc-item">
   
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#seamoth.Camera">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Camera
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#seamoth.Camera.decode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Camera.decode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#seamoth.Camera.encode">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Camera.encode()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#seamoth.Camera.readCameraData">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Camera.readCameraData()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
 <div id="searchbox"></div>
 </div>
 
@@ -347,6 +422,12 @@ if (searchInput) {
 
 <div class="toc-item">
   
+<div class="tocsection sourcelink">
+    <a href="_sources/camera.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
 </div>
 
             </div>
