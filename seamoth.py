@@ -14,7 +14,20 @@ logs = []
 
 
 class Controller:
-    # don't touch these values, no idea why these work
+    """
+    Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:
+
+    ``values = controller.controllerValues``
+
+    These values are returned as a dictionary with the following values:
+
+    `LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B`
+
+    `Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
+
+    :param controllerPort: Controller identifier number
+    """
+
     MAX_TRIG_VAL = float(256)
     MAX_JOY_VAL = float(32768)
 
@@ -23,20 +36,6 @@ class Controller:
                         'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
 
     def __init__(self, controllerPort):
-        """
-        Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:
-
-        ``values = controller.controllerValues``
-
-        These values are returned as a dictionary with the following values:
-
-        `LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B`
-
-        `Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
-
-        :param controllerPort: Controller identifier number
-        """
-
         self.controllerPort = controllerPort
 
         # checking to make sure that controllers exist before initiated
@@ -121,16 +120,17 @@ class Motor:
 
 
 class Camera:
+    """
+    The controller class takes in no inputs, and instead reads from the first camera that it finds. The class stores the active camera connection and reads on a function call. Reading the camera data in your main loop is as simple as calling the read function such as:
+
+    ``image = camera.readCameraData()``
+
+    Which returns a Cv2 image array
+
+    The class also includes two functions for encoding and decoding the above image for transmission, aptly named ``encode()`` and ``decode()``.
+    """
+
     def __init__(self):
-        """
-        The controller class takes in no inputs, and instead reads from the first camera that it finds. The class stores the active camera connection and reads on a function call. Reading the camera data in your main loop is as simple as calling the read function such as:
-
-        ``image = camera.readCameraData()``
-
-        Which returns a Cv2 image array
-
-        The class also includes two functions for encoding and decoding the above image for transmission, aptly named ``encode()`` and ``decode()``.
-        """
         self.capture = cv2.VideoCapture(0)
 
     def readCameraData(self):
@@ -169,6 +169,32 @@ class Camera:
 
 # all the GUI stuff
 class UI:
+    """
+    The class is currently uses tkinter and is meant to be used as your viewport to the submarine. The class runs entirely in a separate thread and shows the video from an internal buffer. You can write to the ui by referencing the internal buffer such as such as:
+
+    ``ui.frame = frame``
+
+    Which is expected to be the frame data from the camera class. Camera and UI are separate to allow data connections through an internet or similar connections without impeding functionality.
+
+    You can specify which menus to be active or inactive with the menus input with the following possible menus:
+
+    * connDetails
+    * connStatus
+    * input
+    * output
+    * custom
+
+    The ui class can later be refrenced to set:
+
+    * **Video Frame** : ``ui.frame`` = most recent frame of video, the ui class reads this every 20ms
+    * **Connection Status** : ``ui.connectionStatus`` = status where status is a string representing the current status
+    * **Connection Info** : ``ui.connInfo`` = (ip, port) where the tuple of ip and port represents the ip and port you are listening from (these can be retrieved from the DataConnection class with conn.IP and conn.PORT respectively.
+    * **Input Data** : ``ui.controllerValues`` = controllerValues where controllerValues is the dictionary outputted by the Controller class
+
+    :param videoSize:
+    :param menus: Dictionary of which menus to keep active. All are on by default.
+    """
+
     controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
                         'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
                         'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
@@ -315,32 +341,6 @@ class UI:
         win.mainloop()
 
     def __init__(self, videoSize=(640, 480), menus={}):
-        """
-        The class is currently uses tkinter and is meant to be used as your viewport to the submarine. The class runs entirely in a separate thread and shows the video from an internal buffer. You can write to the ui by referencing the internal buffer such as such as:
-
-        ``ui.frame = frame``
-
-        Which is expected to be the frame data from the camera class. Camera and UI are separate to allow data connections through an internet or similar connections without impeding functionality.
-
-        You can specify which menus to be active or inactive with the menus input with the following possible menus:
-
-        * connDetails
-        * connStatus
-        * input
-        * output
-        * custom
-
-        The ui class can later be refrenced to set:
-
-        * **Video Frame** : ``ui.frame`` = most recent frame of video, the ui class reads this every 20ms
-        * **Connection Status** : ``ui.connectionStatus`` = status where status is a string representing the current status
-        * **Connection Info** : ``ui.connInfo`` = (ip, port) where the tuple of ip and port represents the ip and port you are listening from (these can be retrieved from the DataConnection class with conn.IP and conn.PORT respectively.
-        * **Input Data** : ``ui.controllerValues`` = controllerValues where controllerValues is the dictionary outputted by the Controller class
-
-        :param videoSize:
-        :param menus: Dictionary of which menus to keep active. All are on by default.
-        """
-
         self.running = True
         self.menus = menus
         self.frame = numpy.array(Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
@@ -352,13 +352,14 @@ class UI:
 
 # black magic voodoo, don't really feel like commenting all of it
 class DataConnection:
+    """
+    The controller class is seperated into two types, server and client, and is built on a UDP based architecture. All data recieved by the server is stored within its internal ``output`` buffer for asyncronous reading. You can send messages with the ``send()`` function.
+    """
+
     output = ''
     connected = False
 
     def __init__(self):
-        """
-        The controller class is seperated into two types, server and client, and is built on a UDP based architecture. All data recieved by the server is stored within its internal ``output`` buffer for asyncronous reading. You can send messages with the ``send()`` function.
-        """
         self.IP = socket.gethostbyname(socket.gethostname())
 
     def _listen(self):
