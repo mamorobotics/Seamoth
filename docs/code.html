@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Documentation &mdash; Seamoth  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Seamoth Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Seamoth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#seamoth.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Camera.decode"><code class="docutils literal notranslate"><span class="pre">Camera.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Camera.encode"><code class="docutils literal notranslate"><span class="pre">Camera.encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Camera.readCameraData"><code class="docutils literal notranslate"><span class="pre">Camera.readCameraData()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#seamoth.Controller"><code class="docutils literal notranslate"><span class="pre">Controller</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#seamoth.DataConnection"><code class="docutils literal notranslate"><span class="pre">DataConnection</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.DataConnection.clientStart"><code class="docutils literal notranslate"><span class="pre">DataConnection.clientStart()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.DataConnection.send"><code class="docutils literal notranslate"><span class="pre">DataConnection.send()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.DataConnection.serverStart"><code class="docutils literal notranslate"><span class="pre">DataConnection.serverStart()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#seamoth.UI"><code class="docutils literal notranslate"><span class="pre">UI</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Seamoth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Code Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/code.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-seamoth">
+<span id="code-documentation"></span><h1>Code Documentation<a class="headerlink" href="#module-seamoth" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.Camera">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><a class="headerlink" href="#seamoth.Camera" title="Permalink to this definition"></a></dt>
+<dd><p>The controller class takes in no inputs, and instead reads from the first camera that it finds. The class stores the active camera connection and reads on a function call. Reading the camera data in your main loop is as simple as calling the read function such as:</p>
+<p><code class="docutils literal notranslate"><span class="pre">image</span> <span class="pre">=</span> <span class="pre">camera.readCameraData()</span></code></p>
+<p>Which returns a Cv2 image array</p>
+<p>The class also includes two functions for encoding and decoding the above image for transmission, aptly named <code class="docutils literal notranslate"><span class="pre">encode()</span></code> and <code class="docutils literal notranslate"><span class="pre">decode()</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Camera.decode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.decode" title="Permalink to this definition"></a></dt>
+<dd><p>Decodes and decompresses an image encoded with <em>encode()</em>
+:param image: Compressed byte array representation of image
+:return: Cv2 image object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Camera.encode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.encode" title="Permalink to this definition"></a></dt>
+<dd><p>Encodes and compressed a Cv2 image to make it posssible to send over the internet
+:param image: Cv2 image object
+:param quality: Quality of Jpeg compression
+:return: Compressed byte array representation of input image</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Camera.readCameraData">
+<span class="sig-name descname"><span class="pre">readCameraData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.readCameraData" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the current camera image
+:return: Cv2 image object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.Controller">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerPort</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Controller" title="Permalink to this definition"></a></dt>
+<dd><p>Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:</p>
+<p><code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">controller.controllerValues</span></code></p>
+<p>These values are returned as a dictionary with the following values:</p>
+<p><cite>LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B</cite></p>
+<p><cite>Some code is modified from the tensorkart project’s inplementation of controllor input detection by kevinhughes27 on github</cite></p>
+<p>The controller class can later be referenced to access or set:</p>
+<ul class="simple">
+<li><p><strong>Controller Values</strong> : <code class="docutils literal notranslate"><span class="pre">controller.controllerValues</span></code> = most recent values of the controller</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>controllerPort</strong> – Controller identifier number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.DataConnection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">DataConnection</span></span><a class="headerlink" href="#seamoth.DataConnection" title="Permalink to this definition"></a></dt>
+<dd><p>The controller class is seperated into two types, server and client, and is built on a UDP based architecture. All data recieved by the server is stored within its internal <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer for asyncronous reading. You can send messages with the <code class="docutils literal notranslate"><span class="pre">send()</span></code> function.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.DataConnection.clientStart">
+<span class="sig-name descname"><span class="pre">clientStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.clientStart" title="Permalink to this definition"></a></dt>
+<dd><p>Starts a client to connect to a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer
+:param ip: ip of the server
+:param port: port of the server</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.DataConnection.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.send" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a message to all servers or clients connected to the program
+:param msg: message that you want to send in a byte form</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.DataConnection.serverStart">
+<span class="sig-name descname"><span class="pre">serverStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.serverStart" title="Permalink to this definition"></a></dt>
+<dd><p>Starts a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer
+:param port: port of the server</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.UI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">UI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">videoSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(640,</span> <span class="pre">480)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">menus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.UI" title="Permalink to this definition"></a></dt>
+<dd><p>The class is currently uses tkinter and is meant to be used as your viewport to the submarine. The class runs entirely in a separate thread and shows the video from an internal buffer. You can write to the ui by referencing the internal buffer such as such as:</p>
+<p><code class="docutils literal notranslate"><span class="pre">ui.frame</span> <span class="pre">=</span> <span class="pre">frame</span></code></p>
+<p>Which is expected to be the frame data from the camera class. Camera and UI are separate to allow data connections through an internet or similar connections without impeding functionality.</p>
+<p>You can specify which menus to be active or inactive with the menus input with the following possible menus:</p>
+<ul class="simple">
+<li><p>connDetails</p></li>
+<li><p>connStatus</p></li>
+<li><p>input</p></li>
+<li><p>output</p></li>
+<li><p>custom</p></li>
+</ul>
+<p>The ui class can later be referenced to access or set:</p>
+<ul class="simple">
+<li><p><strong>Video Frame</strong> : <code class="docutils literal notranslate"><span class="pre">ui.frame</span></code> = most recent frame of video, the ui class reads this every 20ms</p></li>
+<li><p><strong>Connection Status</strong> : <code class="docutils literal notranslate"><span class="pre">ui.connectionStatus</span></code> = status where status is a string representing the current status</p></li>
+<li><p><strong>Connection Info</strong> : <code class="docutils literal notranslate"><span class="pre">ui.connInfo</span></code> = (ip, port) where the tuple of ip and port represents the ip and port you are listening from (these can be retrieved from the DataConnection class with conn.IP and conn.PORT respectively.</p></li>
+<li><p><strong>Input Data</strong> : <code class="docutils literal notranslate"><span class="pre">ui.controllerValues</span></code> = controllerValues where controllerValues is the dictionary outputted by the Controller class</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>videoSize</strong> – </p></li>
+<li><p><strong>menus</strong> – Dictionary of which menus to keep active. All are on by default.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Seamoth Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, TheMagnificentMiles.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
