@@ -1,4 +1,4 @@
-import Seamoth
+import seamoth
 
 def main():
     camera = Seamoth.Camera()
