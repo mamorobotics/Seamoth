@@ -28,6 +28,7 @@ Seamoth Documentation
    camera
    ui
    dataconnection
+   motor
 
 Indices and tables
 ==================
