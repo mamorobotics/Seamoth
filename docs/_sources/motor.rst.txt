@@ -1,4 +1,4 @@
-Controller
+Motor
 ==================
 
 .. autoclass:: seamoth.Motor
