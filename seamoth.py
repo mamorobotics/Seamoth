@@ -107,7 +107,7 @@ class Motor:
     """
     The motor class represents a motor. It takes no inputs and has two functions, ``setMotor()`` and ``setSpeed()``.
 
-    To set a motor you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected motors. This file should follow the format of:
+    To set a motor you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
     ``{ "name": [port1, port2], "name": [port1, port2] }``
     """
@@ -141,6 +141,41 @@ class Motor:
             self.motor.backward(speed)
         if speed == 0:
             self.motor.stop()
+
+
+class Servo:
+    """
+        The servo class represents a servo. It takes no inputs and has two functions, ``setMotor()`` and ``setPosition()``.
+
+        To set a servo you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected servos and motors. This file should follow the format of:
+
+        ``{ "name": port, "name": port }``
+        """
+
+    def __init__(self):
+        self.servo = None
+        self.hardwareMap = json.loads(open(PATH, "r").read())
+
+    def setMotor(self, name):
+        """
+        Assigns the servo to port specified in the hardware map
+
+        :param name: The name of the servo in the hardware map
+        """
+
+        if name in self.hardwareMap:
+            self.servo = gpiozero.Servo(self.hardwareMap[name])
+        else:
+            logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
+
+    def setSpeed(self, position):
+        """
+        Sets the position of the servo the function is called on.
+
+        :param position: position of servo
+        """
+
+        self.servo.value = position
 
 
 class Camera:

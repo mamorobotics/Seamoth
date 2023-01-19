@@ -4,8 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; Seamoth  documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Servo &#8212; Seamoth  documentation</title>
   
   
   
@@ -38,8 +39,8 @@
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
-    <link rel="index" title="Index" href="#" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'servo';</script>
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="docsearch:language" content="en">
@@ -304,103 +305,39 @@
             
             <article class="bd-article" role="main">
               
+  <section id="servo">
+<h1>Servo<a class="headerlink" href="#servo" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="seamoth.Servo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Servo</span></span><a class="headerlink" href="#seamoth.Servo" title="Permalink to this definition">#</a></dt>
+<dd><p>The servo class represents a servo. It takes no inputs and has two functions, <code class="docutils literal notranslate"><span class="pre">setMotor()</span></code> and <code class="docutils literal notranslate"><span class="pre">setPosition()</span></code>.</p>
+<p>To set a servo you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected servos and motors. This file should follow the format of:</p>
+<p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">port,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">port</span> <span class="pre">}</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Servo.setMotor">
+<span class="sig-name descname"><span class="pre">setMotor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Servo.setMotor" title="Permalink to this definition">#</a></dt>
+<dd><p>Assigns the servo to port specified in the hardware map</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the servo in the hardware map</p>
+</dd>
+</dl>
+</dd></dl>
 
-<h1 id="index">Index</h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="seamoth.Servo.setSpeed">
+<span class="sig-name descname"><span class="pre">setSpeed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Servo.setSpeed" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the position of the servo the function is called on.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>position</strong> – position of servo</p>
+</dd>
+</dl>
+</dd></dl>
 
-<div class="genindex-jumpbox">
- <a href="#C"><strong>C</strong></a>
- | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
- | <a href="#M"><strong>M</strong></a>
- | <a href="#R"><strong>R</strong></a>
- | <a href="#S"><strong>S</strong></a>
- | <a href="#U"><strong>U</strong></a>
- 
-</div>
-<h2 id="C">C</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="camera.html#seamoth.Camera">Camera (class in seamoth)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dataconnection.html#seamoth.DataConnection.clientStart">clientStart() (seamoth.DataConnection method)</a>
-</li>
-      <li><a href="controller.html#seamoth.Controller">Controller (class in seamoth)</a>
-</li>
-  </ul></td>
-</tr></table>
+</dd></dl>
 
-<h2 id="D">D</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dataconnection.html#seamoth.DataConnection">DataConnection (class in seamoth)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="camera.html#seamoth.Camera.decode">decode() (seamoth.Camera static method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="camera.html#seamoth.Camera.encode">encode() (seamoth.Camera static method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="M">M</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="motor.html#seamoth.Motor">Motor (class in seamoth)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="R">R</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="camera.html#seamoth.Camera.readCameraData">readCameraData() (seamoth.Camera method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="S">S</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dataconnection.html#seamoth.DataConnection.send">send() (seamoth.DataConnection method)</a>
-</li>
-      <li><a href="dataconnection.html#seamoth.DataConnection.serverStart">serverStart() (seamoth.DataConnection method)</a>
-</li>
-      <li><a href="servo.html#seamoth.Servo">Servo (class in seamoth)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="motor.html#seamoth.Motor.setMotor">setMotor() (seamoth.Motor method)</a>
-
-      <ul>
-        <li><a href="servo.html#seamoth.Servo.setMotor">(seamoth.Servo method)</a>
-</li>
-      </ul></li>
-      <li><a href="motor.html#seamoth.Motor.setSpeed">setSpeed() (seamoth.Motor method)</a>
-
-      <ul>
-        <li><a href="servo.html#seamoth.Servo.setSpeed">(seamoth.Servo method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="U">U</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ui.html#seamoth.UI">UI (class in seamoth)</a>
-</li>
-  </ul></td>
-</tr></table>
-
+</section>
 
 
             </article>
@@ -421,6 +358,47 @@
               
 <div class="toc-item">
   
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#seamoth.Servo">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Servo
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#seamoth.Servo.setMotor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Servo.setMotor()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#seamoth.Servo.setSpeed">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Servo.setSpeed()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
 <div id="searchbox"></div>
 </div>
 
@@ -430,6 +408,12 @@
 
 <div class="toc-item">
   
+<div class="tocsection sourcelink">
+    <a href="_sources/servo.rst.txt">
+        <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+</div>
+
 </div>
 
             </div>
