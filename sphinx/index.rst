@@ -29,6 +29,7 @@ Seamoth Documentation
    ui
    dataconnection
    motor
+   servo
 
 Indices and tables
 ==================
