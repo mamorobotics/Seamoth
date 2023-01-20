@@ -24,12 +24,9 @@ Seamoth Documentation
 .. toctree::
    :maxdepth: 1
 
-   controller
-   camera
-   ui
-   dataconnection
-   motor
-   servo
+   input
+   hardware
+   software
 
 Indices and tables
 ==================
