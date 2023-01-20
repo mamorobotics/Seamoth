@@ -22,7 +22,7 @@ Seamoth Documentation
    * Trello Planning Board: https://trello.com/invite/b/tLW70VzX/9e122bf651127fcb6bf9974a68585161/seamoth
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    controller
    camera
