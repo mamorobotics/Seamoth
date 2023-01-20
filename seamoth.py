@@ -39,7 +39,7 @@ class Controller:
                         'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
                         'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
 
-    def __init__(self, controllerPort):
+    def __init__(self, controllerPort:int):
         self.controllerPort = controllerPort
 
         # checking to make sure that controllers exist before initiated
@@ -116,7 +116,7 @@ class Motor:
         self.motor = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
 
-    def setMotor(self, name):
+    def setMotor(self, name:str):
         """
         Assigns the motor to ports specified in the hardware map
 
@@ -128,7 +128,7 @@ class Motor:
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
 
-    def setSpeed(self, speed):
+    def setSpeed(self, speed:float):
         """
         Sets the speed of the motor the function is called on.
 
@@ -156,7 +156,7 @@ class Servo:
         self.servo = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
 
-    def setMotor(self, name):
+    def setMotor(self, name:str):
         """
         Assigns the servo to port specified in the hardware map
 
@@ -168,7 +168,7 @@ class Servo:
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
 
-    def setSpeed(self, position):
+    def setSpeed(self, position:float):
         """
         Sets the position of the servo the function is called on.
 
@@ -203,7 +203,7 @@ class Camera:
         return frame
 
     @staticmethod
-    def encode(image, quality):
+    def encode(image, quality:int):
         """
         Encodes and compressed a Cv2 image to make it posssible to send over the internet
         :param image: Cv2 image object
@@ -399,7 +399,7 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize=(640, 480), menus={}):
+    def __init__(self, videoSize:tuple=(640, 480), menus:dict={}):
         self.running = True
         self.menus = menus
         self.frame = numpy.array(Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
@@ -432,7 +432,7 @@ class DataConnection:
 
             self.output = self.connection.recv(int(msg_len))
 
-    def clientStart(self, ip, port):
+    def clientStart(self, ip:str, port:int):
         """
         Starts a client to connect to a server and will send received messages to the objects ``output`` buffer
         :param ip: ip of the server
@@ -445,7 +445,7 @@ class DataConnection:
         self.thread = Thread(target=self._listen, args=())
         self.thread.start()
 
-    def serverStart(self, port):
+    def serverStart(self, port:int):
         """
         Starts a server and will send received messages to the objects ``output`` buffer
         :param port: port of the server
@@ -465,7 +465,7 @@ class DataConnection:
 
         return self.IP
 
-    def send(self, msg):
+    def send(self, msg:bytearray):
         """
         Sends a message to all servers or clients connected to the program
         :param msg: message that you want to send in a byte form
