@@ -6,9 +6,6 @@
 Seamoth Documentation
 ===================================
 
-   # Seamoth
-
-
    Seamoth is an OOP based, highly customisable and modular python library for the MATE ROV competition, built by the Mamaroneck High School Robotics Team and named for the iconic personal submarine in subnautica.
 
    .. image:: _static/seamoth.jfif
