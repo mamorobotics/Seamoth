@@ -7,6 +7,7 @@
   <title>Input &mdash; Seamoth  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -40,8 +43,19 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Input</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#camera">Camera</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#controller">Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#camera">Camera</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Camera.decode"><code class="docutils literal notranslate"><span class="pre">Camera.decode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Camera.encode"><code class="docutils literal notranslate"><span class="pre">Camera.encode()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Camera.readCameraData"><code class="docutils literal notranslate"><span class="pre">Camera.readCameraData()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#controller">Controller</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Controller"><code class="docutils literal notranslate"><span class="pre">Controller</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Hardware</a></li>
@@ -73,9 +87,9 @@
            <div itemprop="articleBody">
              
   <section id="input">
-<h1>Input<a class="headerlink" href="#input" title="Permalink to this headline"></a></h1>
+<h1>Input<a class="headerlink" href="#input" title="Permalink to this heading"></a></h1>
 <section id="camera">
-<h2>Camera<a class="headerlink" href="#camera" title="Permalink to this headline"></a></h2>
+<h2>Camera<a class="headerlink" href="#camera" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.Camera">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><a class="headerlink" href="#seamoth.Camera" title="Permalink to this definition"></a></dt>
@@ -111,7 +125,7 @@
 
 </section>
 <section id="controller">
-<h2>Controller<a class="headerlink" href="#controller" title="Permalink to this headline"></a></h2>
+<h2>Controller<a class="headerlink" href="#controller" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.Controller">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerPort</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Controller" title="Permalink to this definition"></a></dt>
