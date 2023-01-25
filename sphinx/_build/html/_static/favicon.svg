@@ -27,15 +27,25 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="false"
+<<<<<<< Updated upstream
      inkscape:zoom="0.25323113"
      inkscape:cx="-908.26118"
      inkscape:cy="-155.98398"
+=======
+     inkscape:zoom="0.50646226"
+     inkscape:cx="111.55816"
+     inkscape:cy="362.31722"
+>>>>>>> Stashed changes
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
+<<<<<<< Updated upstream
      inkscape:current-layer="g422" /><defs
+=======
+     inkscape:current-layer="g592" /><defs
+>>>>>>> Stashed changes
      id="defs2"><inkscape:path-effect
        effect="powerstroke"
        id="path-effect232"
@@ -62,15 +72,20 @@
        autoreverse="true" /></defs><g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
+<<<<<<< Updated upstream
      id="layer1"><path
        style="fill:#ffffff;stroke-width:0.264583"
        d="M 147.58216,-14.1052 V 103.43811"
        id="path516" /><g
+=======
+     id="layer1"><g
+>>>>>>> Stashed changes
        id="g4117"
        transform="translate(0.04844173,-0.40555667)"><g
          id="g422"
          transform="translate(3.9687419,0.94128419)"><g
            id="g1583"
+<<<<<<< Updated upstream
            transform="translate(4.3257924,3.2916307)"><g
              id="g1183"
              transform="matrix(0,5.8255901,5.8255901,0,-602.76867,-127.35469)"
@@ -91,3 +106,30 @@
              cy="37.525387"
              r="26.087103"
              transform="scale(-1,1)" /></g></g></g></g></svg>
+=======
+           transform="translate(4.3257924,3.2916307)"><path
+             style="fill:#ffffff;stroke-width:0.264583"
+             d="M -10.016578,113.17382 H 107.52673"
+             id="path516" /><g
+             id="g592"
+             transform="translate(-12.431598)"><g
+               id="g1183"
+               transform="matrix(5.8255901,0,0,-5.8255901,-119.43871,855.18167)"
+               style="stroke:#8cdeec;stroke-width:4.10519;stroke-dasharray:none;stroke-opacity:1;fill:#5eaed2;fill-opacity:0"><path
+                 style="font-variation-settings:'wght' 300;fill:#5eaed2;fill-opacity:0;stroke:#8cdeec;stroke-width:4.10519;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+                 d="m 62.624464,109.75175 c -5.512682,5.63562 -10.337552,12.80749 -17.856356,12.61122 -6.424226,-0.16771 -11.207111,-4.80177 -11.202963,-6.179 0.0041,-1.37723 5.528143,-6.37233 11.036012,-6.15037 8.803385,-0.23583 12.410494,6.56869 18.12126,12.40734"
+                 id="path507-7"
+                 sodipodi:nodetypes="cszcc" /></g><circle
+               style="font-variation-settings:'wght' 300;fill:#5eaed2;fill-opacity:0;stroke:#8cdeec;stroke-width:10;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+               id="circle2591"
+               cx="117.7401"
+               cy="50.366013"
+               r="20.179428"
+               transform="matrix(0,1,1,0,0,0)" /><circle
+               style="font-variation-settings:'wght' 300;fill:#5eaed2;fill-opacity:0;stroke:#8cdeec;stroke-width:10;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+               id="circle2591-4"
+               cx="53.483852"
+               cy="118.05701"
+               r="26.087103"
+               transform="matrix(0,1,1,0,0,0)" /></g></g></g></g></g></svg>
+>>>>>>> Stashed changes
