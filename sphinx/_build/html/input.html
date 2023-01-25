@@ -129,7 +129,8 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.Controller">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerPort</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Controller" title="Permalink to this definition"></a></dt>
-<dd><p>Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:</p>
+<dd><p><cite>Note: Some code in this class is a modified version of the tensorkart project’s inplementation of controllor input detection by kevinhughes27 on github</cite></p>
+<p>Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:</p>
 <p><code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">controller.controllerValues</span></code></p>
 <p>These values are returned as a dictionary with the following values:</p>
 <p><cite>LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B</cite></p>
@@ -137,7 +138,6 @@
 <ul class="simple">
 <li><p><strong>Controller Values</strong> : <code class="docutils literal notranslate"><span class="pre">controller.controllerValues</span></code> = most recent values of the controller</p></li>
 </ul>
-<p><cite>Note: Some code is modified from the tensorkart project’s inplementation of controllor input detection by kevinhughes27 on github</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>controllerPort</strong> – Controller identifier number</p>

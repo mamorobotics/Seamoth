@@ -49,6 +49,8 @@ logs = []
 
 class Controller:
     """
+    `Note: Some code in this class is a modified version of the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
+
     Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:
 
     ``values = controller.controllerValues``
@@ -60,8 +62,6 @@ class Controller:
     The controller class can later be referenced to access or set:
 
     * **Controller Values** : ``controller.controllerValues`` = most recent values of the controller
-
-    `Note: Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
 
     :param controllerPort: Controller identifier number
     """
