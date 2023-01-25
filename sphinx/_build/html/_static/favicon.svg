@@ -28,9 +28,15 @@
      inkscape:document-units="mm"
      showgrid="false"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      inkscape:zoom="0.25323113"
      inkscape:cx="-908.26118"
      inkscape:cy="-155.98398"
+=======
+     inkscape:zoom="0.50646226"
+     inkscape:cx="111.55816"
+     inkscape:cy="362.31722"
+>>>>>>> Stashed changes
 =======
      inkscape:zoom="0.50646226"
      inkscape:cx="111.55816"
@@ -42,7 +48,11 @@
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      inkscape:current-layer="g422" /><defs
+=======
+     inkscape:current-layer="g592" /><defs
+>>>>>>> Stashed changes
 =======
      inkscape:current-layer="g592" /><defs
 >>>>>>> Stashed changes
@@ -73,10 +83,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      id="layer1"><path
        style="fill:#ffffff;stroke-width:0.264583"
        d="M 147.58216,-14.1052 V 103.43811"
        id="path516" /><g
+=======
+     id="layer1"><g
+>>>>>>> Stashed changes
 =======
      id="layer1"><g
 >>>>>>> Stashed changes
@@ -85,6 +99,7 @@
          id="g422"
          transform="translate(3.9687419,0.94128419)"><g
            id="g1583"
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
            transform="translate(4.3257924,3.2916307)"><g
              id="g1183"
@@ -107,6 +122,8 @@
              r="26.087103"
              transform="scale(-1,1)" /></g></g></g></g></svg>
 =======
+=======
+>>>>>>> Stashed changes
            transform="translate(4.3257924,3.2916307)"><path
              style="fill:#ffffff;stroke-width:0.264583"
              d="M -10.016578,113.17382 H 107.52673"
@@ -132,4 +149,7 @@
                cy="118.05701"
                r="26.087103"
                transform="matrix(0,1,1,0,0,0)" /></g></g></g></g></g></svg>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
