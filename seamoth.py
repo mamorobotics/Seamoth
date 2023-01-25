@@ -49,6 +49,8 @@ logs = []
 
 class Controller:
     """
+    `Note: Some code in this class is a modified version of the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
+
     Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:
 
     ``values = controller.controllerValues``
@@ -56,8 +58,6 @@ class Controller:
     These values are returned as a dictionary with the following values:
 
     `LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B`
-
-    `Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
 
     The controller class can later be referenced to access or set:
 
