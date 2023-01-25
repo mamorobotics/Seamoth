@@ -57,11 +57,11 @@ class Controller:
 
     `LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B`
 
-    `Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
-
     The controller class can later be referenced to access or set:
 
     * **Controller Values** : ``controller.controllerValues`` = most recent values of the controller
+
+    `Note: Some code is modified from the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
 
     :param controllerPort: Controller identifier number
     """
