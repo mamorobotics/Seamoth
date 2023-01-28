@@ -4,7 +4,7 @@ def main():
     camera = seamoth.Camera()
     conn = seamoth.DataConnection()
 
-    conn.clientStart("192.168.86.31", 1951)
+    conn.clientStart("10.0.0.144", 1951)
 
     while True:
         conn.send(seamoth.Camera.encode(camera.readCameraData(), 90))

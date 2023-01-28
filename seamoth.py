@@ -1,43 +1,10 @@
-import socket, json, numpy, subprocess
-import sys
+import socket, json, numpy, bluetooth, cv2, gpiozero
 from threading import Thread
 from tkinter import *
 from ctypes import windll
+from inputs import devices
+from PIL import Image, ImageTk
 
-
-def checkInstall(name):
-    install = input(f"{name} Module not found. Install {name} module? (y/n)")
-    if install.capitalize() == "Y":
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', name])
-        return True
-    else:
-        print("Input module not installed, functionality may not work")
-        return False
-
-
-try:
-    from inputs import devices
-except:
-    if checkInstall("inputs"):
-        from inputs import devices
-
-try:
-    from PIL import Image, ImageTk
-except:
-    if checkInstall("Pillow"):
-        from PIL import Image, ImageTk
-
-try:
-    import cv2
-except:
-    if checkInstall("opencv-python"):
-        import cv2
-
-try:
-    import gpiozero
-except:
-    if checkInstall("gpiozero"):
-        import gpiozero
 
 windll.shcore.SetProcessDpiAwareness(1)
 
