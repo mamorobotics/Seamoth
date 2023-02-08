@@ -1,18 +1,23 @@
 import socket, json, numpy, bluetooth, cv2, gpiozero
 from threading import Thread
 from tkinter import *
-from ctypes import windll
 from inputs import devices
 from PIL import Image, ImageTk
 
 
-windll.shcore.SetProcessDpiAwareness(1)
+
 
 PATH = "hardwareMap.txt"
 
 global logs
 logs = []
 
+
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except:
+    logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible")
 
 class Controller:
     """
