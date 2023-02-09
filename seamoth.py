@@ -4,20 +4,18 @@ from tkinter import *
 from inputs import devices
 from PIL import Image, ImageTk
 
-
-
-
 PATH = "hardwareMap.txt"
 
 global logs
 logs = []
 
-
 try:
     from ctypes import windll
+
     windll.shcore.SetProcessDpiAwareness(1)
 except:
     logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible")
+
 
 class Controller:
     """
