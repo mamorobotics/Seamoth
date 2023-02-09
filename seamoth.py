@@ -271,7 +271,8 @@ class UI:
         win.title("Seamoth Homebase")
         win.config(bg="#323232")
 
-        data = Label(win, text="Good luck MHS", bg="#323232", foreground="#ffffff")
+        if self.connInfo[1] == 1951:
+            logs.append("Good luck MHS!")
 
         # settings
         settings = Frame(win, bg="#323232")
@@ -371,9 +372,6 @@ class UI:
 
         # main loop
         def updateFrame():
-            if connDetailsPORT == 1951:
-                data.grid(row=0, column=0, sticky=N)
-
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
                 connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
