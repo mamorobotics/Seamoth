@@ -489,7 +489,7 @@ class DataConnection:
     def send(self, msg: bytearray):
         """
         Sends a message to all servers or clients connected to the program
-        
+
         :param msg: message that you want to send in a byte form
         """
 
