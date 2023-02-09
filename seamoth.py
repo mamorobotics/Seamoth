@@ -192,7 +192,7 @@ class Camera:
 
     Which returns a Cv2 image array
 
-    The class also includes two functions for encoding and decoding the above image for transmission, aptly named ``encode()`` and ``decode()``.
+    The class also includes two functions for encoding and decoding the above image for transmission, aptly named ``encode()`` and ``decode()``, and a function for resizing an image, named ``resize()``.
     """
 
     def __init__(self):
@@ -231,6 +231,16 @@ class Camera:
         npimg = numpy.frombuffer(image, numpy.uint8)
         return cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
+    @staticmethod
+    def resize(image, x:int, y:int):
+        """
+        Resizes an image
+        :param image: Cv2 image object
+        :param x: Image X
+        :param y: Image Y
+        :return: Resized Cv2 image object
+        """
+        return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
 
 # all the GUI stuff
 class UI:
