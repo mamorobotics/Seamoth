@@ -15,14 +15,12 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Hardware" href="hardware.html" />
-    <link rel="prev" title="Seamoth Documentation" href="index.html" /> 
+    <link rel="prev" title="Seamoth" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,19 +41,8 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Input</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#camera">Camera</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#seamoth.Camera"><code class="docutils literal notranslate"><span class="pre">Camera</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.Camera.decode"><code class="docutils literal notranslate"><span class="pre">Camera.decode()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.Camera.encode"><code class="docutils literal notranslate"><span class="pre">Camera.encode()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.Camera.readCameraData"><code class="docutils literal notranslate"><span class="pre">Camera.readCameraData()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#controller">Controller</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#seamoth.Controller"><code class="docutils literal notranslate"><span class="pre">Controller</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#camera">Camera</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#controller">Controller</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Hardware</a></li>
@@ -87,64 +74,12 @@
            <div itemprop="articleBody">
              
   <section id="input">
-<h1>Input<a class="headerlink" href="#input" title="Permalink to this heading"></a></h1>
+<h1>Input<a class="headerlink" href="#input" title="Permalink to this headline"></a></h1>
 <section id="camera">
-<h2>Camera<a class="headerlink" href="#camera" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="seamoth.Camera">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Camera</span></span><a class="headerlink" href="#seamoth.Camera" title="Permalink to this definition"></a></dt>
-<dd><p>The controller class takes in no inputs, and instead reads from the first camera that it finds. The class stores the active camera connection and reads on a function call. Reading the camera data in your main loop is as simple as calling the read function such as:</p>
-<p><code class="docutils literal notranslate"><span class="pre">image</span> <span class="pre">=</span> <span class="pre">camera.readCameraData()</span></code></p>
-<p>Which returns a Cv2 image array</p>
-<p>The class also includes two functions for encoding and decoding the above image for transmission, aptly named <code class="docutils literal notranslate"><span class="pre">encode()</span></code> and <code class="docutils literal notranslate"><span class="pre">decode()</span></code>.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="seamoth.Camera.decode">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.decode" title="Permalink to this definition"></a></dt>
-<dd><p>Decodes and decompresses an image encoded with <em>encode()</em>
-:param image: Compressed byte array representation of image
-:return: Cv2 image object</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="seamoth.Camera.encode">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.encode" title="Permalink to this definition"></a></dt>
-<dd><p>Encodes and compressed a Cv2 image to make it posssible to send over the internet
-:param image: Cv2 image object
-:param quality: Quality of Jpeg compression
-:return: Compressed byte array representation of input image</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="seamoth.Camera.readCameraData">
-<span class="sig-name descname"><span class="pre">readCameraData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.readCameraData" title="Permalink to this definition"></a></dt>
-<dd><p>Reads the current camera image
-:return: Cv2 image object</p>
-</dd></dl>
-
-</dd></dl>
-
+<h2>Camera<a class="headerlink" href="#camera" title="Permalink to this headline"></a></h2>
 </section>
 <section id="controller">
-<h2>Controller<a class="headerlink" href="#controller" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="seamoth.Controller">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerPort</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Controller" title="Permalink to this definition"></a></dt>
-<dd><p><cite>Note: Some code in this class is a modified version of the tensorkart project’s inplementation of controllor input detection by kevinhughes27 on github</cite></p>
-<p>Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:</p>
-<p><code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">controller.controllerValues</span></code></p>
-<p>These values are returned as a dictionary with the following values:</p>
-<p><cite>LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B</cite></p>
-<p>The controller class can later be referenced to access or set:</p>
-<ul class="simple">
-<li><p><strong>Controller Values</strong> : <code class="docutils literal notranslate"><span class="pre">controller.controllerValues</span></code> = most recent values of the controller</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>controllerPort</strong> – Controller identifier number</p>
-</dd>
-</dl>
-</dd></dl>
-
+<h2>Controller<a class="headerlink" href="#controller" title="Permalink to this headline"></a></h2>
 </section>
 </section>
 
@@ -152,7 +87,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Seamoth Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Seamoth" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="hardware.html" class="btn btn-neutral float-right" title="Hardware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

@@ -1,50 +1,20 @@
-import socket, json, numpy, subprocess
-import sys
+import socket, json, numpy, bluetooth, cv2, gpiozero
 from threading import Thread
 from tkinter import *
-from ctypes import windll
-
-
-def checkInstall(name):
-    install = input(f"{name} Module not found. Install {name} module? (y/n)")
-    if install.capitalize() == "Y":
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', name])
-        return True
-    else:
-        print("Input module not installed, functionality may not work")
-        return False
-
-
-try:
-    from inputs import devices
-except:
-    if checkInstall("inputs"):
-        from inputs import devices
-
-try:
-    from PIL import Image, ImageTk
-except:
-    if checkInstall("Pillow"):
-        from PIL import Image, ImageTk
-
-try:
-    import cv2
-except:
-    if checkInstall("opencv-python"):
-        import cv2
-
-try:
-    import gpiozero
-except:
-    if checkInstall("gpiozero"):
-        import gpiozero
-
-windll.shcore.SetProcessDpiAwareness(1)
+from inputs import devices
+from PIL import Image, ImageTk
 
 PATH = "hardwareMap.txt"
 
 global logs
 logs = []
+
+try:
+    from ctypes import windll
+
+    windll.shcore.SetProcessDpiAwareness(1)
+except:
+    logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible")
 
 
 class Controller:
@@ -299,7 +269,8 @@ class UI:
         win.title("Seamoth Homebase")
         win.config(bg="#323232")
 
-        data = Label(win, text="Good luck MHS", bg="#323232", foreground="#ffffff")
+        if self.connInfo[1] == 1951:
+            logs.append("Good luck MHS!")
 
         # settings
         settings = Frame(win, bg="#323232")
@@ -399,9 +370,6 @@ class UI:
 
         # main loop
         def updateFrame():
-            if connDetailsPORT == 1951:
-                data.grid(row=0, column=0, sticky=N)
-
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
                 connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
