@@ -176,7 +176,7 @@ class Servo:
         """
         Sets the position of the servo the function is called on.
 
-        :param position: position of servo
+        :param position: Position of servo
         """
 
         self.servo.value = position
@@ -199,6 +199,7 @@ class Camera:
     def readCameraData(self):
         """
         Reads the current camera image
+
         :return: Cv2 image object
         """
         ret, frame = self.capture.read()
@@ -210,8 +211,10 @@ class Camera:
     def encode(image, quality: int):
         """
         Encodes and compressed a Cv2 image to make it posssible to send over the internet
+
         :param image: Cv2 image object
         :param quality: Quality of Jpeg compression
+
         :return: Compressed byte array representation of input image
         """
 
@@ -222,7 +225,9 @@ class Camera:
     def decode(image):
         """
         Decodes and decompresses an image encoded with *encode()*
+
         :param image: Compressed byte array representation of image
+
         :return: Cv2 image object
         """
 
@@ -233,9 +238,11 @@ class Camera:
     def resize(image, x:int, y:int):
         """
         Resizes an image
+
         :param image: Cv2 image object
         :param x: Image X
         :param y: Image Y
+
         :return: Resized Cv2 image object
         """
         return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
@@ -447,6 +454,7 @@ class DataConnection:
     def clientStart(self, ip: str, port: int):
         """
         Starts a client to connect to a server and will send received messages to the objects ``output`` buffer
+
         :param ip: ip of the server
         :param port: port of the server
         """
@@ -460,6 +468,7 @@ class DataConnection:
     def serverStart(self, port: int):
         """
         Starts a server and will send received messages to the objects ``output`` buffer
+
         :param port: port of the server
         """
 
