@@ -453,7 +453,7 @@ class DataConnection:
                 except:
                     pass
 
-            header = self.connection.recv(64).decode('utf-8')
+            header = int(self.connection.recv(16).decode('utf-8'))
             message = self.connection.recv(int(msg_len))
             self.output = (header, message)
 
@@ -497,14 +497,14 @@ class DataConnection:
         Sends a message to all servers or clients connected to the program
 
         :param msg: message that you want to send in a byte form
-        :param header: message header value
+        :param header: message header value (default 0)
         """
 
         send_length = str(len(msg)).encode('utf-8')
         send_length += b' ' * (64 - len(send_length))
 
         header = str(header).encode('utf-8')
-        header += b' ' * (64 - len(send_length))
+        header += b' ' * (16 - len(header))
 
         self.connection.send(send_length)
         self.connection.send(header)
