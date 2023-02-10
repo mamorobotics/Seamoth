@@ -450,10 +450,12 @@ class DataConnection:
             while not msg_len:
                 try:
                     msg_len = self.connection.recv(64).decode('utf-8')
+                    print(msg_len)
                 except:
                     pass
 
-            header = int(self.connection.recv(16).decode('utf-8'))
+            header = self.connection.recv(16).decode('utf-8')
+            print(header)
             message = self.connection.recv(int(msg_len))
             self.output = (header, message)
 
@@ -503,7 +505,7 @@ class DataConnection:
         send_length = str(len(msg)).encode('utf-8')
         send_length += b' ' * (64 - len(send_length))
 
-        header = str(header).encode('utf-8')
+        header = str(header).encode( 'utf-8')
         header += b' ' * (16 - len(header))
 
         self.connection.send(send_length)
