@@ -450,13 +450,11 @@ class DataConnection:
             while not msg_len:
                 try:
                     msg_len = self.connection.recv(64).decode('utf-8')
-                    print(msg_len)
                 except:
                     pass
 
             header = self.connection.recv(16).decode('utf-8')
-            print(header)
-            message = self.connection.recv(int(msg_len))
+            message = self.connection.recv(int(msg_len), socket.MSG_WAITALL)
             self.output = (header, message)
 
     def clientStart(self, ip: str, port: int):
