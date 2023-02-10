@@ -486,14 +486,20 @@ class DataConnection:
 
         return self.IP
 
-    def send(self, msg: bytearray):
+    def send(self, msg: bytearray, header: int = 0):
         """
         Sends a message to all servers or clients connected to the program
 
         :param msg: message that you want to send in a byte form
+        :param header: message header value
         """
 
         send_length = str(len(msg)).encode('utf-8')
         send_length += b' ' * (64 - len(send_length))
+
+        header = str(header).encode('utf-8')
+        header += b' ' * (64 - len(send_length))
+
         self.connection.send(send_length)
+        self.connection.send(header)
         self.connection.send(msg)
