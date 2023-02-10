@@ -6,9 +6,9 @@ def main():
 
     ui = seamoth.UI(videoSize=(640, 480))
 
-    ui.connInfo = (conn.IP, 1951)
+    ui.connInfo = (conn.IP, 2000)
     ui.connectionStatus = "Waiting for Connection"
-    conn.serverStart(1951)
+    conn.serverStart(2000)
 
     while True:
         if conn.connected and len(conn.output) > 3:
