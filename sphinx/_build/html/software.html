@@ -126,7 +126,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.DataConnection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">DataConnection</span></span><a class="headerlink" href="#seamoth.DataConnection" title="Permalink to this definition"></a></dt>
-<dd><p>The controller class is seperated into two types, server and client, and is built on a UDP based architecture. All data recieved by the server is stored within its internal <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer for asyncronous reading. You can send messages with the <code class="docutils literal notranslate"><span class="pre">send()</span></code> function.</p>
+<dd><p>The controller class is seperated into two types, server and client, and is built on a UDP based architecture.
+All data recieved by the server is stored within its internal <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer for asyncronous reading.
+This buffer stores the main message and the specified header as <code class="docutils literal notranslate"><span class="pre">(header,</span> <span class="pre">message)</span></code>.</p>
+<p>You can send messages with the <code class="docutils literal notranslate"><span class="pre">send()</span></code> function.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.clientStart">
 <span class="sig-name descname"><span class="pre">clientStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.clientStart" title="Permalink to this definition"></a></dt>

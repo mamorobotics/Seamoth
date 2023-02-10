@@ -431,7 +431,11 @@ class UI:
 # black magic voodoo, don't really feel like commenting all of it
 class DataConnection:
     """
-    The controller class is seperated into two types, server and client, and is built on a UDP based architecture. All data recieved by the server is stored within its internal ``output`` buffer for asyncronous reading. You can send messages with the ``send()`` function.
+    The controller class is seperated into two types, server and client, and is built on a UDP based architecture.
+    All data recieved by the server is stored within its internal ``output`` buffer for asyncronous reading.
+    This buffer stores the main message and the specified header as ``(header, message)``.
+
+    You can send messages with the ``send()`` function.
     """
 
     output = ''
@@ -449,7 +453,9 @@ class DataConnection:
                 except:
                     pass
 
-            self.output = self.connection.recv(int(msg_len))
+            header = self.connection.recv(64).decode('utf-8')
+            message = self.connection.recv(int(msg_len))
+            self.output = (header, message)
 
     def clientStart(self, ip: str, port: int):
         """
