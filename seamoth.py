@@ -235,7 +235,7 @@ class Camera:
         return cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
     @staticmethod
-    def resize(image, x:int, y:int):
+    def resize(image, x: int, y: int):
         """
         Resizes an image
 
@@ -246,6 +246,7 @@ class Camera:
         :return: Resized Cv2 image object
         """
         return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
+
 
 # all the GUI stuff
 class UI:
@@ -438,7 +439,7 @@ class DataConnection:
     You can send messages with the ``send()`` function.
     """
 
-    output = ''
+    output = (0, b'')
     connected = False
 
     def __init__(self):
@@ -503,7 +504,7 @@ class DataConnection:
         send_length = str(len(msg)).encode('utf-8')
         send_length += b' ' * (64 - len(send_length))
 
-        header = str(header).encode( 'utf-8')
+        header = str(header).encode('utf-8')
         header += b' ' * (16 - len(header))
 
         self.connection.send(send_length)
