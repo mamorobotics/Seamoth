@@ -450,12 +450,12 @@ class DataConnection:
             while not msg_len:
                 try:
                     msg_len = self.connection.recv(64).decode('utf-8')
-                    print(msg_len)
+                    print("len: " + msg_len)
                 except:
                     pass
 
             header = self.connection.recv(16).decode('utf-8')
-            print(header)
+            print("header: " + header)
             message = self.connection.recv(int(msg_len))
             self.output = (header, message)
 
@@ -468,6 +468,7 @@ class DataConnection:
         """
 
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.connection.connect((ip, port))
 
         self.thread = Thread(target=self._listen, args=())
@@ -482,6 +483,7 @@ class DataConnection:
 
         self.PORT = int(port)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.server.bind((self.IP, self.PORT))
 
         self.server.listen()
