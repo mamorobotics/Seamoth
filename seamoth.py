@@ -1,9 +1,10 @@
+import PIL
 import cv2
 import gpiozero
 import json
 import numpy
 import socket
-from PIL import Image, ImageTk
+from PIL import ImageTk
 from inputs import devices
 from threading import Thread
 from tkinter import *
@@ -312,7 +313,7 @@ class UI:
 
         # settings
         settings = Frame(win, bg="#323232")
-        settings.grid(row=1, column=1, sticky=N)
+        settings.grid(row=0, column=1, sticky=N)
 
         # conn details settings
         if self.menus.get("connDetails", True):
@@ -385,7 +386,7 @@ class UI:
         if self.menus.get("custom", True):
             Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
             customSettingsFrame = Frame(win, bg="#323232")
-            customSettingsFrame.grid(row=4, column=0, sticky=W, pady=5, padx=5)
+            customSettingsFrame.grid(row=2, column=0, sticky=W, pady=5, padx=5)
             customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
                               bg="#323232", foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
@@ -404,7 +405,7 @@ class UI:
 
         # video
         video = Label(win)
-        video.grid(row=1, column=0)
+        video.grid(row=0, column=0)
 
         # main loop
         def updateFrame():
@@ -429,7 +430,7 @@ class UI:
                     logBox.insert(INSERT, log)
 
             cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(cv2image)
+            img = PIL.Image.fromarray(cv2image)
             imgtk = ImageTk.PhotoImage(image=img)
             video.imgtk = imgtk
             video.configure(image=imgtk)
@@ -442,7 +443,7 @@ class UI:
     def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}):
         self.running = True
         self.menus = menus
-        self.frame = numpy.array(Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
+        self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
         self.thread = Thread(target=self._ui, args=())
