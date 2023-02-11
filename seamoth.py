@@ -9,7 +9,6 @@ from threading import Thread
 from tkinter import *
 
 PATH = "hardwareMap.txt"
-HARDWAREMAP = json.loads(open(PATH, "r").read())
 
 global logs
 logs = []
@@ -116,11 +115,6 @@ class Controller:
                     self.controllerValues['DpadX'] = event.state
 
 
-class Hardware:
-    def __init__(self):
-        self.motor = None
-
-
 class Motor:
     """
     The motor class represents a motor. It takes no inputs and has two functions, ``setMotor()`` and ``setSpeed()``.
@@ -133,6 +127,7 @@ class Motor:
 
     def __init__(self):
         self.motor = None
+        self.hardwareMap = json.loads(open(PATH, "r").read())
 
     def setMotor(self, name: str):
         """
@@ -141,8 +136,8 @@ class Motor:
         :param name: the name of the motor in the hardware map
         """
 
-        if name in HARDWAREMAP:
-            self.motor = gpiozero.Motor(HARDWAREMAP[name][0], HARDWAREMAP[name][1])
+        if name in self.hardwareMap:
+            self.motor = gpiozero.Motor(self.hardwareMap[name][0], self.hardwareMap[name][1])
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
 
@@ -174,6 +169,7 @@ class Servo:
 
     def __init__(self):
         self.servo = None
+        self.hardwareMap = json.loads(open(PATH, "r").read())
 
     def setMotor(self, name: str):
         """
@@ -182,8 +178,8 @@ class Servo:
         :param name: the name of the servo in the hardware map
         """
 
-        if name in HARDWAREMAP:
-            self.servo = gpiozero.Servo(HARDWAREMAP[name])
+        if name in self.hardwareMap:
+            self.servo = gpiozero.Servo(self.hardwareMap[name])
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
 
