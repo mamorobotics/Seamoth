@@ -305,6 +305,10 @@ class UI:
 
     menus = {}
 
+    def _fullscreen(self):
+        while True:
+            cv2.imshow("Hello", self.frame)
+
     def _ui(self):
         win = Tk()
         win.title("Seamoth Homebase")
@@ -313,13 +317,16 @@ class UI:
         if self.connInfo[1] == 1951:
             logs.append("Good luck MHS!")
 
-        # settings
-        settings = Frame(win, bg=self.backgroundColor)
-        settings.grid(row=1, column=1, sticky=N)
+        video = Label(win, background=self.accentColor)
+        video.grid(row=0, column=0)
+
+        # details
+        details = Frame(win, bg=self.backgroundColor)
+        details.grid(row=0, column=1, sticky=N)
 
         # conn details settings
         if self.menus.get("connDetails", True):
-            connDetailsFrame = Frame(settings, bg=self.backgroundColor)
+            connDetailsFrame = Frame(details, bg=self.backgroundColor)
             connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
                                                                                                          anchor=W)
@@ -331,7 +338,7 @@ class UI:
 
         # conn status settings
         if self.menus.get("connStatus", True):
-            connStatusFrame = Frame(settings, bg=self.backgroundColor)
+            connStatusFrame = Frame(details, bg=self.backgroundColor)
             connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
                                                                                                        anchor=W)
@@ -341,7 +348,7 @@ class UI:
 
         # input settings
         if self.menus.get("input", True):
-            inputDetailsFrame = Frame(settings, bg=self.backgroundColor)
+            inputDetailsFrame = Frame(details, bg=self.backgroundColor)
             inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0,
                                                                                                      sticky=W)
@@ -378,38 +385,53 @@ class UI:
 
         # errors
         if self.menus.get("output", True):
-            logDetailsFrame = Frame(settings, bg=self.backgroundColor, bd=1)
+            logDetailsFrame = Frame(details, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
 
             Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
             logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60, relief=FLAT)
             logBox.grid(row=1, column=0, sticky=W)
 
+        # settings
+        settings = Frame(win, bg=self.backgroundColor)
+        settings.grid(row=1, column=0, sticky=W)
+
         # custom values
         if self.menus.get("custom", True):
-            Label(win, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
-            customSettingsFrame = Frame(win, bg=self.backgroundColor)
-            customSettingsFrame.grid(row=4, column=0, sticky=W, pady=5, padx=5)
+            customSettingsFrame = Frame(settings, bg=self.backgroundColor)
+            customSettingsFrame.grid(row=0, column=0, sticky=W, pady=5, padx=5)
 
-            customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
+            Label(customSettingsFrame, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
+
+            customSettingsSlidersFrame = Frame(customSettingsFrame, bg=self.backgroundColor)
+            customSettingsSlidersFrame.grid(row=1, column=0, sticky=W, pady=5, padx=5)
+
+            customOne = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
-            customTwo = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2",
+            customTwo = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2",
                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customTwo.pack(side=LEFT, anchor=W)
-            customThree = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="3",
+            customThree = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="3",
                                 bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customThree.pack(side=LEFT, anchor=W)
-            customFour = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="4",
+            customFour = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="4",
                                bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customFour.pack(side=LEFT, anchor=W)
-            customFive = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="5",
+            customFive = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="5",
                                bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customFive.pack(side=LEFT, anchor=W)
 
-        # video
-        video = Label(win, background=self.accentColor)
-        video.grid(row=1, column=0)
+        # screen settings
+        if self.menus.get("screenControls", True):
+            connStatusFrame = Frame(settings, bg=self.backgroundColor)
+            connStatusFrame.grid(row=0, column=1, sticky=N, ipadx=10, pady=5, padx=5)
+            Label(connStatusFrame, text="SCREEN CONTROLS:", bg=self.backgroundColor, foreground="#ffffff").pack(
+                side=TOP,
+                anchor=W)
+            fullscreen = Button(connStatusFrame, text="Fullscreen", bg=self.foregroundColor,
+                               foreground="#ffffff", command=self.openFullscreen)
+            fullscreen.pack(side=TOP, anchor=W)
 
         # main loop
         def updateFrame():
@@ -444,7 +466,11 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f"):
+    def openFullscreen(self):
+        thread = Thread(target=self._fullscreen, args=())
+        thread.start()
+
+    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
         self.running = True
         self.menus = menus
         self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
@@ -455,6 +481,7 @@ class UI:
 
         self.accentColor = accentColor
         self.backgroundColor = backgroundColor
+        self.foregroundColor = foregroundColor
 
 
 # black magic voodoo, don't really feel like commenting all of it
