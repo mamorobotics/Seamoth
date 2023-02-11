@@ -1,10 +1,15 @@
-import socket, json, numpy, bluetooth, cv2, gpiozero
+import cv2
+import gpiozero
+import json
+import numpy
+import socket
+from PIL import Image, ImageTk
+from inputs import devices
 from threading import Thread
 from tkinter import *
-from inputs import devices
-from PIL import Image, ImageTk
 
 PATH = "hardwareMap.txt"
+HARDWAREMAP = json.loads(open(PATH, "r").read())
 
 global logs
 logs = []
@@ -19,9 +24,13 @@ except:
 
 class Controller:
     """
-    `Note: Some code in this class is a modified version of the tensorkart project's inplementation of controllor input detection by kevinhughes27 on github`
+    `Note: Some code in this class is a modified version of the tensorkart project's implementation of controller
+    input detection by kevinhughes27 on GitHub`
 
-    Controllers are currently tested to work with XInput designed controllers, however controls should be relatively normalized for other types of controllers. The class runs in a separate thread to read controller input and assigns read values to an internal buffer in the object. Reading the controllers in your main loop is as simple as refrencing that buffer such as:
+    Controllers are currently tested to work with XInput designed controllers,
+    however controls should be relatively normalized for other types of controllers.
+    The class runs in a separate thread to read controller input and assigns read values to an internal
+    buffer in the object. Reading the controllers in your main loop is as simple as referencing that buffer such as:
 
     ``values = controller.controllerValues``
 
@@ -107,18 +116,23 @@ class Controller:
                     self.controllerValues['DpadX'] = event.state
 
 
+class Hardware:
+    def __init__(self):
+        self.motor = None
+
+
 class Motor:
     """
     The motor class represents a motor. It takes no inputs and has two functions, ``setMotor()`` and ``setSpeed()``.
 
-    To set a motor you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected servos and motors. This file should follow the format of:
+    To set a motor you need to have a file within the project directory called hardwareMap.txt,
+    which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
     ``{ "name": [port1, port2], "name": [port1, port2] }``
     """
 
     def __init__(self):
         self.motor = None
-        self.hardwareMap = json.loads(open(PATH, "r").read())
 
     def setMotor(self, name: str):
         """
@@ -127,8 +141,8 @@ class Motor:
         :param name: the name of the motor in the hardware map
         """
 
-        if name in self.hardwareMap:
-            self.motor = gpiozero.Motor(self.hardwareMap[name][0], self.hardwareMap[name][1])
+        if name in HARDWAREMAP:
+            self.motor = gpiozero.Motor(HARDWAREMAP[name][0], HARDWAREMAP[name][1])
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
 
@@ -149,16 +163,17 @@ class Motor:
 
 class Servo:
     """
-        The servo class represents a servo. It takes no inputs and has two functions, ``setMotor()`` and ``setPosition()``.
+        The servo class represents a servo. It takes no inputs and has two functions,
+        ``setMotor()`` and ``setPosition()``.
 
-        To set a servo you need to have a file within the project directory called hardwareMap.txt, which specifies the names and ports of all connected servos and motors. This file should follow the format of:
+        To set a servo you need to have a file within the project directory called hardwareMap.txt, which specifies the
+        names and ports of all connected servos and motors. This file should follow the format of:
 
         ``{ "name": port, "name": port }``
         """
 
     def __init__(self):
         self.servo = None
-        self.hardwareMap = json.loads(open(PATH, "r").read())
 
     def setMotor(self, name: str):
         """
@@ -167,8 +182,8 @@ class Servo:
         :param name: the name of the servo in the hardware map
         """
 
-        if name in self.hardwareMap:
-            self.servo = gpiozero.Servo(self.hardwareMap[name])
+        if name in HARDWAREMAP:
+            self.servo = gpiozero.Servo(HARDWAREMAP[name])
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
 
@@ -184,13 +199,16 @@ class Servo:
 
 class Camera:
     """
-    The controller class takes in no inputs, and instead reads from the first camera that it finds. The class stores the active camera connection and reads on a function call. Reading the camera data in your main loop is as simple as calling the read function such as:
+    The controller class takes in no inputs, and instead reads from the first camera that it finds.
+    The class stores the active camera connection and reads on a function call.
+    Reading the camera data in your main loop is as simple as calling the read function such as:
 
     ``image = camera.readCameraData()``
 
     Which returns a Cv2 image array
 
-    The class also includes two functions for encoding and decoding the above image for transmission, aptly named ``encode()`` and ``decode()``, and a function for resizing an image, named ``resize()``.
+    The class also includes two functions for encoding and decoding the above image for transmission,
+    aptly named ``encode()`` and ``decode()``, and a function for resizing an image, named ``resize()``.
     """
 
     def __init__(self):
@@ -210,7 +228,7 @@ class Camera:
     @staticmethod
     def encode(image, quality: int):
         """
-        Encodes and compressed a Cv2 image to make it posssible to send over the internet
+        Encodes and compressed a Cv2 image to make it possible to send over the internet
 
         :param image: Cv2 image object
         :param quality: quality of Jpeg compression
@@ -251,11 +269,15 @@ class Camera:
 # all the GUI stuff
 class UI:
     """
-    The class is currently uses tkinter and is meant to be used as your viewport to the submarine. The class runs entirely in a separate thread and shows the video from an internal buffer. You can write to the ui by referencing the internal buffer such as such as:
+    The class is currently uses tkinter and is meant to be used as your viewport to the submarine.
+    The class runs entirely in a separate thread and shows the video from an internal buffer.
+    You can write to the ui by referencing the internal buffer such as such as:
 
     ``ui.frame = frame``
 
-    Which is expected to be the frame data from the camera class. Camera and UI are separate to allow data connections through an internet or similar connections without impeding functionality.
+    Which is expected to be the frame data from the camera class.
+    Camera and UI are separate to allow data connections through an
+    internet connection or other similar connections without impeding functionality.
 
     You can specify which menus to be active or inactive with the menus input with the following possible menus:
 
@@ -269,8 +291,10 @@ class UI:
 
     * **Video Frame** : ``ui.frame`` = most recent frame of video, the ui class reads this every 20ms
     * **Connection Status** : ``ui.connectionStatus`` = status where status is a string representing the current status
-    * **Connection Info** : ``ui.connInfo`` = (ip, port) where the tuple of ip and port represents the ip and port you are listening from (these can be retrieved from the DataConnection class with conn.IP and conn.PORT respectively.
-    * **Input Data** : ``ui.controllerValues`` = controllerValues where controllerValues is the dictionary outputted by the Controller class
+    * **Connection Info** : ``ui.connInfo`` = (ip, port) where the tuple of ip and port represents the ip and port you
+    are listening from (these can be retrieved from the DataConnection class with conn.IP and conn.PORT respectively.)
+    * **Input Data** : ``ui.controllerValues`` = controllerValues where controllerValues is the dictionary outputted
+    by the Controller class
 
     :param videoSize:
     :param menus: Dictionary of which menus to keep active. All are on by default.
@@ -432,8 +456,8 @@ class UI:
 # black magic voodoo, don't really feel like commenting all of it
 class DataConnection:
     """
-    The controller class is seperated into two types, server and client, and is built on a UDP based architecture.
-    All data recieved by the server is stored within its internal ``output`` buffer for asyncronous reading.
+    The controller class is separated into two types, server and client, and is built on a UDP based architecture.
+    All data received by the server is stored within its internal ``output`` buffer for asynchronous reading.
     This buffer stores the main message and the specified header as ``(header, message)``.
 
     You can send messages with the ``send()`` function.
