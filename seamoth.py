@@ -33,7 +33,7 @@ class Controller:
 
     * **Controller Values** : ``controller.controllerValues`` = most recent values of the controller
 
-    :param controllerPort: Controller identifier number
+    :param controllerPort: controller identifier number
     """
 
     MAX_TRIG_VAL = float(256)
@@ -124,7 +124,7 @@ class Motor:
         """
         Assigns the motor to ports specified in the hardware map
 
-        :param name: The name of the motor in the hardware map
+        :param name: the name of the motor in the hardware map
         """
 
         if name in self.hardwareMap:
@@ -164,7 +164,7 @@ class Servo:
         """
         Assigns the servo to port specified in the hardware map
 
-        :param name: The name of the servo in the hardware map
+        :param name: the name of the servo in the hardware map
         """
 
         if name in self.hardwareMap:
@@ -176,7 +176,7 @@ class Servo:
         """
         Sets the position of the servo the function is called on.
 
-        :param position: Position of servo
+        :param position: position of servo
         """
 
         self.servo.value = position
@@ -213,7 +213,7 @@ class Camera:
         Encodes and compressed a Cv2 image to make it posssible to send over the internet
 
         :param image: Cv2 image object
-        :param quality: Quality of Jpeg compression
+        :param quality: quality of Jpeg compression
 
         :return: Compressed byte array representation of input image
         """
@@ -226,7 +226,7 @@ class Camera:
         """
         Decodes and decompresses an image encoded with *encode()*
 
-        :param image: Compressed byte array representation of image
+        :param image: compressed byte array representation of image
 
         :return: Cv2 image object
         """
@@ -235,17 +235,18 @@ class Camera:
         return cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
     @staticmethod
-    def resize(image, x:int, y:int):
+    def resize(image, x: int, y: int):
         """
         Resizes an image
 
         :param image: Cv2 image object
-        :param x: Image X
-        :param y: Image Y
+        :param x: image X
+        :param y: image Y
 
-        :return: Resized Cv2 image object
+        :return: resized Cv2 image object
         """
         return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
+
 
 # all the GUI stuff
 class UI:
@@ -438,7 +439,7 @@ class DataConnection:
     You can send messages with the ``send()`` function.
     """
 
-    output = ''
+    output = (0, b'')
     connected = False
 
     def __init__(self):
@@ -453,8 +454,8 @@ class DataConnection:
                 except:
                     pass
 
-            header = int(self.connection.recv(16).decode('utf-8'))
-            message = self.connection.recv(int(msg_len))
+            header = self.connection.recv(16).decode('utf-8')
+            message = self.connection.recv(int(msg_len), socket.MSG_WAITALL)
             self.output = (header, message)
 
     def clientStart(self, ip: str, port: int):
@@ -492,12 +493,12 @@ class DataConnection:
 
         return self.IP
 
-    def send(self, msg: bytearray, header: int = 0):
+    def send(self, msg: bytearray, header: int = 1):
         """
         Sends a message to all servers or clients connected to the program
 
         :param msg: message that you want to send in a byte form
-        :param header: message header value (default 0)
+        :param header: message header value (default 1)
         """
 
         send_length = str(len(msg)).encode('utf-8')
