@@ -14,7 +14,7 @@ def main():
     while True:
         if int(conn.output[0]) > 0:
             ui.connectionStatus = f"Connected with {conn.connectionAddress[0]} on port {conn.PORT}"
-            ui.frame = seamoth.Camera.resize(seamoth.Camera.decode(conn.output[1]), 1248, 702)
+            ui.frame = seamoth.Camera.decode(conn.output[1])
             ui.controllerValues = controller.controllerValues
             conn.send(json.dumps(controller.controllerValues).encode('utf-8'))
 
