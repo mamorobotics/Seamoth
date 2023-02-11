@@ -305,10 +305,6 @@ class UI:
 
     menus = {}
 
-    def _fullscreen(self):
-        while True:
-            cv2.imshow("Hello", self.frame)
-
     def _ui(self):
         win = Tk()
         win.title("Seamoth Homebase")
@@ -422,17 +418,6 @@ class UI:
                                bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customFive.pack(side=LEFT, anchor=W)
 
-        # screen settings
-        if self.menus.get("screenControls", True):
-            connStatusFrame = Frame(settings, bg=self.backgroundColor)
-            connStatusFrame.grid(row=0, column=1, sticky=N, ipadx=10, pady=5, padx=5)
-            Label(connStatusFrame, text="SCREEN CONTROLS:", bg=self.backgroundColor, foreground="#ffffff").pack(
-                side=TOP,
-                anchor=W)
-            fullscreen = Button(connStatusFrame, text="Fullscreen", bg=self.foregroundColor,
-                               foreground="#ffffff", command=self.openFullscreen)
-            fullscreen.pack(side=TOP, anchor=W)
-
         # main loop
         def updateFrame():
             if self.menus.get("connDetails", True):
@@ -463,12 +448,10 @@ class UI:
             if self.running:
                 video.after(10, updateFrame)
 
+        frame = self.frame
+
         updateFrame()
         win.mainloop()
-
-    def openFullscreen(self):
-        thread = Thread(target=self._fullscreen, args=())
-        thread.start()
 
     def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
         self.running = True
