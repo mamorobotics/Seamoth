@@ -1,9 +1,10 @@
+import PIL
 import cv2
 import gpiozero
 import json
 import numpy
 import socket
-from PIL import Image, ImageTk
+from PIL import ImageTk
 from inputs import devices
 from threading import Thread
 from tkinter import *
@@ -378,7 +379,7 @@ class UI:
             logDetailsFrame = Frame(settings, bg="#323232")
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
             Label(logDetailsFrame, text="OUTPUT:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
-            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=9, width=60)
+            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=15, width=60)
             logBox.grid(row=1, column=0, sticky=W)
 
         # custom values
@@ -429,7 +430,7 @@ class UI:
                     logBox.insert(INSERT, log)
 
             cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
-            img = Image.fromarray(cv2image)
+            img = PIL.Image.fromarray(cv2image)
             imgtk = ImageTk.PhotoImage(image=img)
             video.imgtk = imgtk
             video.configure(image=imgtk)
@@ -442,7 +443,7 @@ class UI:
     def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}):
         self.running = True
         self.menus = menus
-        self.frame = numpy.array(Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
+        self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
         self.thread = Thread(target=self._ui, args=())
