@@ -293,8 +293,10 @@ class UI:
     * **Input Data** : ``ui.controllerValues`` = controllerValues where controllerValues is the dictionary outputted
     by the Controller class
 
-    :param videoSize:
-    :param menus: Dictionary of which menus to keep active. All are on by default.
+    :param videoSize: default video viewport size
+    :param menus: dictionary of which menus to keep active. All are on by default.
+    :param accentColor: accent color of the ui
+    :param backgroundColor: background color of the ui
     """
 
     controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
@@ -312,13 +314,8 @@ class UI:
             logs.append("Good luck MHS!")
 
         # settings
-<<<<<<< Updated upstream
-        settings = Frame(win, bg="#323232")
-        settings.grid(row=0, column=1, sticky=N)
-=======
         settings = Frame(win, bg=self.backgroundColor)
         settings.grid(row=1, column=1, sticky=N)
->>>>>>> Stashed changes
 
         # conn details settings
         if self.menus.get("connDetails", True):
@@ -383,26 +380,17 @@ class UI:
         if self.menus.get("output", True):
             logDetailsFrame = Frame(settings, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
-<<<<<<< Updated upstream
-            Label(logDetailsFrame, text="OUTPUT:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
-            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=9, width=60)
-=======
+
             Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
             logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60, relief=FLAT)
->>>>>>> Stashed changes
             logBox.grid(row=1, column=0, sticky=W)
 
         # custom values
         if self.menus.get("custom", True):
-<<<<<<< Updated upstream
-            Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
-            customSettingsFrame = Frame(win, bg="#323232")
-            customSettingsFrame.grid(row=2, column=0, sticky=W, pady=5, padx=5)
-=======
             Label(win, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
             customSettingsFrame = Frame(win, bg=self.backgroundColor)
             customSettingsFrame.grid(row=4, column=0, sticky=W, pady=5, padx=5)
->>>>>>> Stashed changes
+
             customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
@@ -420,13 +408,8 @@ class UI:
             customFive.pack(side=LEFT, anchor=W)
 
         # video
-<<<<<<< Updated upstream
-        video = Label(win)
-        video.grid(row=0, column=0)
-=======
         video = Label(win, background=self.accentColor)
         video.grid(row=1, column=0)
->>>>>>> Stashed changes
 
         # main loop
         def updateFrame():
@@ -461,7 +444,7 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}):
+    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f"):
         self.running = True
         self.menus = menus
         self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
@@ -470,8 +453,8 @@ class UI:
         self.thread = Thread(target=self._ui, args=())
         self.thread.start()
 
-        self.accentColor = "#cf4100"
-        self.backgroundColor = "#000000"
+        self.accentColor = accentColor
+        self.backgroundColor = backgroundColor
 
 
 # black magic voodoo, don't really feel like commenting all of it
