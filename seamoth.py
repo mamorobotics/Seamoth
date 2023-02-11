@@ -313,7 +313,7 @@ class UI:
 
         # settings
         settings = Frame(win, bg="#323232")
-        settings.grid(row=1, column=1, sticky=N)
+        settings.grid(row=0, column=1, sticky=N)
 
         # conn details settings
         if self.menus.get("connDetails", True):
@@ -379,14 +379,14 @@ class UI:
             logDetailsFrame = Frame(settings, bg="#323232")
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
             Label(logDetailsFrame, text="OUTPUT:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
-            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=15, width=60)
+            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=9, width=60)
             logBox.grid(row=1, column=0, sticky=W)
 
         # custom values
         if self.menus.get("custom", True):
             Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
             customSettingsFrame = Frame(win, bg="#323232")
-            customSettingsFrame.grid(row=4, column=0, sticky=W, pady=5, padx=5)
+            customSettingsFrame.grid(row=2, column=0, sticky=W, pady=5, padx=5)
             customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
                               bg="#323232", foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
@@ -405,7 +405,7 @@ class UI:
 
         # video
         video = Label(win)
-        video.grid(row=1, column=0)
+        video.grid(row=0, column=0)
 
         # main loop
         def updateFrame():
