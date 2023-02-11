@@ -15,7 +15,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -42,8 +44,22 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="input.html">Input</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Hardware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#motor">Motor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#servo">Servo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#motor">Motor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Motor"><code class="docutils literal notranslate"><span class="pre">Motor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Motor.setMotor"><code class="docutils literal notranslate"><span class="pre">Motor.setMotor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Motor.setSpeed"><code class="docutils literal notranslate"><span class="pre">Motor.setSpeed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#servo">Servo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#seamoth.Servo"><code class="docutils literal notranslate"><span class="pre">Servo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Servo.setMotor"><code class="docutils literal notranslate"><span class="pre">Servo.setMotor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.Servo.setSpeed"><code class="docutils literal notranslate"><span class="pre">Servo.setSpeed()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Software</a></li>
@@ -74,9 +90,9 @@
            <div itemprop="articleBody">
              
   <section id="hardware">
-<h1>Hardware<a class="headerlink" href="#hardware" title="Permalink to this headline"></a></h1>
+<h1>Hardware<a class="headerlink" href="#hardware" title="Permalink to this heading"></a></h1>
 <section id="motor">
-<h2>Motor<a class="headerlink" href="#motor" title="Permalink to this headline"></a></h2>
+<h2>Motor<a class="headerlink" href="#motor" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.Motor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Motor</span></span><a class="headerlink" href="#seamoth.Motor" title="Permalink to this definition"></a></dt>
@@ -110,7 +126,7 @@ which specifies the names and ports of all connected servos and motors. This fil
 
 </section>
 <section id="servo">
-<h2>Servo<a class="headerlink" href="#servo" title="Permalink to this headline"></a></h2>
+<h2>Servo<a class="headerlink" href="#servo" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.Servo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">Servo</span></span><a class="headerlink" href="#seamoth.Servo" title="Permalink to this definition"></a></dt>

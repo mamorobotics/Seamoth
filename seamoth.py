@@ -293,8 +293,10 @@ class UI:
     * **Input Data** : ``ui.controllerValues`` = controllerValues where controllerValues is the dictionary outputted
     by the Controller class
 
-    :param videoSize:
-    :param menus: Dictionary of which menus to keep active. All are on by default.
+    :param videoSize: default video viewport size
+    :param menus: dictionary of which menus to keep active. All are on by default.
+    :param accentColor: accent color of the ui
+    :param backgroundColor: background color of the ui
     """
 
     controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
@@ -306,106 +308,108 @@ class UI:
     def _ui(self):
         win = Tk()
         win.title("Seamoth Homebase")
-        win.config(bg="#323232")
+        win.config(bg=self.backgroundColor)
 
         if self.connInfo[1] == 1951:
             logs.append("Good luck MHS!")
 
         # settings
-        settings = Frame(win, bg="#323232")
-        settings.grid(row=0, column=1, sticky=N)
+        settings = Frame(win, bg=self.backgroundColor)
+        settings.grid(row=1, column=1, sticky=N)
 
         # conn details settings
         if self.menus.get("connDetails", True):
-            connDetailsFrame = Frame(settings, bg="#323232")
+            connDetailsFrame = Frame(settings, bg=self.backgroundColor)
             connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg="#323232", foreground="#ffffff").pack(side=TOP,
+            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
                                                                                                          anchor=W)
 
-            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg="#323232", foreground="#ffffff")
+            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor, foreground="#ffffff")
             connDetailsIP.pack(side=TOP, anchor=W)
-            connDetailsPORT = Label(connDetailsFrame, text="1111", bg="#323232", foreground="#ffffff")
+            connDetailsPORT = Label(connDetailsFrame, text="1111", bg=self.backgroundColor, foreground="#ffffff")
             connDetailsPORT.pack(side=TOP, anchor=W)
 
         # conn status settings
         if self.menus.get("connStatus", True):
-            connStatusFrame = Frame(settings, bg="#323232")
+            connStatusFrame = Frame(settings, bg=self.backgroundColor)
             connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connStatusFrame, text="CONNECTION STATUS:", bg="#323232", foreground="#ffffff").pack(side=TOP,
+            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
                                                                                                        anchor=W)
 
-            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg="#323232", foreground="#ffffff")
+            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor, foreground="#ffffff")
             connStatus.pack(side=TOP, anchor=W)
 
         # input settings
         if self.menus.get("input", True):
-            inputDetailsFrame = Frame(settings, bg="#323232")
+            inputDetailsFrame = Frame(settings, bg=self.backgroundColor)
             inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(inputDetailsFrame, text="INPUT DETAILS:", bg="#323232", foreground="#ffffff").grid(row=0, column=0,
+            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0,
                                                                                                      sticky=W)
 
-            inputDetailsJoyFrame = Frame(inputDetailsFrame, bg="#323232")
+            inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy X", showvalue=0, bg="#323232", foreground="#ffffff",
+                                  label="Left Joy X", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputJoyLeftX.pack(side=TOP, anchor=W)
             inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy Y", showvalue=0, bg="#323232", foreground="#ffffff",
+                                  label="Left Joy Y", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputJoyLeftY.pack(side=TOP, anchor=W)
             inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy X", showvalue=0, bg="#323232", foreground="#ffffff",
+                                   label="Right Joy X", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputJoyRightX.pack(side=TOP, anchor=W)
             inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy Y", showvalue=0, bg="#323232", foreground="#ffffff",
+                                   label="Right Joy Y", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputJoyRightY.pack(side=TOP, anchor=W)
 
-            inputDetailsTrigFrame = Frame(inputDetailsFrame, bg="#323232")
+            inputDetailsTrigFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
             inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Left Trigger", showvalue=0, bg="#323232", foreground="#ffffff",
+                                   label="Left Trigger", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputTrigRight.pack(side=TOP, anchor=W)
             inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Right Trigger", showvalue=0, bg="#323232", foreground="#ffffff",
+                                  label="Right Trigger", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
 
         # errors
         if self.menus.get("output", True):
-            logDetailsFrame = Frame(settings, bg="#323232")
+            logDetailsFrame = Frame(settings, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
-            Label(logDetailsFrame, text="OUTPUT:", bg="#323232", foreground="#ffffff").grid(row=0, column=0, sticky=W)
-            logBox = Text(logDetailsFrame, bg="#323232", foreground="#ffffff", height=9, width=60)
+
+            Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
+            logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60, relief=FLAT)
             logBox.grid(row=1, column=0, sticky=W)
 
         # custom values
         if self.menus.get("custom", True):
-            Label(win, text="CUSTOMIZABLE VALUES:", bg="#323232", foreground="#ffffff").grid(row=1, column=0, sticky=W)
-            customSettingsFrame = Frame(win, bg="#323232")
-            customSettingsFrame.grid(row=2, column=0, sticky=W, pady=5, padx=5)
+            Label(win, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
+            customSettingsFrame = Frame(win, bg=self.backgroundColor)
+            customSettingsFrame.grid(row=4, column=0, sticky=W, pady=5, padx=5)
+
             customOne = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
-                              bg="#323232", foreground="#ffffff", highlightthickness=0)
+                              bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
             customTwo = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2",
-                              bg="#323232", foreground="#ffffff", highlightthickness=0)
+                              bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customTwo.pack(side=LEFT, anchor=W)
             customThree = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="3",
-                                bg="#323232", foreground="#ffffff", highlightthickness=0)
+                                bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customThree.pack(side=LEFT, anchor=W)
             customFour = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="4",
-                               bg="#323232", foreground="#ffffff", highlightthickness=0)
+                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customFour.pack(side=LEFT, anchor=W)
             customFive = Scale(customSettingsFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="5",
-                               bg="#323232", foreground="#ffffff", highlightthickness=0)
+                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customFive.pack(side=LEFT, anchor=W)
 
         # video
-        video = Label(win)
-        video.grid(row=0, column=0)
+        video = Label(win, background=self.accentColor)
+        video.grid(row=1, column=0)
 
         # main loop
         def updateFrame():
@@ -440,7 +444,7 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}):
+    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f"):
         self.running = True
         self.menus = menus
         self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
@@ -448,6 +452,9 @@ class UI:
         self.connInfo = ("1.1.1.1", "1111")
         self.thread = Thread(target=self._ui, args=())
         self.thread.start()
+
+        self.accentColor = accentColor
+        self.backgroundColor = backgroundColor
 
 
 # black magic voodoo, don't really feel like commenting all of it
