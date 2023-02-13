@@ -12,7 +12,7 @@ def main():
     conn.serverStart(1951)
 
     while True:
-        if int(conn.output[0]) > 0:
+        if conn.output[0] > 0:
             ui.connectionStatus = f"Connected with {conn.connectionAddress[0]} on port {conn.PORT}"
             ui.frame = seamoth.Camera.decode(conn.output[1])
             ui.controllerValues = controller.controllerValues

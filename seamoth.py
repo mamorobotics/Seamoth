@@ -491,6 +491,8 @@ class DataConnection:
     This buffer stores the main message and the specified header as ``(header, message)``.
 
     You can send messages with the ``send()`` function.
+
+    **header values 0-5 are reserved for system functions**
     """
 
     output = (0, b'')
@@ -508,9 +510,16 @@ class DataConnection:
                 except:
                     pass
 
-            header = self.connection.recv(16).decode('utf-8')
+            header = int(self.connection.recv(16).decode('utf-8'))
             message = self.connection.recv(int(msg_len), socket.MSG_WAITALL)
-            self.output = (header, message)
+            if header == 1:
+                logs.append("[ERROR]" + message.decode('utf-8'))
+            if header == 2:
+                logs.append("[WARNING]" + message.decode('utf-8'))
+            if header == 3:
+                logs.append("[TELEMETRY]" + message.decode('utf-8'))
+            if header > 5:
+                self.output = (header, message)
 
     def clientStart(self, ip: str, port: int):
         """
@@ -547,12 +556,33 @@ class DataConnection:
 
         return self.IP
 
+    def sendError(self, msg):
+        """
+        Sends an error message directly to the log
+        :param msg: Error msg
+        """
+        self.send(msg, 1)
+
+    def sendWarning(self, msg):
+        """
+        Sends a warning message data directly to the log
+        :param msg: Warning msg
+        """
+        self.send(msg, 2)
+
+    def sendTelemetry(self, msg):
+        """
+        Sends a telemetric message directly to the log
+        :param msg: Telemetric msg
+        """
+        self.send(msg, 3)
+
     def send(self, msg: bytearray, header: int = 1):
         """
         Sends a message to all servers or clients connected to the program
 
         :param msg: message that you want to send in a byte form
-        :param header: message header value (default 1)
+        :param header: message header value **header values 0-5 are reserved for system functions**
         """
 
         send_length = str(len(msg)).encode('utf-8')
