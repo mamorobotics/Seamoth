@@ -418,8 +418,22 @@ class UI:
                                bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
             customFive.pack(side=LEFT, anchor=W)
 
+        # video settings
+        if self.menus.get("video", True):
+            videoSettingsFrame = Frame(settings, bg=self.backgroundColor)
+            videoSettingsFrame.grid(row=0, column=1, sticky=N, pady=5, padx=5)
+
+            Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
+
+            Button(videoSettingsFrame, text="fullscreen", bg=self.foregroundColor, foreground="#ffffff", command=self.toggleFullscreen).grid(row=1, column=0, sticky=W)
+
         # main loop
         def updateFrame():
+            if self.fullscreen:
+                cv2.imshow("hello", Camera.resize(self.frame, 1920, 1080))
+            else:
+                cv2.destroyAllWindows()
+
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
                 connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
@@ -448,10 +462,11 @@ class UI:
             if self.running:
                 video.after(10, updateFrame)
 
-        frame = self.frame
-
         updateFrame()
         win.mainloop()
+
+    def toggleFullscreen(self):
+        self.fullscreen = not self.fullscreen
 
     def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
         self.running = True
@@ -465,6 +480,7 @@ class UI:
         self.accentColor = accentColor
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
+        self.fullscreen = False
 
 
 # black magic voodoo, don't really feel like commenting all of it
