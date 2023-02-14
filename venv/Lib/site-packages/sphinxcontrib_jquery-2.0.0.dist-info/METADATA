@@ -1,0 +1,53 @@
+Metadata-Version: 2.1
+Name: sphinxcontrib-jquery
+Version: 2.0.0
+Summary: Extension to include jQuery on newer Sphinx releases
+Author: Adam Turner
+License: BSD Zero Clause License
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Framework :: Sphinx
+Classifier: Framework :: Sphinx :: Extension
+Classifier: Topic :: Documentation
+Classifier: Topic :: Documentation :: Sphinx
+Requires-Python: >=2.7
+Description-Content-Type: text/x-rst
+License-File: LICENCE
+License-File: AUTHORS
+Requires-Dist: setuptools
+
+======================
+ sphinxcontrib-jquery
+======================
+
+.. image:: https://img.shields.io/pypi/v/sphinxcontrib-jquery.svg
+   :target: https://pypi.org/project/sphinxcontrib-jquery/
+   :alt: Package on PyPI
+
+``sphinxcontrib-jquery`` ensures that jQuery is always installed for use in
+Sphinx themes or extensions.
+
+To use it, add ``sphinxcontrib.jquery`` as a Sphinx extension:
+
+.. code:: python
+
+   # conf.py
+
+   extensions = [
+       "sphinxcontrib.jquery",
+   ]
+   ...

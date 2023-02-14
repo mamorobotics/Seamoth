@@ -14,12 +14,14 @@ PATH = "hardwareMap.txt"
 global logs
 logs = []
 
+global telemetryLog
+telemetryLog = {}
+
 try:
     from ctypes import windll
-
     windll.shcore.SetProcessDpiAwareness(1)
 except:
-    logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible")
+    logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible \n")
 
 
 class Controller:
@@ -268,7 +270,7 @@ class UI:
     """
     The class is currently uses tkinter and is meant to be used as your viewport to the submarine.
     The class runs entirely in a separate thread and shows the video from an internal buffer.
-    You can write to the ui by referencing the internal buffer such as such as:
+    You can write to the ui by referencing the internal buffer such as:
 
     ``ui.frame = frame``
 
@@ -276,13 +278,15 @@ class UI:
     Camera and UI are separate to allow data connections through an
     internet connection or other similar connections without impeding functionality.
 
-    You can specify which menus to be active or inactive with the menus input with the following possible menus:
+    You can specify which menus should be active or inactive with the menus input with the following possible menus:
 
     * connDetails
     * connStatus
     * input
     * output
     * custom
+    * video
+    * telemetry
 
     The ui class can later be referenced to access or set:
 
@@ -311,7 +315,7 @@ class UI:
         win.config(bg=self.backgroundColor)
 
         if self.connInfo[1] == 1951:
-            logs.append("Good luck MHS!")
+            logs.append("Good luck MHS! \n")
 
         video = Label(win, background=self.accentColor)
         video.grid(row=0, column=0)
@@ -379,7 +383,7 @@ class UI:
                                   highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
 
-        # errors
+        # log
         if self.menus.get("output", True):
             logDetailsFrame = Frame(details, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
@@ -425,15 +429,26 @@ class UI:
 
             Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
 
-            Button(videoSettingsFrame, text="fullscreen", bg=self.foregroundColor, foreground="#ffffff", command=self.toggleFullscreen).grid(row=1, column=0, sticky=W)
+            Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
+            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+            fullscreenSlider.grid(row=1, column=1, sticky=W)
+
+            Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor, foreground="#ffffff").grid(row=2, column=0, sticky=W)
+            pauseSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+            pauseSlider.grid(row=2, column=1, sticky=W)
+
+        # telemetry
+        if self.menus.get("telemetry", True):
+            telemetryFrame = Frame(settings, bg=self.backgroundColor)
+            telemetryFrame.grid(row=0, column=2, sticky=N, pady=5, padx=5)
+
+            Label(telemetryFrame, text="TELEMETRY:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
+            telemetryBox = Text(telemetryFrame, bg=self.backgroundColor, foreground=self.accentColor, height=4, width=32, relief=FLAT)
+            telemetryBox.grid(row=1, column=0, sticky=W)
 
         # main loop
         def updateFrame():
-            if self.fullscreen:
-                cv2.imshow("hello", Camera.resize(self.frame, 1920, 1080))
-            else:
-                cv2.destroyAllWindows()
-
+            # conn details/status managers
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
                 connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
@@ -441,6 +456,7 @@ class UI:
             if self.menus.get("connStatus", True):
                 connStatus.configure(text=self.connectionStatus)
 
+            # input display manager
             if self.menus.get("input", True):
                 inputJoyLeftX.set(float(self.controllerValues.get("LeftJoystickX")))
                 inputJoyLeftY.set(float(self.controllerValues.get("LeftJoystickY")))
@@ -449,24 +465,36 @@ class UI:
                 inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
                 inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
 
+            # log manager
             if self.menus.get("output", True):
                 logBox.delete("1.0", "end")
                 for log in logs:
                     logBox.insert(INSERT, log)
 
-            cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
-            img = PIL.Image.fromarray(cv2image)
-            imgtk = ImageTk.PhotoImage(image=img)
-            video.imgtk = imgtk
-            video.configure(image=imgtk)
+            # telemetry manager
+            if self.menus.get("telemetry", True):
+                telemetryBox.delete("1.0", "end")
+                for key in telemetryLog:
+                    telemetryBox.insert(INSERT, f"{key}: {telemetryLog[key]}\n")
+
+            # video manager
+            if pauseSlider.get() == 0:
+                if fullscreenSlider.get() == 1:
+                    cv2.imshow("hello", Camera.resize(self.frame, 1920, 1080))
+                else:
+                    cv2.destroyAllWindows()
+
+                cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+                img = PIL.Image.fromarray(cv2image)
+                imgtk = ImageTk.PhotoImage(image=img)
+                video.imgtk = imgtk
+                video.configure(image=imgtk)
+
             if self.running:
                 video.after(10, updateFrame)
 
         updateFrame()
         win.mainloop()
-
-    def toggleFullscreen(self):
-        self.fullscreen = not self.fullscreen
 
     def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
         self.running = True
@@ -480,7 +508,9 @@ class UI:
         self.accentColor = accentColor
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
-        self.fullscreen = False
+
+        self.videoFullscreen = False
+        self.videoPaused = False
 
 
 # black magic voodoo, don't really feel like commenting all of it
@@ -492,7 +522,7 @@ class DataConnection:
 
     You can send messages with the ``send()`` function.
 
-    **header values 0-5 are reserved for system functions**
+    **header values 0-10 are reserved for system functions**
     """
 
     output = (0, b'')
@@ -513,12 +543,13 @@ class DataConnection:
             header = int(self.connection.recv(16).decode('utf-8'))
             message = self.connection.recv(int(msg_len), socket.MSG_WAITALL)
             if header == 1:
-                logs.append("[ERROR]" + message.decode('utf-8'))
+                logs.append("[ERROR]" + message.decode('utf-8') + "\n")
             if header == 2:
-                logs.append("[WARNING]" + message.decode('utf-8'))
+                logs.append("[WARNING]" + message.decode('utf-8') + "\n")
             if header == 3:
-                logs.append("[TELEMETRY]" + message.decode('utf-8'))
-            if header > 5:
+                msgParts = message.decode('utf-8').split("!")
+                telemetryLog[msgParts[0]] = msgParts[1]
+            if header > 10:
                 self.output = (header, message)
 
     def clientStart(self, ip: str, port: int):
@@ -556,36 +587,39 @@ class DataConnection:
 
         return self.IP
 
-    def sendError(self, msg):
+    def sendError(self, msg: str):
         """
         Sends an error message directly to the log
-
-        :param msg: Error msg
+        :param msg: error msg
         """
-        self.send(msg, 1)
+        self.send(msg.encode('utf-8'), 1)
 
-    def sendWarning(self, msg):
+    def sendWarning(self, msg: str):
         """
         Sends a warning message data directly to the log
-
-        :param msg: Warning msg
+        :param msg: warning msg
         """
-        self.send(msg, 2)
+        self.send(msg.encode('utf-8'), 2)
 
-    def sendTelemetry(self, msg):
+    def sendTelemetry(self, name: str, value):
         """
-        Sends a telemetric message directly to the log
-
-        :param msg: Telemetric msg
+        Sends telemetry directly to the ui
+        :param name: name of the telemetry
+        :param value: value of the telemetry
         """
-        self.send(msg, 3)
+        msg = name + "!" + str(value)
+        if msg.count('!') == 1:
+            msg = msg.encode('utf-8')
+            self.send(msg, 3)
+        else:
+            self.sendWarning(f"Telemetry message {msg} cannot be sent")
 
-    def send(self, msg: bytearray, header: int = 1):
+    def send(self, msg: bytes, header: int = 11):
         """
         Sends a message to all servers or clients connected to the program
 
         :param msg: message that you want to send in a byte form
-        :param header: message header value **header values 0-5 are reserved for system functions**
+        :param header: message header value **header values 0-10 are reserved for system functions**
         """
 
         send_length = str(len(msg)).encode('utf-8')

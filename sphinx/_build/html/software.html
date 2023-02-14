@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Software &mdash; Seamoth  documentation</title>
@@ -12,10 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,12 +27,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Seamoth
-            <img src="_static/logo.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Seamoth
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -77,7 +79,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Software</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/software.rst.txt" rel="nofollow"> View page source</a>
@@ -97,18 +99,20 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">UI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">videoSize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(640,</span> <span class="pre">480)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">menus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accentColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#ffffff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backgroundColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#3f3f3f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foregroundColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#585654'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.UI" title="Permalink to this definition"></a></dt>
 <dd><p>The class is currently uses tkinter and is meant to be used as your viewport to the submarine.
 The class runs entirely in a separate thread and shows the video from an internal buffer.
-You can write to the ui by referencing the internal buffer such as such as:</p>
+You can write to the ui by referencing the internal buffer such as:</p>
 <p><code class="docutils literal notranslate"><span class="pre">ui.frame</span> <span class="pre">=</span> <span class="pre">frame</span></code></p>
 <p>Which is expected to be the frame data from the camera class.
 Camera and UI are separate to allow data connections through an
 internet connection or other similar connections without impeding functionality.</p>
-<p>You can specify which menus to be active or inactive with the menus input with the following possible menus:</p>
+<p>You can specify which menus should be active or inactive with the menus input with the following possible menus:</p>
 <ul class="simple">
 <li><p>connDetails</p></li>
 <li><p>connStatus</p></li>
 <li><p>input</p></li>
 <li><p>output</p></li>
 <li><p>custom</p></li>
+<li><p>video</p></li>
+<li><p>telemetry</p></li>
 </ul>
 <p>The ui class can later be referenced to access or set:</p>
 <ul class="simple">
@@ -120,7 +124,7 @@ internet connection or other similar connections without impeding functionality.
 * <strong>Input Data</strong> : <code class="docutils literal notranslate"><span class="pre">ui.controllerValues</span></code> = controllerValues where controllerValues is the dictionary outputted
 by the Controller class</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>videoSize</strong> – default video viewport size</p></li>
 <li><p><strong>menus</strong> – dictionary of which menus to keep active. All are on by default.</p></li>
@@ -141,13 +145,13 @@ by the Controller class</p>
 All data received by the server is stored within its internal <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer for asynchronous reading.
 This buffer stores the main message and the specified header as <code class="docutils literal notranslate"><span class="pre">(header,</span> <span class="pre">message)</span></code>.</p>
 <p>You can send messages with the <code class="docutils literal notranslate"><span class="pre">send()</span></code> function.</p>
-<p><strong>header values 0-5 are reserved for system functions</strong></p>
+<p><strong>header values 0-10 are reserved for system functions</strong></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.clientStart">
 <span class="sig-name descname"><span class="pre">clientStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.clientStart" title="Permalink to this definition"></a></dt>
 <dd><p>Starts a client to connect to a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ip</strong> – ip of the server</p></li>
 <li><p><strong>port</strong> – port of the server</p></li>
@@ -158,13 +162,13 @@ This buffer stores the main message and the specified header as <code class="doc
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.send">
-<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.send" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.send" title="Permalink to this definition"></a></dt>
 <dd><p>Sends a message to all servers or clients connected to the program</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg</strong> – message that you want to send in a byte form</p></li>
-<li><p><strong>header</strong> – message header value <strong>header values 0-5 are reserved for system functions</strong></p></li>
+<li><p><strong>header</strong> – message header value <strong>header values 0-10 are reserved for system functions</strong></p></li>
 </ul>
 </dd>
 </dl>
@@ -172,35 +176,24 @@ This buffer stores the main message and the specified header as <code class="doc
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.sendError">
-<span class="sig-name descname"><span class="pre">sendError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendError" title="Permalink to this definition"></a></dt>
-<dd><p>Sends an error message directly to the log</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>msg</strong> – Error msg</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">sendError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendError" title="Permalink to this definition"></a></dt>
+<dd><p>Sends an error message directly to the log
+:param msg: error msg</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.sendTelemetry">
-<span class="sig-name descname"><span class="pre">sendTelemetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendTelemetry" title="Permalink to this definition"></a></dt>
-<dd><p>Sends a telemetric message directly to the log</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>msg</strong> – Telemetric msg</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">sendTelemetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendTelemetry" title="Permalink to this definition"></a></dt>
+<dd><p>Sends telemetry directly to the ui
+:param name: name of the telemetry
+:param value: value of the telemetry</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.sendWarning">
-<span class="sig-name descname"><span class="pre">sendWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendWarning" title="Permalink to this definition"></a></dt>
-<dd><p>Sends a warning message data directly to the log</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>msg</strong> – Warning msg</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">sendWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendWarning" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a warning message data directly to the log
+:param msg: warning msg</p>
 </dd></dl>
 
 <dl class="py method">
@@ -208,7 +201,7 @@ This buffer stores the main message and the specified header as <code class="doc
 <span class="sig-name descname"><span class="pre">serverStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.serverStart" title="Permalink to this definition"></a></dt>
 <dd><p>Starts a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>port</strong> – port of the server</p>
 </dd>
 </dl>
