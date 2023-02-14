@@ -1,4 +1,5 @@
-import seamoth, json
+import json
+import seamoth
 
 
 def main():
