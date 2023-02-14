@@ -270,7 +270,7 @@ class UI:
     """
     The class is currently uses tkinter and is meant to be used as your viewport to the submarine.
     The class runs entirely in a separate thread and shows the video from an internal buffer.
-    You can write to the ui by referencing the internal buffer such as such as:
+    You can write to the ui by referencing the internal buffer such as:
 
     ``ui.frame = frame``
 
@@ -278,13 +278,15 @@ class UI:
     Camera and UI are separate to allow data connections through an
     internet connection or other similar connections without impeding functionality.
 
-    You can specify which menus to be active or inactive with the menus input with the following possible menus:
+    You can specify which menus should be active or inactive with the menus input with the following possible menus:
 
     * connDetails
     * connStatus
     * input
     * output
     * custom
+    * video
+    * telemetry
 
     The ui class can later be referenced to access or set:
 
@@ -520,7 +522,7 @@ class DataConnection:
 
     You can send messages with the ``send()`` function.
 
-    **header values 0-5 are reserved for system functions**
+    **header values 0-10 are reserved for system functions**
     """
 
     output = (0, b'')
