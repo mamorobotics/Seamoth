@@ -11,16 +11,14 @@ from tkinter import *
 
 PATH = "hardwareMap.txt"
 
-global logs
 logs = []
 
-global telemetryLog
 telemetryLog = {}
 
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
-except:
+except ImportError or ImportWarning:
     logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible \n")
 
 
@@ -356,30 +354,30 @@ class UI:
             inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy X", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Left Joy X", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputJoyLeftX.pack(side=TOP, anchor=W)
             inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy Y", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Left Joy Y", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputJoyLeftY.pack(side=TOP, anchor=W)
             inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy X", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Right Joy X", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputJoyRightX.pack(side=TOP, anchor=W)
             inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy Y", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Right Joy Y", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputJoyRightY.pack(side=TOP, anchor=W)
 
             inputDetailsTrigFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
             inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Left Trigger", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Left Trigger", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputTrigRight.pack(side=TOP, anchor=W)
             inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Right Trigger", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Right Trigger", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
 
@@ -496,7 +494,9 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
+    def __init__(self, videoSize: tuple = (640, 480), menus=None, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
+        if menus is None:
+            menus = {}
         self.running = True
         self.menus = menus
         self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
