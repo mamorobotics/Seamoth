@@ -19,7 +19,7 @@ try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
 except ImportError or ImportWarning:
-    logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible \n")
+    logs.append("[ERROR] windll not found; window sharpening not possible\n")
 
 
 class Controller:
@@ -57,7 +57,7 @@ class Controller:
 
         # checking to make sure that controllers exist before initiated
         if len(devices.gamepads) < 1:
-            logs.append("[ERROR] Cannot find a connected controller.\n")
+            logs.append("[ERROR] unable to find a connected controller\n")
 
         else:
             # controller value monitor thread start
@@ -301,11 +301,43 @@ class UI:
     :param backgroundColor: background color of the ui
     """
 
+    fullscreen = False
+
     controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
                         'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
                         'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
 
     menus = {}
+
+    def _fullscreen(self):
+        winFull = Tk()
+        winFull.title("Seamoth Fullscreen")
+
+        videoFull = Label(winFull)
+        videoFull.pack()
+
+        # main loop
+        def updateFrame():
+            cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+            img = PIL.Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img, master=winFull)
+            videoFull.imgtk = imgtk
+            videoFull.configure(image=imgtk)
+
+            if self.fullscreen:
+                videoFull.after(10, updateFrame)
+            else:
+                winFull.destroy()
+
+        updateFrame()
+        winFull.mainloop()
+
+    def openFullscreen(self):
+        self.fullscreenthread = Thread(target=self._fullscreen, args=())
+        self.fullscreenthread.start()
+
+    def closeFullscreen(self):
+        self.fullscreenthread.join()
 
     def _ui(self):
         win = Tk()
@@ -321,6 +353,14 @@ class UI:
         # details
         details = Frame(win, bg=self.backgroundColor)
         details.grid(row=0, column=1, sticky=N)
+
+        def fullscreenChange(value):
+            if fullscreenSlider.get() == 1:
+                self.fullscreen = True
+                self.openFullscreen()
+            else:
+                self.fullscreen = False
+                self.closeFullscreen()
 
         # conn details settings
         if self.menus.get("connDetails", True):
@@ -428,7 +468,7 @@ class UI:
             Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
 
             Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
-            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0, command=fullscreenChange)
             fullscreenSlider.grid(row=1, column=1, sticky=W)
 
             Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor, foreground="#ffffff").grid(row=2, column=0, sticky=W)
@@ -446,6 +486,11 @@ class UI:
 
         # main loop
         def updateFrame():
+            if len(logs) > 15:
+                logs.pop(0)
+            if len(telemetryLog) > 4:
+                telemetryLog.pop(0)
+
             # conn details/status managers
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
@@ -477,11 +522,6 @@ class UI:
 
             # video manager
             if pauseSlider.get() == 0:
-                if fullscreenSlider.get() == 1:
-                    cv2.imshow("hello", Camera.resize(self.frame, 1920, 1080))
-                else:
-                    cv2.destroyAllWindows()
-
                 cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
                 img = PIL.Image.fromarray(cv2image)
                 imgtk = ImageTk.PhotoImage(image=img)
@@ -502,8 +542,8 @@ class UI:
         self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
-        self.thread = Thread(target=self._ui, args=())
-        self.thread.start()
+        self.mainthread = Thread(target=self._ui, args=())
+        self.mainthread.start()
 
         self.accentColor = accentColor
         self.backgroundColor = backgroundColor
