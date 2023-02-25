@@ -1,9 +1,10 @@
 import PIL
 import cv2
-import gpiozero
 import json
 import numpy
 import socket
+import os
+import time
 from PIL import ImageTk
 from inputs import devices
 from threading import Thread
@@ -11,17 +12,27 @@ from tkinter import *
 
 PATH = "hardwareMap.txt"
 
-global logs
 logs = []
 
-global telemetryLog
 telemetryLog = {}
 
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
+except ImportError or ImportWarning:
+    logs.append("[ERROR] ctypes not found; window sharpening not possible\n")
+    print('[ERROR] ctypes not found; window sharpening not possible')
+
+try:
+    os.system("sudo pigpiod")
+    time.sleep(1)
+    import pigpio
+
+    global PI
+    PI = pigpio.pi()
 except:
-    logs.append("[ERROR] Unable to get windll.\n        Window sharpening will not be possible \n")
+    logs.append('[ERROR] RPi.GPIO not found; hardware control not possible\n')
+    print('[ERROR] RPi.GPIO not found; hardware control not possible')
 
 
 class Controller:
@@ -59,7 +70,7 @@ class Controller:
 
         # checking to make sure that controllers exist before initiated
         if len(devices.gamepads) < 1:
-            logs.append("[ERROR] Cannot find a connected controller.\n")
+            logs.append("[ERROR] unable to find a connected controller\n")
 
         else:
             # controller value monitor thread start
@@ -120,17 +131,24 @@ class Controller:
 
 class Motor:
     """
-    The motor class represents a motor. It takes no inputs and has two functions, ``setMotor()`` and ``setSpeed()``.
+    **Motor is not multithreaded, expect some lag on initialization as we set up stuff**
+
+    The motor class represents a motor. It takes no inputs and has three functions, ``setMotor()``, ``setSpeed()``, ``calibrateMotor()``.
+    It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
     To set a motor you need to have a file within the project directory called hardwareMap.txt,
     which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
-    ``{ "name": [port1, port2], "name": [port1, port2] }``
+    ``{ "name": port }``
+
+    the file should also have a config of the pwm values used by your esc as such:
+
+    ``"PWMConfig": [lowestValue, zeroValue, highestValue],``
     """
 
     def __init__(self):
-        self.motor = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
+        self.port = 0
 
     def setMotor(self, name: str):
         """
@@ -140,60 +158,81 @@ class Motor:
         """
 
         if name in self.hardwareMap:
-            self.motor = gpiozero.Motor(self.hardwareMap[name][0], self.hardwareMap[name][1])
+            self.port = int(self.hardwareMap[name])
+            PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
+            self.calibrateMotor()
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
+
+    def calibrateMotor(self):
+        """
+        Calibrates/initializes the esc. In most cases this shouldn't really be used.
+        """
+        PI.set_servo_pulsewidth(self.port, self.hardwareMap["MotorPWMConfig"][1])
+        time.sleep(3)
 
     def setSpeed(self, speed: float):
         """
         Sets the speed of the motor the function is called on.
 
-        :param speed: speed of motor
+        :param speed: speed of motor (-1 - 1)
         """
+        pwmSignal = ((speed + 1) / 2) * (self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + self.hardwareMap["MotorPWMConfig"][0]
 
-        if speed > 0:
-            self.motor.forward(speed)
-        if speed < 0:
-            self.motor.backward(speed)
-        if speed == 0:
-            self.motor.stop()
+        PI.set_servo_pulsewidth(self.port, pwmSignal)
 
 
 class Servo:
     """
-        The servo class represents a servo. It takes no inputs and has two functions,
-        ``setMotor()`` and ``setPosition()``.
+    **Servo is not multithreaded, expect some lag on initialization as we set up stuff**
 
-        To set a servo you need to have a file within the project directory called hardwareMap.txt, which specifies the
-        names and ports of all connected servos and motors. This file should follow the format of:
+    The servo class represents a servo. It takes no inputs and has three functions, ``setServo()``, ``setPosition()``, ``calibrateServo()``.
+    It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
-        ``{ "name": port, "name": port }``
-        """
+    To set a servo you need to have a file within the project directory called hardwareMap.txt,
+    which specifies the names and ports of all connected servos and motors. This file should follow the format of:
+
+    ``{ "name": port }``
+
+    the file should also have a config of the pwm values used by your esc as such:
+
+    ``"ServoPWMConfig": [lowestValue, highestValue],``
+    """
 
     def __init__(self):
-        self.servo = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
+        self.port = 0
 
-    def setMotor(self, name: str):
+    def setServo(self, name: str):
         """
-        Assigns the servo to port specified in the hardware map
+        Assigns the servo to ports specified in the hardware map
 
         :param name: the name of the servo in the hardware map
         """
 
         if name in self.hardwareMap:
-            self.servo = gpiozero.Servo(self.hardwareMap[name])
+            self.port = int(self.hardwareMap[name])
+            PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
+            self.calibrateServo()
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
 
-    def setSpeed(self, position: float):
+    def calibrateServo(self):
+        """
+        Calibrates/initializes the esc. In most cases this shouldn't really be used.
+        """
+        PI.set_servo_pulsewidth(self.port, self.hardwareMap["ServoPWMConfig"][0])
+        time.sleep(3)
+
+    def setPosition(self, position: float):
         """
         Sets the position of the servo the function is called on.
 
-        :param position: position of servo
+        :param position: position of servo (0 - 1)
         """
+        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][2] - self.hardwareMap["ServoPWMConfig"][0]) + self.hardwareMap["ServoPWMConfig"][0]
 
-        self.servo.value = position
+        PI.set_servo_pulsewidth(self.port, pwmSignal)
 
 
 class Camera:
@@ -303,11 +342,43 @@ class UI:
     :param backgroundColor: background color of the ui
     """
 
+    fullscreen = False
+
     controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
                         'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
                         'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
 
     menus = {}
+
+    def _fullscreen(self):
+        winFull = Tk()
+        winFull.title("Seamoth Fullscreen")
+
+        videoFull = Label(winFull)
+        videoFull.pack()
+
+        # main loop
+        def updateFrame():
+            cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+            img = PIL.Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=img, master=winFull)
+            videoFull.imgtk = imgtk
+            videoFull.configure(image=imgtk)
+
+            if self.fullscreen:
+                videoFull.after(10, updateFrame)
+            else:
+                winFull.destroy()
+
+        updateFrame()
+        winFull.mainloop()
+
+    def openFullscreen(self):
+        self.fullscreenthread = Thread(target=self._fullscreen, args=())
+        self.fullscreenthread.start()
+
+    def closeFullscreen(self):
+        self.fullscreenthread.join()
 
     def _ui(self):
         win = Tk()
@@ -323,6 +394,14 @@ class UI:
         # details
         details = Frame(win, bg=self.backgroundColor)
         details.grid(row=0, column=1, sticky=N)
+
+        def fullscreenChange(value):
+            if fullscreenSlider.get() == 1:
+                self.fullscreen = True
+                self.openFullscreen()
+            else:
+                self.fullscreen = False
+                self.closeFullscreen()
 
         # conn details settings
         if self.menus.get("connDetails", True):
@@ -356,30 +435,30 @@ class UI:
             inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy X", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Left Joy X", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputJoyLeftX.pack(side=TOP, anchor=W)
             inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy Y", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Left Joy Y", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputJoyLeftY.pack(side=TOP, anchor=W)
             inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy X", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Right Joy X", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputJoyRightX.pack(side=TOP, anchor=W)
             inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy Y", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Right Joy Y", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputJoyRightY.pack(side=TOP, anchor=W)
 
             inputDetailsTrigFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
             inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Left Trigger", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Left Trigger", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                    highlightthickness=0)
             inputTrigRight.pack(side=TOP, anchor=W)
             inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Right Trigger", showvalue=0, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Right Trigger", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
                                   highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
 
@@ -430,7 +509,7 @@ class UI:
             Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
 
             Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
-            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0, command=fullscreenChange)
             fullscreenSlider.grid(row=1, column=1, sticky=W)
 
             Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor, foreground="#ffffff").grid(row=2, column=0, sticky=W)
@@ -448,6 +527,11 @@ class UI:
 
         # main loop
         def updateFrame():
+            if len(logs) > 15:
+                logs.pop(0)
+            if len(telemetryLog) > 4:
+                telemetryLog.pop(0)
+
             # conn details/status managers
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
@@ -479,11 +563,6 @@ class UI:
 
             # video manager
             if pauseSlider.get() == 0:
-                if fullscreenSlider.get() == 1:
-                    cv2.imshow("hello", Camera.resize(self.frame, 1920, 1080))
-                else:
-                    cv2.destroyAllWindows()
-
                 cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
                 img = PIL.Image.fromarray(cv2image)
                 imgtk = ImageTk.PhotoImage(image=img)
@@ -496,14 +575,16 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus: dict = {}, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
+    def __init__(self, videoSize: tuple = (640, 480), menus=None, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
+        if menus is None:
+            menus = {}
         self.running = True
         self.menus = menus
         self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
-        self.thread = Thread(target=self._ui, args=())
-        self.thread.start()
+        self.mainthread = Thread(target=self._ui, args=())
+        self.mainthread.start()
 
         self.accentColor = accentColor
         self.backgroundColor = backgroundColor
