@@ -159,6 +159,7 @@ class Motor:
 
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
+            PI.set_mode(self.port, pigpio.OUTPUT)
             PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
             self.calibrateMotor()
         else:
@@ -212,6 +213,7 @@ class Servo:
 
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
+            PI.set_mode(self.port, pigpio.OUTPUT)
             PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
             self.calibrateServo()
         else:
