@@ -1,4 +1,6 @@
 {
- "fl": [1, 3],
- "bl": [2, 4]
+ "MotorPWMConfig": [1100, 1500, 1900],
+ "ServoPWMConfig": [1111, 1111],
+ "fl": 1,
+ "bl": 2
 }

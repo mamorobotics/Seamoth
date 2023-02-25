@@ -1,9 +1,10 @@
 import PIL
 import cv2
-import gpiozero
 import json
 import numpy
 import socket
+import os
+import time
 from PIL import ImageTk
 from inputs import devices
 from threading import Thread
@@ -19,7 +20,19 @@ try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
 except ImportError or ImportWarning:
-    logs.append("[ERROR] windll not found; window sharpening not possible\n")
+    logs.append("[ERROR] ctypes not found; window sharpening not possible\n")
+    print('[ERROR] ctypes not found; window sharpening not possible')
+
+try:
+    os.system("sudo pigpiod")
+    time.sleep(1)
+    import pigpio
+
+    global PI
+    PI = pigpio.pi()
+except:
+    logs.append('[ERROR] RPi.GPIO not found; hardware control not possible\n')
+    print('[ERROR] RPi.GPIO not found; hardware control not possible')
 
 
 class Controller:
@@ -118,17 +131,24 @@ class Controller:
 
 class Motor:
     """
-    The motor class represents a motor. It takes no inputs and has two functions, ``setMotor()`` and ``setSpeed()``.
+    **Motor is not multithreaded, expect some lag on initialization as we set up stuff**
+
+    The motor class represents a motor. It takes no inputs and has three functions, ``setMotor()``, ``setSpeed()``, ``calibrateMotor()``.
+    It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
     To set a motor you need to have a file within the project directory called hardwareMap.txt,
     which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
-    ``{ "name": [port1, port2], "name": [port1, port2] }``
+    ``{ "name": port }``
+
+    the file should also have a config of the pwm values used by your esc as such:
+
+    ``"PWMConfig": [lowestValue, zeroValue, highestValue],``
     """
 
     def __init__(self):
-        self.motor = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
+        self.port = 0
 
     def setMotor(self, name: str):
         """
@@ -138,60 +158,81 @@ class Motor:
         """
 
         if name in self.hardwareMap:
-            self.motor = gpiozero.Motor(self.hardwareMap[name][0], self.hardwareMap[name][1])
+            self.port = int(self.hardwareMap[name])
+            PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
+            self.calibrateMotor()
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
+
+    def calibrateMotor(self):
+        """
+        Calibrates/initializes the esc. In most cases this shouldn't really be used.
+        """
+        PI.set_servo_pulsewidth(self.port, self.hardwareMap["MotorPWMConfig"][1])
+        time.sleep(3)
 
     def setSpeed(self, speed: float):
         """
         Sets the speed of the motor the function is called on.
 
-        :param speed: speed of motor
+        :param speed: speed of motor (-1 - 1)
         """
+        pwmSignal = ((speed + 1) / 2) * (self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + self.hardwareMap["MotorPWMConfig"][0]
 
-        if speed > 0:
-            self.motor.forward(speed)
-        if speed < 0:
-            self.motor.backward(speed)
-        if speed == 0:
-            self.motor.stop()
+        PI.set_servo_pulsewidth(self.port, pwmSignal)
 
 
 class Servo:
     """
-        The servo class represents a servo. It takes no inputs and has two functions,
-        ``setMotor()`` and ``setPosition()``.
+    **Servo is not multithreaded, expect some lag on initialization as we set up stuff**
 
-        To set a servo you need to have a file within the project directory called hardwareMap.txt, which specifies the
-        names and ports of all connected servos and motors. This file should follow the format of:
+    The servo class represents a servo. It takes no inputs and has three functions, ``setServo()``, ``setPosition()``, ``calibrateServo()``.
+    It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
-        ``{ "name": port, "name": port }``
-        """
+    To set a servo you need to have a file within the project directory called hardwareMap.txt,
+    which specifies the names and ports of all connected servos and motors. This file should follow the format of:
+
+    ``{ "name": port }``
+
+    the file should also have a config of the pwm values used by your esc as such:
+
+    ``"ServoPWMConfig": [lowestValue, highestValue],``
+    """
 
     def __init__(self):
-        self.servo = None
         self.hardwareMap = json.loads(open(PATH, "r").read())
+        self.port = 0
 
-    def setMotor(self, name: str):
+    def setServo(self, name: str):
         """
-        Assigns the servo to port specified in the hardware map
+        Assigns the servo to ports specified in the hardware map
 
         :param name: the name of the servo in the hardware map
         """
 
         if name in self.hardwareMap:
-            self.servo = gpiozero.Servo(self.hardwareMap[name])
+            self.port = int(self.hardwareMap[name])
+            PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
+            self.calibrateServo()
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
 
-    def setSpeed(self, position: float):
+    def calibrateServo(self):
+        """
+        Calibrates/initializes the esc. In most cases this shouldn't really be used.
+        """
+        PI.set_servo_pulsewidth(self.port, self.hardwareMap["ServoPWMConfig"][0])
+        time.sleep(3)
+
+    def setPosition(self, position: float):
         """
         Sets the position of the servo the function is called on.
 
-        :param position: position of servo
+        :param position: position of servo (0 - 1)
         """
+        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][2] - self.hardwareMap["ServoPWMConfig"][0]) + self.hardwareMap["ServoPWMConfig"][0]
 
-        self.servo.value = position
+        PI.set_servo_pulsewidth(self.port, pwmSignal)
 
 
 class Camera:
