@@ -56,7 +56,24 @@ class ControllerValues:
     ``
     """
 
-    LeftJoystickY, LeftJoystickX, RightJoystickY, RightJoystickX, LeftTrigger, RightTrigger, LeftBumper, RightBumper, A, X, Y, B, LeftThumb, RightThumb, Back, Start, DpadY, DpadX = 0
+    LeftJoystickY = 0
+    LeftJoystickX = 0
+    RightJoystickY = 0
+    RightJoystickX = 0
+    LeftTrigger = 0
+    RightTrigger = 0
+    LeftBumper = 0
+    RightBumper = 0
+    A = 0
+    X = 0
+    Y = 0
+    B = 0
+    LeftThumb = 0
+    RightThumb = 0
+    Back = 0
+    Start = 0
+    DpadY = 0
+    DpadX = 0
 
     @staticmethod
     def fromDict(controllerValueDict):
