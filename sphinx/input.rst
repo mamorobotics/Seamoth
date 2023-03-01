@@ -12,3 +12,9 @@ Controller
 
 .. autoclass:: seamoth.Controller
     :members:
+
+Controller Values
+-----------------
+
+.. autoclass:: seamoth.ControllerValues
+    :members:

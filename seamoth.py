@@ -35,25 +35,105 @@ except:
     print('[ERROR] RPi.GPIO not found; hardware control not possible')
 
 
+class ControllerValues:
+    """
+    A class primarily used to store the values of the controller. It is returned by the controller class when you try to access its values.
+
+    To send it over a data connection you can access its value in a dictionary format with:
+
+    ``
+    controllerVaues = ControllerValues()
+
+    dict = controllerValues.getDict()
+    ``
+
+    and you can turn this dict back into a Controller values object using from dict as such:
+
+    ``
+    controllerVaues = ControllerValues()
+
+    controllerValues = ControllerValues.fromDict(dict)
+    ``
+    """
+
+    LeftJoystickY = 0
+    LeftJoystickX = 0
+    RightJoystickY = 0
+    RightJoystickX = 0
+    LeftTrigger = 0
+    RightTrigger = 0
+    LeftBumper = 0
+    RightBumper = 0
+    A = 0
+    X = 0
+    Y = 0
+    B = 0
+    LeftThumb = 0
+    RightThumb = 0
+    Back = 0
+    Start = 0
+    DpadY = 0
+    DpadX = 0
+
+    @staticmethod
+    def fromDict(controllerValueDict):
+        """
+        Turns a dictionary into a ControllerValue object.
+
+        :param controllerValueDict: dictionary of controller values
+        :return: ControllerValues object
+        """
+        controllerValues = ControllerValues()
+        controllerValues.LeftJoystickY = controllerValueDict["LeftJoystickY"]
+        controllerValues.LeftJoystickX = controllerValueDict["LeftJoystickX"]
+        controllerValues.RightJoystickY = controllerValueDict["RightJoystickY"]
+        controllerValues.RightJoystickX = controllerValueDict["RightJoystickX"]
+        controllerValues.LeftTrigger = controllerValueDict["LeftTrigger"]
+        controllerValues.RightTrigger = controllerValueDict["RightTrigger"]
+        controllerValues.LeftBumper = controllerValueDict["LeftBumper"]
+        controllerValues.RightBumper = controllerValueDict["RightBumper"]
+        controllerValues.A = controllerValueDict["A"]
+        controllerValues.X = controllerValueDict["X"]
+        controllerValues.Y = controllerValueDict["Y"]
+        controllerValues.B = controllerValueDict["B"]
+        controllerValues.LeftThumb = controllerValueDict["LeftThumb"]
+        controllerValues.RightThumb = controllerValueDict["RightThumb"]
+        controllerValues.Back = controllerValueDict["Back"]
+        controllerValues.Start = controllerValueDict["Start"]
+        controllerValues.DpadY = controllerValueDict["DpadY"]
+        controllerValues.DpadX = controllerValueDict["DpadX"]
+        return controllerValues
+
+
+    def getDict(self):
+        """
+        Turns a ControllerValue object into a dictionary.
+
+        :return: dictionary of controller values
+        """
+        return {'LeftJoystickY': self.LeftJoystickY, 'LeftJoystickX': self.LeftJoystickX, 'RightJoystickY': self.RightJoystickY, 'RightJoystickX': self.RightJoystickX,
+         'LeftTrigger': self.LeftTrigger, 'RightTrigger': self.RightTrigger, 'LeftBumper': self.LeftBumper, 'RightBumper': self.RightBumper, 'A': self.A, 'X': self.X, 'Y': self.Y,
+         'B': self.X, 'LeftThumb': self.LeftThumb, 'RightThumb': self.RightThumb, 'Menu': self.Menu, 'Start': self.Start, 'DpadY': self.DpadY, 'DpadX': self.DpadX}
+
+
+
 class Controller:
     """
     `Note: Some code in this class is a modified version of the tensorkart project's implementation of controller
-    input detection by kevinhughes27 on GitHub`
+    input detection by kevinhughes27 on GitHub.`
 
     Controllers are currently tested to work with XInput designed controllers,
     however controls should be relatively normalized for other types of controllers.
     The class runs in a separate thread to read controller input and assigns read values to an internal
     buffer in the object. Reading the controllers in your main loop is as simple as referencing that buffer such as:
 
-    ``values = controller.controllerValues``
+    ``
+    controller = Controller()
 
-    These values are returned as a dictionary with the following values:
+    values = controller.controllerValues
+    ``
 
-    `LeftJoystickX, LeftJoystickY, LeftThumb, RightJoystickX, RightJoystickY, RightThumb, RightTrigger, RightBumper, LeftTrigger, LeftBumper, Menu, Start, DpadX, DpadY, A, X, Y, B`
-
-    The controller class can later be referenced to access or set:
-
-    * **Controller Values** : ``controller.controllerValues`` = most recent values of the controller
+    These values are returned as a ControllerValue object.
 
     :param controllerPort: controller identifier number
     """
@@ -61,9 +141,7 @@ class Controller:
     MAX_TRIG_VAL = float(256)
     MAX_JOY_VAL = float(32768)
 
-    controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
-                        'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
-                        'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
+    controllerValues = ControllerValues()
 
     def __init__(self, controllerPort: int):
         self.controllerPort = controllerPort
@@ -86,47 +164,41 @@ class Controller:
             events = gamepad.read()
             for event in events:
                 if event.code == 'ABS_Y':
-                    self.controllerValues[
-                        'LeftJoystickY'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.LeftJoystickY = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_X':
-                    self.controllerValues[
-                        'LeftJoystickX'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.LeftJoystickX = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_RY':
-                    self.controllerValues[
-                        'RightJoystickY'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.RightJoystickY = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_RX':
-                    self.controllerValues[
-                        'RightJoystickX'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.RightJoystickX = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_Z':
-                    self.controllerValues[
-                        'LeftTrigger'] = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
+                    self.controllerValues.LeftTrigger = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
                 elif event.code == 'ABS_RZ':
-                    self.controllerValues[
-                        'RightTrigger'] = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
+                    self.controllerValues.RightTrigger = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
                 elif event.code == 'BTN_TL':
-                    self.controllerValues['LeftBumper'] = event.state
+                    self.controllerValues.LeftBumper = event.state
                 elif event.code == 'BTN_TR':
-                    self.controllerValues['RightBumper'] = event.state
+                    self.controllerValues.RightBumper = event.state
                 elif event.code == 'BTN_SOUTH':
-                    self.controllerValues['A'] = event.state
+                    self.controllerValues.A = event.state
                 elif event.code == 'BTN_NORTH':
-                    self.controllerValues['X'] = event.state
+                    self.controllerValues.X = event.state
                 elif event.code == 'BTN_WEST':
-                    self.controllerValues['Y'] = event.state
+                    self.controllerValues.Y = event.state
                 elif event.code == 'BTN_EAST':
-                    self.controllerValues['B'] = event.state
+                    self.controllerValues.B = event.state
                 elif event.code == 'BTN_THUMBL':
-                    self.controllerValues['LeftThumb'] = event.state
+                    self.controllerValues.LeftThumb = event.state
                 elif event.code == 'BTN_THUMBR':
-                    self.controllerValues['RightThumb'] = event.state
+                    self.controllerValues.RightThumb = event.state
                 elif event.code == 'BTN_SELECT':
-                    self.controllerValues['Back'] = event.state
+                    self.controllerValues.Back = event.state
                 elif event.code == 'BTN_START':
-                    self.controllerValues['Start'] = event.state
+                    self.controllerValues.Start = event.state
                 elif event.code == 'ABS_HAT0Y':
-                    self.controllerValues['DpadY'] = -event.state
+                    self.controllerValues.DpadY = -event.state
                 elif event.code == 'ABS_HAT0X':
-                    self.controllerValues['DpadX'] = event.state
+                    self.controllerValues.DpadX = event.state
 
 
 class Motor:
@@ -152,13 +224,14 @@ class Motor:
 
     def setMotor(self, name: str):
         """
-        Assigns the motor to ports specified in the hardware map
+        Assigns the motor to ports specified in the hardware map.
 
         :param name: the name of the motor in the hardware map
         """
 
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
+            PI.set_mode(self.port, pigpio.OUTPUT)
             PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
             self.calibrateMotor()
         else:
@@ -184,7 +257,7 @@ class Motor:
 
 class Servo:
     """
-    **Servo is not multithreaded, expect some lag on initialization as we set up stuff**
+    **Servo is not multithreaded, expect some lag on initialization as we set up stuff.**
 
     The servo class represents a servo. It takes no inputs and has three functions, ``setServo()``, ``setPosition()``, ``calibrateServo()``.
     It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
@@ -205,13 +278,14 @@ class Servo:
 
     def setServo(self, name: str):
         """
-        Assigns the servo to ports specified in the hardware map
+        Assigns the servo to ports specified in the hardware map.
 
         :param name: the name of the servo in the hardware map
         """
 
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
+            PI.set_mode(self.port, pigpio.OUTPUT)
             PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
             self.calibrateServo()
         else:
@@ -254,7 +328,7 @@ class Camera:
 
     def readCameraData(self):
         """
-        Reads the current camera image
+        Reads the current camera image.
 
         :return: Cv2 image object
         """
@@ -266,7 +340,7 @@ class Camera:
     @staticmethod
     def encode(image, quality: int):
         """
-        Encodes and compressed a Cv2 image to make it possible to send over the internet
+        Encodes and compressed a Cv2 image to make it possible to send over the internet.
 
         :param image: Cv2 image object
         :param quality: quality of Jpeg compression
@@ -280,7 +354,7 @@ class Camera:
     @staticmethod
     def decode(image):
         """
-        Decodes and decompresses an image encoded with *encode()*
+        Decodes and decompresses an image encoded with *encode()*.
 
         :param image: compressed byte array representation of image
 
@@ -293,7 +367,7 @@ class Camera:
     @staticmethod
     def resize(image, x: int, y: int):
         """
-        Resizes an image
+        Resizes an image.
 
         :param image: Cv2 image object
         :param x: image X
@@ -344,9 +418,7 @@ class UI:
 
     fullscreen = False
 
-    controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
-                        'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
-                        'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
+    controllerValues = ControllerValues()
 
     menus = {}
 
@@ -542,12 +614,12 @@ class UI:
 
             # input display manager
             if self.menus.get("input", True):
-                inputJoyLeftX.set(float(self.controllerValues.get("LeftJoystickX")))
-                inputJoyLeftY.set(float(self.controllerValues.get("LeftJoystickY")))
-                inputJoyRightX.set(float(self.controllerValues.get("RightJoystickX")))
-                inputJoyRightY.set(float(self.controllerValues.get("RightJoystickY")))
-                inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
-                inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
+                inputJoyLeftX.set(float(self.controllerValues.LeftJoystickX))
+                inputJoyLeftY.set(float(self.controllerValues.LeftJoystickY))
+                inputJoyRightX.set(float(self.controllerValues.RightJoystickX))
+                inputJoyRightY.set(float(self.controllerValues.RightJoystickY))
+                inputTrigLeft.set(float(self.controllerValues.LeftTrigger))
+                inputTrigRight.set(float(self.controllerValues.RightTrigger))
 
             # log manager
             if self.menus.get("output", True):
@@ -635,7 +707,7 @@ class DataConnection:
 
     def clientStart(self, ip: str, port: int):
         """
-        Starts a client to connect to a server and will send received messages to the objects ``output`` buffer
+        Starts a client to connect to a server and will send received messages to the objects ``output`` buffer.
 
         :param ip: ip of the server
         :param port: port of the server
@@ -649,7 +721,7 @@ class DataConnection:
 
     def serverStart(self, port: int):
         """
-        Starts a server and will send received messages to the objects ``output`` buffer
+        Starts a server and will send received messages to the objects ``output`` buffer.
 
         :param port: port of the server
         """
@@ -670,21 +742,24 @@ class DataConnection:
 
     def sendError(self, msg: str):
         """
-        Sends an error message directly to the log
+        Sends an error message directly to the log.
+
         :param msg: error msg
         """
         self.send(msg.encode('utf-8'), 1)
 
     def sendWarning(self, msg: str):
         """
-        Sends a warning message data directly to the log
+        Sends a warning message data directly to the log.
+
         :param msg: warning msg
         """
         self.send(msg.encode('utf-8'), 2)
 
     def sendTelemetry(self, name: str, value):
         """
-        Sends telemetry directly to the ui
+        Sends telemetry directly to the ui.
+
         :param name: name of the telemetry
         :param value: value of the telemetry
         """
@@ -697,7 +772,7 @@ class DataConnection:
 
     def send(self, msg: bytes, header: int = 11):
         """
-        Sends a message to all servers or clients connected to the program
+        Sends a message to all servers or clients connected to the program.
 
         :param msg: message that you want to send in a byte form
         :param header: message header value **header values 0-10 are reserved for system functions**

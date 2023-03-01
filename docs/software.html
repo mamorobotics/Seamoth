@@ -149,7 +149,7 @@ This buffer stores the main message and the specified header as <code class="doc
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.clientStart">
 <span class="sig-name descname"><span class="pre">clientStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.clientStart" title="Permalink to this definition"></a></dt>
-<dd><p>Starts a client to connect to a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer</p>
+<dd><p>Starts a client to connect to a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -163,7 +163,7 @@ This buffer stores the main message and the specified header as <code class="doc
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.send">
 <span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.send" title="Permalink to this definition"></a></dt>
-<dd><p>Sends a message to all servers or clients connected to the program</p>
+<dd><p>Sends a message to all servers or clients connected to the program.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -177,29 +177,43 @@ This buffer stores the main message and the specified header as <code class="doc
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.sendError">
 <span class="sig-name descname"><span class="pre">sendError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendError" title="Permalink to this definition"></a></dt>
-<dd><p>Sends an error message directly to the log
-:param msg: error msg</p>
+<dd><p>Sends an error message directly to the log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>msg</strong> – error msg</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.sendTelemetry">
 <span class="sig-name descname"><span class="pre">sendTelemetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendTelemetry" title="Permalink to this definition"></a></dt>
-<dd><p>Sends telemetry directly to the ui
-:param name: name of the telemetry
-:param value: value of the telemetry</p>
+<dd><p>Sends telemetry directly to the ui.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the telemetry</p></li>
+<li><p><strong>value</strong> – value of the telemetry</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.sendWarning">
 <span class="sig-name descname"><span class="pre">sendWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.sendWarning" title="Permalink to this definition"></a></dt>
-<dd><p>Sends a warning message data directly to the log
-:param msg: warning msg</p>
+<dd><p>Sends a warning message data directly to the log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>msg</strong> – warning msg</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.serverStart">
 <span class="sig-name descname"><span class="pre">serverStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.serverStart" title="Permalink to this definition"></a></dt>
-<dd><p>Starts a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer</p>
+<dd><p>Starts a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>port</strong> – port of the server</p>
