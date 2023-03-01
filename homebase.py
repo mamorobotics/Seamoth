@@ -15,9 +15,11 @@ def main():
     while True:
         if conn.output[0] > 0:
             ui.connectionStatus = f"Connected with {conn.connectionAddress[0]} on port {conn.PORT}"
-            ui.frame = seamoth.Camera.decode(conn.output[1])
+            if conn.output[0] == 11:
+                ui.frame = seamoth.Camera.decode(conn.output[1])
+
             ui.controllerValues = controller.controllerValues
-            conn.send(json.dumps(controller.controllerValues).encode('utf-8'))
+            conn.send(json.dumps(controller.controllerValues.getDict()).encode('utf-8'), 12)
 
 
 if __name__ == "__main__":

@@ -35,6 +35,40 @@ except:
     print('[ERROR] RPi.GPIO not found; hardware control not possible')
 
 
+class ControllerValues:
+    LeftJoystickY, LeftJoystickX, RightJoystickY, RightJoystickX, LeftTrigger, RightTrigger, LeftBumper, RightBumper, A, X, Y, B, LeftThumb, RightThumb, Back, Start, DpadY, DpadX = 0
+
+    @staticmethod
+    def fromDict(controllerValueDict):
+        controllerValues = ControllerValues()
+        controllerValues.LeftJoystickY = controllerValueDict["LeftJoystickY"]
+        controllerValues.LeftJoystickX = controllerValueDict["LeftJoystickX"]
+        controllerValues.RightJoystickY = controllerValueDict["RightJoystickY"]
+        controllerValues.RightJoystickX = controllerValueDict["RightJoystickX"]
+        controllerValues.LeftTrigger = controllerValueDict["LeftTrigger"]
+        controllerValues.RightTrigger = controllerValueDict["RightTrigger"]
+        controllerValues.LeftBumper = controllerValueDict["LeftBumper"]
+        controllerValues.RightBumper = controllerValueDict["RightBumper"]
+        controllerValues.A = controllerValueDict["A"]
+        controllerValues.X = controllerValueDict["X"]
+        controllerValues.Y = controllerValueDict["Y"]
+        controllerValues.B = controllerValueDict["B"]
+        controllerValues.LeftThumb = controllerValueDict["LeftThumb"]
+        controllerValues.RightThumb = controllerValueDict["RightThumb"]
+        controllerValues.Back = controllerValueDict["Back"]
+        controllerValues.Start = controllerValueDict["Start"]
+        controllerValues.DpadY = controllerValueDict["DpadY"]
+        controllerValues.DpadX = controllerValueDict["DpadX"]
+        return controllerValues
+
+
+    def getDict(self):
+        return {'LeftJoystickY': self.LeftJoystickY, 'LeftJoystickX': self.LeftJoystickX, 'RightJoystickY': self.RightJoystickY, 'RightJoystickX': self.RightJoystickX,
+         'LeftTrigger': self.LeftTrigger, 'RightTrigger': self.RightTrigger, 'LeftBumper': self.LeftBumper, 'RightBumper': self.RightBumper, 'A': self.A, 'X': self.X, 'Y': self.Y,
+         'B': self.X, 'LeftThumb': self.LeftThumb, 'RightThumb': self.RightThumb, 'Menu': self.Menu, 'Start': self.Start, 'DpadY': self.DpadY, 'DpadX': self.DpadX}
+
+
+
 class Controller:
     """
     `Note: Some code in this class is a modified version of the tensorkart project's implementation of controller
@@ -61,9 +95,7 @@ class Controller:
     MAX_TRIG_VAL = float(256)
     MAX_JOY_VAL = float(32768)
 
-    controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
-                        'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
-                        'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
+    controllerValues = ControllerValues()
 
     def __init__(self, controllerPort: int):
         self.controllerPort = controllerPort
@@ -86,47 +118,41 @@ class Controller:
             events = gamepad.read()
             for event in events:
                 if event.code == 'ABS_Y':
-                    self.controllerValues[
-                        'LeftJoystickY'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.LeftJoystickY = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_X':
-                    self.controllerValues[
-                        'LeftJoystickX'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.LeftJoystickX = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_RY':
-                    self.controllerValues[
-                        'RightJoystickY'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.RightJoystickY = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_RX':
-                    self.controllerValues[
-                        'RightJoystickX'] = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
+                    self.controllerValues.RightJoystickX = event.state / Controller.MAX_JOY_VAL  # normalize between -1 and 1
                 elif event.code == 'ABS_Z':
-                    self.controllerValues[
-                        'LeftTrigger'] = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
+                    self.controllerValues.LeftTrigger = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
                 elif event.code == 'ABS_RZ':
-                    self.controllerValues[
-                        'RightTrigger'] = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
+                    self.controllerValues.RightTrigger = event.state / Controller.MAX_TRIG_VAL  # normalize between 0 and 1
                 elif event.code == 'BTN_TL':
-                    self.controllerValues['LeftBumper'] = event.state
+                    self.controllerValues.LeftBumper = event.state
                 elif event.code == 'BTN_TR':
-                    self.controllerValues['RightBumper'] = event.state
+                    self.controllerValues.RightBumper = event.state
                 elif event.code == 'BTN_SOUTH':
-                    self.controllerValues['A'] = event.state
+                    self.controllerValues.A = event.state
                 elif event.code == 'BTN_NORTH':
-                    self.controllerValues['X'] = event.state
+                    self.controllerValues.X = event.state
                 elif event.code == 'BTN_WEST':
-                    self.controllerValues['Y'] = event.state
+                    self.controllerValues.Y = event.state
                 elif event.code == 'BTN_EAST':
-                    self.controllerValues['B'] = event.state
+                    self.controllerValues.B = event.state
                 elif event.code == 'BTN_THUMBL':
-                    self.controllerValues['LeftThumb'] = event.state
+                    self.controllerValues.LeftThumb = event.state
                 elif event.code == 'BTN_THUMBR':
-                    self.controllerValues['RightThumb'] = event.state
+                    self.controllerValues.RightThumb = event.state
                 elif event.code == 'BTN_SELECT':
-                    self.controllerValues['Back'] = event.state
+                    self.controllerValues.Back = event.state
                 elif event.code == 'BTN_START':
-                    self.controllerValues['Start'] = event.state
+                    self.controllerValues.Start = event.state
                 elif event.code == 'ABS_HAT0Y':
-                    self.controllerValues['DpadY'] = -event.state
+                    self.controllerValues.DpadY = -event.state
                 elif event.code == 'ABS_HAT0X':
-                    self.controllerValues['DpadX'] = event.state
+                    self.controllerValues.DpadX = event.state
 
 
 class Motor:
@@ -346,9 +372,7 @@ class UI:
 
     fullscreen = False
 
-    controllerValues = {'LeftJoystickY': 0, 'LeftJoystickX': 0, 'RightJoystickY': 0, 'RightJoystickX': 0,
-                        'LeftTrigger': 0, 'RightTrigger': 0, 'LeftBumper': 0, 'RightBumper': 0, 'A': 0, 'X': 0, 'Y': 0,
-                        'B': 0, 'LeftThumb': 0, 'RightThumb': 0, 'Menu': 0, 'Start': 0, 'DpadY': 0, 'DpadX': 0}
+    controllerValues = ControllerValues()
 
     menus = {}
 
@@ -544,12 +568,12 @@ class UI:
 
             # input display manager
             if self.menus.get("input", True):
-                inputJoyLeftX.set(float(self.controllerValues.get("LeftJoystickX")))
-                inputJoyLeftY.set(float(self.controllerValues.get("LeftJoystickY")))
-                inputJoyRightX.set(float(self.controllerValues.get("RightJoystickX")))
-                inputJoyRightY.set(float(self.controllerValues.get("RightJoystickY")))
-                inputTrigLeft.set(float(self.controllerValues.get("LeftTrigger")))
-                inputTrigRight.set(float(self.controllerValues.get("RightTrigger")))
+                inputJoyLeftX.set(float(self.controllerValues.LeftJoystickX))
+                inputJoyLeftY.set(float(self.controllerValues.LeftJoystickY))
+                inputJoyRightX.set(float(self.controllerValues.RightJoystickX))
+                inputJoyRightY.set(float(self.controllerValues.RightJoystickY))
+                inputTrigLeft.set(float(self.controllerValues.LeftTrigger))
+                inputTrigRight.set(float(self.controllerValues.RightTrigger))
 
             # log manager
             if self.menus.get("output", True):
