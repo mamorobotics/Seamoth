@@ -1,6 +1,6 @@
 {
  "MotorPWMConfig": [1100, 1500, 1900],
- "ServoPWMConfig": [850, 2350],
+ "ServoPWMConfig": [900, 2100],
  "fl": 1,
  "bl": 2
 }
