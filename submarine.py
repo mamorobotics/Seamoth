@@ -19,8 +19,10 @@ def main():
         if conn.output[0] == 12:
             controllerValues = seamoth.ControllerValues.fromDict(conn.output[1])
 
-        if controllerValues.A > 0:
+        if controllerValues.A > 0.5:
             testServo.setPosition(1)
+        else:
+            testServo.setPosition(0)
 
 
 if __name__ == "__main__":
