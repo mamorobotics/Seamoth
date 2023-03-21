@@ -18,6 +18,7 @@ telemetryLog = {}
 
 try:
     from ctypes import windll
+
     windll.shcore.SetProcessDpiAwareness(1)
 except ImportError or ImportWarning:
     logs.append("[ERROR] ctypes not found; window sharpening not possible\n")
@@ -104,7 +105,6 @@ class ControllerValues:
         controllerValues.DpadX = controllerValueDict["DpadX"]
         return controllerValues
 
-
     def getDict(self):
         """
         Turns a ControllerValue object into a dictionary.
@@ -112,9 +112,8 @@ class ControllerValues:
         :return: dictionary of controller values
         """
         return {'LeftJoystickY': self.LeftJoystickY, 'LeftJoystickX': self.LeftJoystickX, 'RightJoystickY': self.RightJoystickY, 'RightJoystickX': self.RightJoystickX,
-         'LeftTrigger': self.LeftTrigger, 'RightTrigger': self.RightTrigger, 'LeftBumper': self.LeftBumper, 'RightBumper': self.RightBumper, 'A': self.A, 'X': self.X, 'Y': self.Y,
-         'B': self.X, 'LeftThumb': self.LeftThumb, 'RightThumb': self.RightThumb, 'Menu': self.Menu, 'Start': self.Start, 'DpadY': self.DpadY, 'DpadX': self.DpadX}
-
+                'LeftTrigger': self.LeftTrigger, 'RightTrigger': self.RightTrigger, 'LeftBumper': self.LeftBumper, 'RightBumper': self.RightBumper, 'A': self.A, 'X': self.X, 'Y': self.Y,
+                'B': self.X, 'LeftThumb': self.LeftThumb, 'RightThumb': self.RightThumb, 'Back': self.Back, 'Start': self.Start, 'DpadY': self.DpadY, 'DpadX': self.DpadX}
 
 
 class Controller:
@@ -232,7 +231,7 @@ class Motor:
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
             PI.set_mode(self.port, pigpio.OUTPUT)
-            PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
+            PI.set_servo_pulsewidth(self.port, self.hardwareMap["MotorPWMConfig"][1])
             self.calibrateMotor()
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
@@ -286,7 +285,7 @@ class Servo:
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
             PI.set_mode(self.port, pigpio.OUTPUT)
-            PI.set_servo_pulsewidth(self.port, self.hardwareMap[1])
+            PI.set_servo_pulsewidth(self.port, self.hardwareMap["ServoPWMConfig"][0])
             self.calibrateServo()
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
@@ -304,7 +303,7 @@ class Servo:
 
         :param position: position of servo (0 - 1)
         """
-        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][2] - self.hardwareMap["ServoPWMConfig"][0]) + self.hardwareMap["ServoPWMConfig"][0]
+        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][1] - self.hardwareMap["ServoPWMConfig"][0]) + self.hardwareMap["ServoPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
 
@@ -323,18 +322,29 @@ class Camera:
     aptly named ``encode()`` and ``decode()``, and a function for resizing an image, named ``resize()``.
     """
 
-    def __init__(self):
-        self.capture = cv2.VideoCapture(0)
+    _calls = 0
+    _bufferframe = ""
 
-    def readCameraData(self):
+    def readCameraData(self, docallcount=True, callcounts=100):
         """
         Reads the current camera image.
 
+        :param docallcount: optimises the reading the camera by only actually getting new data ever `x` calls; it isn't recommended to set this to false.
+        :param callcounts: changes how many calls call count optimisation will wait before giving you a new image; lowering this value could fix laggy video feeds
+
         :return: Cv2 image object
         """
+        if docallcount:
+            if self._calls == callcounts:
+                self._calls = 1
+            else:
+                self._calls += 1
+                return self._bufferframe
+
         ret, frame = self.capture.read()
         while not ret:
             ret, frame = self.capture.read()
+        self._bufferframe = frame
         return frame
 
     @staticmethod
@@ -376,6 +386,10 @@ class Camera:
         :return: resized Cv2 image object
         """
         return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
+
+    def __init__(self):
+        self.capture = cv2.VideoCapture(0)
+        self._bufferframe = self.readCameraData(False)
 
 
 # all the GUI stuff
@@ -480,7 +494,7 @@ class UI:
             connDetailsFrame = Frame(details, bg=self.backgroundColor)
             connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
-                                                                                                         anchor=W)
+                                                                                                                    anchor=W)
 
             connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor, foreground="#ffffff")
             connDetailsIP.pack(side=TOP, anchor=W)
@@ -492,7 +506,7 @@ class UI:
             connStatusFrame = Frame(details, bg=self.backgroundColor)
             connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
-                                                                                                       anchor=W)
+                                                                                                                  anchor=W)
 
             connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor, foreground="#ffffff")
             connStatus.pack(side=TOP, anchor=W)
@@ -502,7 +516,7 @@ class UI:
             inputDetailsFrame = Frame(details, bg=self.backgroundColor)
             inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0,
-                                                                                                     sticky=W)
+                                                                                                                sticky=W)
 
             inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)

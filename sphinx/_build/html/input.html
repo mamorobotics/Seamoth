@@ -144,11 +144,17 @@ aptly named <code class="docutils literal notranslate"><span class="pre">encode(
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.Camera.readCameraData">
-<span class="sig-name descname"><span class="pre">readCameraData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.readCameraData" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">readCameraData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docallcount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callcounts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.Camera.readCameraData" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the current camera image.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Cv2 image object</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>docallcount</strong> – optimises the reading the camera by only actually getting new data ever <cite>x</cite> calls; it isn’t recommended to set this to false.</p></li>
+<li><p><strong>callcounts</strong> – changes how many calls call count optimisation will wait before giving you a new image; lowering this value could fix laggy video feeds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cv2 image object</p>
 </dd>
 </dl>
 </dd></dl>
