@@ -10,7 +10,7 @@ from inputs import devices
 from threading import Thread
 from tkinter import *
 
-HardwareMapPath = "hardwareMap.txt"
+ResourcesPath = "resources"
 
 logs = []
 
@@ -207,7 +207,7 @@ class Motor:
     The motor class represents a motor. It takes no inputs and has three functions, ``setMotor()``, ``setSpeed()``, ``calibrateMotor()``.
     It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
-    To set a motor you need to have a file within the project directory called hardwareMap.txt,
+    To set a motor you need to have a file within the resources directory called hardwareMap.txt,
     which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
     ``{ "name": port }``
@@ -218,7 +218,7 @@ class Motor:
     """
 
     def __init__(self):
-        self.hardwareMap = json.loads(open(HardwareMapPath, "r").read())
+        self.hardwareMap = json.loads(open(f"{ResourcesPath}/hardwareMap.txt", "r").read())
         self.port = 0
 
     def setMotor(self, name: str):
@@ -261,7 +261,7 @@ class Servo:
     The servo class represents a servo. It takes no inputs and has three functions, ``setServo()``, ``setPosition()``, ``calibrateServo()``.
     It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
-    To set a servo you need to have a file within the project directory called hardwareMap.txt,
+    To set a servo you need to have a file within the resources directory called hardwareMap.txt,
     which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
     ``{ "name": port }``
@@ -272,7 +272,7 @@ class Servo:
     """
 
     def __init__(self):
-        self.hardwareMap = json.loads(open(HardwareMapPath, "r").read())
+        self.hardwareMap = json.loads(open(f"{ResourcesPath}/hardwareMap.txt", "r").read())
         self.port = 0
 
     def setServo(self, name: str):
@@ -562,7 +562,7 @@ class UI:
             image = Label(details)
             image.grid(row=4, column=0)
 
-            img = PIL.Image.open(os.getcwd().replace("\\", "/") + "/uiImage.png")
+            img = PIL.Image.open(os.getcwd().replace("\\", "/") + f"/{ResourcesPath}/logo.png")
 
             r, g, b, alpha = img.split()
             img = ImageOps.colorize(PIL.ImageOps.grayscale(img), (0, 0, 0, 0), self.accentColor)
