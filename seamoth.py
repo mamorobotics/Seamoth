@@ -470,6 +470,7 @@ class UI:
         win = Tk()
         win.title("Seamoth Homebase")
         win.config(bg=self.backgroundColor)
+        win.iconbitmap(f'{ResourcesPath}/favicon.ico')
 
         if self.connInfo[1] == 1951:
             logs.append("Good luck MHS! \n")
