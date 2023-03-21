@@ -6,7 +6,7 @@ def main():
     conn = seamoth.DataConnection()
     controller = seamoth.Controller(0)
 
-    ui = seamoth.UI(videoSize=(1248, 702), accentColor="#cf4100", backgroundColor="#000000")
+    ui = seamoth.UI(videoSize=(1248, 702), accentColor="#187082", backgroundColor="#eeeeee")
 
     ui.connInfo = (conn.IP, 1951)
     ui.connectionStatus = "Waiting for Connection"
