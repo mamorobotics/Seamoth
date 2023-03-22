@@ -5,12 +5,12 @@ import numpy
 import socket
 import os
 import time
-from PIL import ImageTk
+from PIL import ImageTk, Image, ImageOps
 from inputs import devices
 from threading import Thread
 from tkinter import *
 
-PATH = "hardwareMap.txt"
+ResourcesPath = "resources"
 
 logs = []
 
@@ -207,7 +207,7 @@ class Motor:
     The motor class represents a motor. It takes no inputs and has three functions, ``setMotor()``, ``setSpeed()``, ``calibrateMotor()``.
     It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
-    To set a motor you need to have a file within the project directory called hardwareMap.txt,
+    To set a motor you need to have a file within the resources directory called hardwareMap.txt,
     which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
     ``{ "name": port }``
@@ -218,7 +218,7 @@ class Motor:
     """
 
     def __init__(self):
-        self.hardwareMap = json.loads(open(PATH, "r").read())
+        self.hardwareMap = json.loads(open(f"{ResourcesPath}/hardwareMap.txt", "r").read())
         self.port = 0
 
     def setMotor(self, name: str):
@@ -261,7 +261,7 @@ class Servo:
     The servo class represents a servo. It takes no inputs and has three functions, ``setServo()``, ``setPosition()``, ``calibrateServo()``.
     It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.
 
-    To set a servo you need to have a file within the project directory called hardwareMap.txt,
+    To set a servo you need to have a file within the resources directory called hardwareMap.txt,
     which specifies the names and ports of all connected servos and motors. This file should follow the format of:
 
     ``{ "name": port }``
@@ -272,7 +272,7 @@ class Servo:
     """
 
     def __init__(self):
-        self.hardwareMap = json.loads(open(PATH, "r").read())
+        self.hardwareMap = json.loads(open(f"{ResourcesPath}/hardwareMap.txt", "r").read())
         self.port = 0
 
     def setServo(self, name: str):
@@ -438,7 +438,7 @@ class UI:
 
     def _fullscreen(self):
         winFull = Tk()
-        winFull.title("Seamoth Fullscreen")
+        winFull.title(f"Seamoth Fullscreen ({self.teamName})")
 
         videoFull = Label(winFull)
         videoFull.pack()
@@ -468,8 +468,9 @@ class UI:
 
     def _ui(self):
         win = Tk()
-        win.title("Seamoth Homebase")
+        win.title(f"Seamoth Homebase ({self.teamName})")
         win.config(bg=self.backgroundColor)
+        win.iconbitmap(f'{ResourcesPath}/favicon.ico')
 
         if self.connInfo[1] == 1951:
             logs.append("Good luck MHS! \n")
@@ -479,7 +480,7 @@ class UI:
 
         # details
         details = Frame(win, bg=self.backgroundColor)
-        details.grid(row=0, column=1, sticky=N)
+        details.grid(row=0, column=1, sticky=N, rowspan=2)
 
         def fullscreenChange(value):
             if fullscreenSlider.get() == 1:
@@ -493,58 +494,58 @@ class UI:
         if self.menus.get("connDetails", True):
             connDetailsFrame = Frame(details, bg=self.backgroundColor)
             connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
-                                                                                                                    anchor=W)
+            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP,
+                                                                                                                           anchor=W)
 
-            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor, foreground="#ffffff")
+            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor, foreground=self.accentColor)
             connDetailsIP.pack(side=TOP, anchor=W)
-            connDetailsPORT = Label(connDetailsFrame, text="1111", bg=self.backgroundColor, foreground="#ffffff")
+            connDetailsPORT = Label(connDetailsFrame, text="1111", bg=self.backgroundColor, foreground=self.accentColor)
             connDetailsPORT.pack(side=TOP, anchor=W)
 
         # conn status settings
         if self.menus.get("connStatus", True):
             connStatusFrame = Frame(details, bg=self.backgroundColor)
             connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground="#ffffff").pack(side=TOP,
-                                                                                                                  anchor=W)
+            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP,
+                                                                                                                         anchor=W)
 
-            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor, foreground="#ffffff")
+            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor, foreground=self.accentColor)
             connStatus.pack(side=TOP, anchor=W)
 
         # input settings
         if self.menus.get("input", True):
             inputDetailsFrame = Frame(details, bg=self.backgroundColor)
             inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0,
-                                                                                                                sticky=W)
+            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0,
+                                                                                                                       sticky=W)
 
             inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy X", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Left Joy X", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
                                   highlightthickness=0)
             inputJoyLeftX.pack(side=TOP, anchor=W)
             inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy Y", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Left Joy Y", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
                                   highlightthickness=0)
             inputJoyLeftY.pack(side=TOP, anchor=W)
             inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy X", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Right Joy X", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
                                    highlightthickness=0)
             inputJoyRightX.pack(side=TOP, anchor=W)
             inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy Y", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Right Joy Y", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
                                    highlightthickness=0)
             inputJoyRightY.pack(side=TOP, anchor=W)
 
             inputDetailsTrigFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
             inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Left Trigger", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
+                                   label="Left Trigger", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
                                    highlightthickness=0)
             inputTrigRight.pack(side=TOP, anchor=W)
             inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Right Trigger", showvalue=False, bg=self.backgroundColor, foreground="#ffffff",
+                                  label="Right Trigger", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
                                   highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
 
@@ -553,9 +554,26 @@ class UI:
             logDetailsFrame = Frame(details, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
 
-            Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
-            logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60, relief=FLAT)
+            Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
+            logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60)
             logBox.grid(row=1, column=0, sticky=W)
+
+        # image
+        if self.menus.get("image", True):
+            image = Label(details)
+            image.grid(row=4, column=0)
+
+            img = PIL.Image.open(os.getcwd().replace("\\", "/") + f"/{ResourcesPath}/logo.png")
+
+            r, g, b, alpha = img.split()
+            img = ImageOps.colorize(PIL.ImageOps.grayscale(img), (0, 0, 0, 0), self.accentColor)
+            img.putalpha(alpha)
+
+            imgratio = img.height / img.width
+            img = img.resize((int(135 / imgratio), 135))
+            uiImage = ImageTk.PhotoImage(img)
+            image.imgtk = uiImage
+            image.configure(image=uiImage)
 
         # settings
         settings = Frame(win, bg=self.backgroundColor)
@@ -566,25 +584,25 @@ class UI:
             customSettingsFrame = Frame(settings, bg=self.backgroundColor)
             customSettingsFrame.grid(row=0, column=0, sticky=W, pady=5, padx=5)
 
-            Label(customSettingsFrame, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
+            Label(customSettingsFrame, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
 
             customSettingsSlidersFrame = Frame(customSettingsFrame, bg=self.backgroundColor)
             customSettingsSlidersFrame.grid(row=1, column=0, sticky=W, pady=5, padx=5)
 
             customOne = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="1",
-                              bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+                              bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             customOne.pack(side=LEFT, anchor=W)
             customTwo = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="2",
-                              bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+                              bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             customTwo.pack(side=LEFT, anchor=W)
             customThree = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="3",
-                                bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+                                bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             customThree.pack(side=LEFT, anchor=W)
             customFour = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="4",
-                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+                               bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             customFour.pack(side=LEFT, anchor=W)
             customFive = Scale(customSettingsSlidersFrame, from_=0, to=100, resolution=1, orient=VERTICAL, label="5",
-                               bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+                               bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             customFive.pack(side=LEFT, anchor=W)
 
         # video settings
@@ -592,14 +610,14 @@ class UI:
             videoSettingsFrame = Frame(settings, bg=self.backgroundColor)
             videoSettingsFrame.grid(row=0, column=1, sticky=N, pady=5, padx=5)
 
-            Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
+            Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
 
-            Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor, foreground="#ffffff").grid(row=1, column=0, sticky=W)
-            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0, command=fullscreenChange)
+            Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=1, column=0, sticky=W)
+            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0, command=fullscreenChange)
             fullscreenSlider.grid(row=1, column=1, sticky=W)
 
-            Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor, foreground="#ffffff").grid(row=2, column=0, sticky=W)
-            pauseSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground="#ffffff", highlightthickness=0)
+            Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=2, column=0, sticky=W)
+            pauseSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             pauseSlider.grid(row=2, column=1, sticky=W)
 
         # telemetry
@@ -607,8 +625,8 @@ class UI:
             telemetryFrame = Frame(settings, bg=self.backgroundColor)
             telemetryFrame.grid(row=0, column=2, sticky=N, pady=5, padx=5)
 
-            Label(telemetryFrame, text="TELEMETRY:", bg=self.backgroundColor, foreground="#ffffff").grid(row=0, column=0, sticky=W)
-            telemetryBox = Text(telemetryFrame, bg=self.backgroundColor, foreground=self.accentColor, height=4, width=32, relief=FLAT)
+            Label(telemetryFrame, text="TELEMETRY:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
+            telemetryBox = Text(telemetryFrame, bg=self.backgroundColor, foreground=self.accentColor, height=4, width=32)
             telemetryBox.grid(row=1, column=0, sticky=W)
 
         # main loop
@@ -661,23 +679,24 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus=None, accentColor: str = "#ffffff", backgroundColor: str = "#3f3f3f", foregroundColor: str = "#585654"):
+    def __init__(self, videoSize: tuple = (1248, 702), menus=None, accentColor: str = "#187082", backgroundColor: str = "#eeeeee", teamName: str = "MHS Tiger Sharks"):
         if menus is None:
             menus = {}
         self.running = True
         self.menus = menus
-        self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=(82, 82, 82)))
+        self.frame = numpy.array(PIL.Image.new(mode="RGB", size=videoSize, color=rgbFromHex(backgroundColor)))
         self.connectionStatus = "Starting"
         self.connInfo = ("1.1.1.1", "1111")
         self.mainthread = Thread(target=self._ui, args=())
         self.mainthread.start()
 
-        self.accentColor = accentColor
         self.backgroundColor = backgroundColor
-        self.foregroundColor = foregroundColor
+
+        self.accentColor = accentColor
 
         self.videoFullscreen = False
         self.videoPaused = False
+        self.teamName = teamName
 
 
 # black magic voodoo, don't really feel like commenting all of it
@@ -801,3 +820,11 @@ class DataConnection:
         self.connection.send(send_length)
         self.connection.send(header)
         self.connection.send(msg)
+
+
+def rgbFromHex(hex_string):
+    r = int(hex_string[1:3], 16)
+    g = int(hex_string[3:5], 16)
+    b = int(hex_string[5:7], 16)
+
+    return r, g, b
