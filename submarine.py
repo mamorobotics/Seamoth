@@ -4,8 +4,10 @@ import seamoth
 def main():
     camera = seamoth.Camera()
     conn = seamoth.DataConnection()
+
     testMotor = seamoth.Motor()
     testServo = seamoth.Servo()
+
     controllerValues = seamoth.ControllerValues()
 
     testMotor.setMotor("testMotor")
@@ -19,10 +21,9 @@ def main():
         if conn.output[0] == 12:
             controllerValues = seamoth.ControllerValues.fromDict(conn.output[1])
 
-        if controllerValues.A > 0.5:
-            testServo.setPosition(1)
-        else:
-            testServo.setPosition(0)
+        testServo.setPosition(controllerValues.RightTrigger)
+
+        testMotor.setSpeed(controllerValues.LeftJoystickY)
 
 
 if __name__ == "__main__":

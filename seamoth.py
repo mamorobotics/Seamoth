@@ -438,7 +438,7 @@ class UI:
 
     def _fullscreen(self):
         winFull = Tk()
-        winFull.title("Seamoth Fullscreen")
+        winFull.title(f"Seamoth Fullscreen ({self.teamName})")
 
         videoFull = Label(winFull)
         videoFull.pack()
@@ -468,7 +468,7 @@ class UI:
 
     def _ui(self):
         win = Tk()
-        win.title("Seamoth Homebase")
+        win.title(f"Seamoth Homebase ({self.teamName})")
         win.config(bg=self.backgroundColor)
         win.iconbitmap(f'{ResourcesPath}/favicon.ico')
 
@@ -679,7 +679,7 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (640, 480), menus=None, accentColor: str = "", backgroundColor: str = "#3f3f3f"):
+    def __init__(self, videoSize: tuple = (1248, 702), menus=None, accentColor: str = "#187082", backgroundColor: str = "#eeeeee", teamName: str = "MHS Tiger Sharks"):
         if menus is None:
             menus = {}
         self.running = True
@@ -690,13 +690,13 @@ class UI:
         self.mainthread = Thread(target=self._ui, args=())
         self.mainthread.start()
 
-        self.accentColor = accentColor
         self.backgroundColor = backgroundColor
 
-        self.accentColor = invertHex(backgroundColor) if accentColor == "" else accentColor
+        self.accentColor = accentColor
 
         self.videoFullscreen = False
         self.videoPaused = False
+        self.teamName = teamName
 
 
 # black magic voodoo, don't really feel like commenting all of it
@@ -820,14 +820,6 @@ class DataConnection:
         self.connection.send(send_length)
         self.connection.send(header)
         self.connection.send(msg)
-
-
-def invertHex(hex_string):
-    r = 255 - int(hex_string[1:3], 16)
-    g = 255 - int(hex_string[3:5], 16)
-    b = 255 - int(hex_string[5:7], 16)
-
-    return '#%02x%02x%02x' % (r, g, b)
 
 
 def rgbFromHex(hex_string):
