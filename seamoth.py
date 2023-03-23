@@ -560,7 +560,7 @@ class UI:
 
         # image
         if self.menus.get("image", True):
-            image = Label(details)
+            image = Label(details, bg=self.backgroundColor)
             image.grid(row=4, column=0)
 
             img = PIL.Image.open(os.getcwd().replace("\\", "/") + f"/{ResourcesPath}/logo.png")
