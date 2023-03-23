@@ -77,43 +77,47 @@ class ControllerValues:
     DpadX = 0
 
     @staticmethod
-    def fromDict(controllerValueDict):
+    def fromString(controllerValueString: str):
         """
         Turns a dictionary into a ControllerValue object.
 
         :param controllerValueDict: dictionary of controller values
         :return: ControllerValues object
         """
+
+        controllerValueList = json.loads(controllerValueString)
+
         controllerValues = ControllerValues()
-        controllerValues.LeftJoystickY = controllerValueDict["LeftJoystickY"]
-        controllerValues.LeftJoystickX = controllerValueDict["LeftJoystickX"]
-        controllerValues.RightJoystickY = controllerValueDict["RightJoystickY"]
-        controllerValues.RightJoystickX = controllerValueDict["RightJoystickX"]
-        controllerValues.LeftTrigger = controllerValueDict["LeftTrigger"]
-        controllerValues.RightTrigger = controllerValueDict["RightTrigger"]
-        controllerValues.LeftBumper = controllerValueDict["LeftBumper"]
-        controllerValues.RightBumper = controllerValueDict["RightBumper"]
-        controllerValues.A = controllerValueDict["A"]
-        controllerValues.X = controllerValueDict["X"]
-        controllerValues.Y = controllerValueDict["Y"]
-        controllerValues.B = controllerValueDict["B"]
-        controllerValues.LeftThumb = controllerValueDict["LeftThumb"]
-        controllerValues.RightThumb = controllerValueDict["RightThumb"]
-        controllerValues.Back = controllerValueDict["Back"]
-        controllerValues.Start = controllerValueDict["Start"]
-        controllerValues.DpadY = controllerValueDict["DpadY"]
-        controllerValues.DpadX = controllerValueDict["DpadX"]
+        controllerValues.LeftJoystickY = controllerValueList[0]
+        controllerValues.LeftJoystickX = controllerValueList[1]
+        controllerValues.RightJoystickY = controllerValueList[2]
+        controllerValues.RightJoystickX = controllerValueList[3]
+        controllerValues.LeftTrigger = controllerValueList[4]
+        controllerValues.RightTrigger = controllerValueList[5]
+        controllerValues.LeftBumper = controllerValueList[6]
+        controllerValues.RightBumper = controllerValueList[7]
+        controllerValues.A = controllerValueList[8]
+        controllerValues.X = controllerValueList[9]
+        controllerValues.Y = controllerValueList[10]
+        controllerValues.B = controllerValueList[11]
+        controllerValues.LeftThumb = controllerValueList[12]
+        controllerValues.RightThumb = controllerValueList[13]
+        controllerValues.Back = controllerValueList[14]
+        controllerValues.Start = controllerValueList[15]
+        controllerValues.DpadY = controllerValueList[16]
+        controllerValues.DpadX = controllerValueList[17]
         return controllerValues
 
-    def getDict(self):
+    def toString(self) -> str:
         """
-        Turns a ControllerValue object into a dictionary.
+        Turns a ControllerValue object into a string for easy network sending.
 
-        :return: dictionary of controller values
+        :return: string containing the controller values
         """
-        return {'LeftJoystickY': self.LeftJoystickY, 'LeftJoystickX': self.LeftJoystickX, 'RightJoystickY': self.RightJoystickY, 'RightJoystickX': self.RightJoystickX,
-                'LeftTrigger': self.LeftTrigger, 'RightTrigger': self.RightTrigger, 'LeftBumper': self.LeftBumper, 'RightBumper': self.RightBumper, 'A': self.A, 'X': self.X, 'Y': self.Y,
-                'B': self.X, 'LeftThumb': self.LeftThumb, 'RightThumb': self.RightThumb, 'Back': self.Back, 'Start': self.Start, 'DpadY': self.DpadY, 'DpadX': self.DpadX}
+        return json.dumps(
+            [self.LeftJoystickY, self.LeftJoystickX, self.RightJoystickY, self.RightJoystickX, self.LeftTrigger,
+             self.RightTrigger, self.LeftBumper, self.RightBumper, self.A, self.X, self.Y, self.B, self.LeftThumb,
+             self.RightThumb, self.Back, self.Start, self.DpadY, self.DpadX])
 
 
 class Controller:
@@ -249,7 +253,9 @@ class Motor:
 
         :param speed: speed of motor (-1 - 1)
         """
-        pwmSignal = ((speed + 1) / 2) * (self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + self.hardwareMap["MotorPWMConfig"][0]
+        pwmSignal = ((speed + 1) / 2) * (
+                    self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + \
+                    self.hardwareMap["MotorPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
 
@@ -494,9 +500,7 @@ class UI:
         if self.menus.get("connDetails", True):
             connDetailsFrame = Frame(details, bg=self.backgroundColor)
             connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP,
-                                                                                                                           anchor=W)
-
+            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP, anchor=W)
             connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor, foreground=self.accentColor)
             connDetailsIP.pack(side=TOP, anchor=W)
             connDetailsPORT = Label(connDetailsFrame, text="1111", bg=self.backgroundColor, foreground=self.accentColor)
@@ -506,9 +510,7 @@ class UI:
         if self.menus.get("connStatus", True):
             connStatusFrame = Frame(details, bg=self.backgroundColor)
             connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP,
-                                                                                                                         anchor=W)
-
+            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP, anchor=W)
             connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor, foreground=self.accentColor)
             connStatus.pack(side=TOP, anchor=W)
 
@@ -516,8 +518,7 @@ class UI:
         if self.menus.get("input", True):
             inputDetailsFrame = Frame(details, bg=self.backgroundColor)
             inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0,
-                                                                                                                       sticky=W)
+            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
 
             inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
@@ -553,7 +554,6 @@ class UI:
         if self.menus.get("output", True):
             logDetailsFrame = Frame(details, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
-
             Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
             logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60)
             logBox.grid(row=1, column=0, sticky=W)
@@ -624,7 +624,6 @@ class UI:
         if self.menus.get("telemetry", True):
             telemetryFrame = Frame(settings, bg=self.backgroundColor)
             telemetryFrame.grid(row=0, column=2, sticky=N, pady=5, padx=5)
-
             Label(telemetryFrame, text="TELEMETRY:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
             telemetryBox = Text(telemetryFrame, bg=self.backgroundColor, foreground=self.accentColor, height=4, width=32)
             telemetryBox.grid(row=1, column=0, sticky=W)

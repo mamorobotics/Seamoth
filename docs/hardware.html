@@ -12,7 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -68,6 +69,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Software</a></li>
 </ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="submarine.html">Submarine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="homebase.html">Homebase</a></li>
+</ul>
 
         </div>
       </div>
@@ -103,7 +108,7 @@
 <dd><p><strong>Motor is not multithreaded, expect some lag on initialization as we set up stuff</strong></p>
 <p>The motor class represents a motor. It takes no inputs and has three functions, <code class="docutils literal notranslate"><span class="pre">setMotor()</span></code>, <code class="docutils literal notranslate"><span class="pre">setSpeed()</span></code>, <code class="docutils literal notranslate"><span class="pre">calibrateMotor()</span></code>.
 It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.</p>
-<p>To set a motor you need to have a file within the project directory called hardwareMap.txt,
+<p>To set a motor you need to have a file within the resources directory called hardwareMap.txt,
 which specifies the names and ports of all connected servos and motors. This file should follow the format of:</p>
 <p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">port</span> <span class="pre">}</span></code></p>
 <p>the file should also have a config of the pwm values used by your esc as such:</p>
@@ -147,7 +152,7 @@ which specifies the names and ports of all connected servos and motors. This fil
 <dd><p><strong>Servo is not multithreaded, expect some lag on initialization as we set up stuff.</strong></p>
 <p>The servo class represents a servo. It takes no inputs and has three functions, <code class="docutils literal notranslate"><span class="pre">setServo()</span></code>, <code class="docutils literal notranslate"><span class="pre">setPosition()</span></code>, <code class="docutils literal notranslate"><span class="pre">calibrateServo()</span></code>.
 It is designed to be used with the Blue Robotics ESC but theoretically can work with any esc.</p>
-<p>To set a servo you need to have a file within the project directory called hardwareMap.txt,
+<p>To set a servo you need to have a file within the resources directory called hardwareMap.txt,
 which specifies the names and ports of all connected servos and motors. This file should follow the format of:</p>
 <p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">port</span> <span class="pre">}</span></code></p>
 <p>the file should also have a config of the pwm values used by your esc as such:</p>

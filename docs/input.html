@@ -12,7 +12,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -61,8 +62,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#controller-values">Controller Values</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#seamoth.ControllerValues"><code class="docutils literal notranslate"><span class="pre">ControllerValues</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.ControllerValues.fromDict"><code class="docutils literal notranslate"><span class="pre">ControllerValues.fromDict()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.ControllerValues.getDict"><code class="docutils literal notranslate"><span class="pre">ControllerValues.getDict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.ControllerValues.fromString"><code class="docutils literal notranslate"><span class="pre">ControllerValues.fromString()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#seamoth.ControllerValues.toString"><code class="docutils literal notranslate"><span class="pre">ControllerValues.toString()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -71,6 +72,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Hardware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Software</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="submarine.html">Submarine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="homebase.html">Homebase</a></li>
 </ul>
 
         </div>
@@ -221,8 +226,8 @@ controllerVaues = ControllerValues()</p>
 <p>controllerValues = ControllerValues.fromDict(dict)
 ``</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="seamoth.ControllerValues.fromDict">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerValueDict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.ControllerValues.fromDict" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="seamoth.ControllerValues.fromString">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerValueString</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.ControllerValues.fromString" title="Permalink to this definition"></a></dt>
 <dd><p>Turns a dictionary into a ControllerValue object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -235,12 +240,12 @@ controllerVaues = ControllerValues()</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="seamoth.ControllerValues.getDict">
-<span class="sig-name descname"><span class="pre">getDict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.ControllerValues.getDict" title="Permalink to this definition"></a></dt>
-<dd><p>Turns a ControllerValue object into a dictionary.</p>
+<dt class="sig sig-object py" id="seamoth.ControllerValues.toString">
+<span class="sig-name descname"><span class="pre">toString</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#seamoth.ControllerValues.toString" title="Permalink to this definition"></a></dt>
+<dd><p>Turns a ControllerValue object into a string for easy network sending.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dictionary of controller values</p>
+<dd class="field-odd"><p>string containing the controller values</p>
 </dd>
 </dl>
 </dd></dl>
