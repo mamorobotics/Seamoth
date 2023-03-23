@@ -1,4 +1,3 @@
-import json
 import seamoth
 
 
@@ -20,7 +19,7 @@ def main():
                 ui.frame = seamoth.Camera.decode(conn.output[1])
 
             ui.controllerValues = controller.controllerValues
-            conn.send(json.dumps(controller.controllerValues.getDict()).encode('utf-8'), 12)
+            conn.send(controller.controllerValues.getDict().encode('utf-8'), 12)
 
 
 if __name__ == "__main__":
