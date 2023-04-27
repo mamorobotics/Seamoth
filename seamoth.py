@@ -253,9 +253,7 @@ class Motor:
 
         :param speed: speed of motor (-1 - 1)
         """
-        pwmSignal = ((speed + 1) / 2) * (
-                    self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + \
-                    self.hardwareMap["MotorPWMConfig"][0]
+        pwmSignal = ((speed + 1) / 2) * (self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + self.hardwareMap["MotorPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
 
@@ -442,6 +440,12 @@ class UI:
 
     menus = {}
 
+    customOne = 0
+    customTwo = 0
+    customThree = 0
+    customFour = 0
+    customFive = 0
+
     def _fullscreen(self):
         winFull = Tk()
         winFull.title(f"Seamoth Fullscreen ({self.teamName})")
@@ -560,7 +564,7 @@ class UI:
 
         # image
         if self.menus.get("image", True):
-            image = Label(details)
+            image = Label(details, bg=self.backgroundColor)
             image.grid(row=4, column=0)
 
             img = PIL.Image.open(os.getcwd().replace("\\", "/") + f"/{ResourcesPath}/logo.png")
@@ -642,6 +646,14 @@ class UI:
 
             if self.menus.get("connStatus", True):
                 connStatus.configure(text=self.connectionStatus)
+
+            # custom values manager
+            if self.menus.get("custom", True):
+                self.customOne = customOne.get()
+                self.customTwo = customTwo.get()
+                self.customThree = customThree.get()
+                self.customFour = customFour.get()
+                self.customFive = customFive.get()
 
             # input display manager
             if self.menus.get("input", True):
@@ -726,7 +738,12 @@ class DataConnection:
                     pass
 
             header = int(self.connection.recv(16).decode('utf-8'))
-            message = self.connection.recv(int(msg_len), socket.MSG_WAITALL)
+
+            message = bytearray()
+            while len(message) < int(msg_len):
+                packet = self.connection.recv(int(msg_len) - len(message))
+                message.extend(packet)
+
             if header == 1:
                 logs.append("[ERROR]" + message.decode('utf-8') + "\n")
             if header == 2:
