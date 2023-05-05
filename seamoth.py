@@ -781,7 +781,7 @@ class DataConnection:
                 for func in self.recvFunctions:
                     func((header, message))
 
-    def onRevieve(self, func):
+    def onReceive(self, func):
         """
         Calls function ``func`` whenever a message is received. The message is passed into the function.
         This can be done as such:
