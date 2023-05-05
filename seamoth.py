@@ -492,7 +492,7 @@ class UI:
 
         self.frame = frame
         diff = datetime.datetime.now() - self.frameTimeLast
-        self.fps = round((1000/ (diff.microseconds / 1000) + (self.fps * 50)) / 51)
+        self.fps = round((1000/ (diff.microseconds / 1000) + (self.fps * 10)) / 11)
         self.frameTimeLast = datetime.datetime.now()
 
 
@@ -747,6 +747,7 @@ class DataConnection:
 
     output = (0, b'')
     connected = False
+    recvFunctions = []
 
     def __init__(self):
         self.IP = socket.gethostbyname(socket.gethostname())
@@ -776,6 +777,24 @@ class DataConnection:
                 telemetryLog[msgParts[0]] = msgParts[1]
             if header > 10:
                 self.output = (header, message)
+
+                for func in self.recvFunctions:
+                    func((header, message))
+
+    def onRevieve(self, func):
+        """
+        Calls function ``func`` whenever a message is received. The message is passed into the function.
+        This can be done as such:
+
+        def setFrame(output):
+            ui.setFrame(output[1])
+
+        conn.onRecieve(setFrame)
+
+        :param func: function to be called. must contain a input for a message value
+        :return:
+        """
+        self.recvFunctions.append(func)
 
     def clientStart(self, ip: str, port: int):
         """
