@@ -16,10 +16,10 @@ def main():
 
         if conn.output[0] > 0:
             if conn.output[0] == 11:
-                ui.frame = seamoth.Camera.decode(conn.output[1])
+                ui.setFrame(seamoth.Camera.decode(conn.output[1]))
 
             ui.controllerValues = controller.controllerValues
-            conn.send(controller.controllerValues.getDict().encode('utf-8'), 12)
+            conn.send(controller.controllerValues.toString().encode('utf-8'), 12)
 
 
 if __name__ == "__main__":

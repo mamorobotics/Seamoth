@@ -13,7 +13,7 @@ def main():
     testMotor.setMotor("testMotor")
     testServo.setServo("testServo")
 
-    conn.clientStart("0.0.0.0", 2000)
+    conn.clientStart("10.11.105.44", 2000)
 
     while True:
         conn.send(seamoth.Camera.encode(seamoth.Camera.resize(camera.readCameraData(), 1248, 702), 90))
