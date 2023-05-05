@@ -1,3 +1,6 @@
+import datetime
+import blosc
+import pickle
 import PIL
 import cv2
 import json
@@ -329,7 +332,7 @@ class Camera:
     _calls = 0
     _bufferframe = ""
 
-    def readCameraData(self, docallcount=True, callcounts=100):
+    def readCameraData(self, docallcount=False, callcounts=100):
         """
         Reads the current camera image.
 
@@ -363,7 +366,7 @@ class Camera:
         """
 
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), int(quality)]
-        return cv2.imencode('.jpg', image, encode_param)[1].tobytes()
+        return blosc.compress(pickle.dumps(cv2.imencode('.jpg', image, encode_param)[1]))
 
     @staticmethod
     def decode(image):
@@ -375,7 +378,7 @@ class Camera:
         :return: Cv2 image object
         """
 
-        npimg = numpy.frombuffer(image, numpy.uint8)
+        npimg = numpy.frombuffer(pickle.loads(blosc.decompress(image)), numpy.uint8)
         return cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
     @staticmethod
@@ -446,6 +449,9 @@ class UI:
     customFour = 0
     customFive = 0
 
+    fps = 60
+    frameTimeLast = datetime.datetime.now()
+
     def _fullscreen(self):
         winFull = Tk()
         winFull.title(f"Seamoth Fullscreen ({self.teamName})")
@@ -475,6 +481,20 @@ class UI:
 
     def closeFullscreen(self):
         self.fullscreenthread.join()
+
+    def setFrame(self, frame):
+        """
+        Sets a frame
+
+        :param frame: an image from the camera class
+        :return:
+        """
+
+        self.frame = frame
+        diff = datetime.datetime.now() - self.frameTimeLast
+        self.fps = round((1000/ (diff.microseconds / 1000) + (self.fps * 50)) / 51)
+        self.frameTimeLast = datetime.datetime.now()
+
 
     def _ui(self):
         win = Tk()
@@ -509,6 +529,8 @@ class UI:
             connDetailsIP.pack(side=TOP, anchor=W)
             connDetailsPORT = Label(connDetailsFrame, text="1111", bg=self.backgroundColor, foreground=self.accentColor)
             connDetailsPORT.pack(side=TOP, anchor=W)
+            fpsLabel = Label(connDetailsFrame, text="0", bg=self.backgroundColor, foreground=self.accentColor)
+            fpsLabel.pack(side=TOP, anchor=W)
 
         # conn status settings
         if self.menus.get("connStatus", True):
@@ -643,6 +665,7 @@ class UI:
             if self.menus.get("connDetails", True):
                 connDetailsIP.configure(text=f"IP: {self.connInfo[0]}")
                 connDetailsPORT.configure(text=f"PORT: {self.connInfo[1]}")
+                fpsLabel.configure(text=f"FPS: {self.fps}")
 
             if self.menus.get("connStatus", True):
                 connStatus.configure(text=self.connectionStatus)
