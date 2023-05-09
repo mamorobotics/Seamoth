@@ -256,6 +256,8 @@ class Motor:
 
         :param speed: speed of motor (-1 - 1)
         """
+
+        speed = clamp(speed, -1, 1)
         pwmSignal = ((speed + 1) / 2) * (self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + self.hardwareMap["MotorPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
@@ -310,6 +312,7 @@ class Servo:
 
         :param position: position of servo (0 - 1)
         """
+        position = clamp(position, 0, 1)
         pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][1] - self.hardwareMap["ServoPWMConfig"][0]) + self.hardwareMap["ServoPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
@@ -492,7 +495,7 @@ class UI:
 
         self.frame = frame
         diff = datetime.datetime.now() - self.frameTimeLast
-        self.fps = round((1000/ (diff.microseconds / 1000) + (self.fps * 10)) / 11)
+        self.fps = round((1000 / (diff.microseconds / 1000 + .01) + (self.fps * 10)) / 11)
         self.frameTimeLast = datetime.datetime.now()
 
 
@@ -886,3 +889,10 @@ def rgbFromHex(hex_string):
     b = int(hex_string[5:7], 16)
 
     return r, g, b
+
+def clamp(i, max, min):
+    if i > max:
+        return max
+    if i < min:
+        return min
+    return i
