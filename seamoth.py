@@ -327,27 +327,20 @@ class Camera:
     _calls = 0
     _bufferframe = ""
 
-    def readCameraData(self, docallcount=False, callcounts=100):
+    def _queryCamera(self):
+        while True:
+            ret, frame = self.capture.read()
+            while not ret:
+                ret, frame = self.capture.read()
+            self.frame = frame
+
+    def readCameraData(self):
         """
         Reads the current camera image.
 
-        :param docallcount: optimises the reading the camera by only actually getting new data ever `x` calls; it isn't recommended to set this to false.
-        :param callcounts: changes how many calls call count optimisation will wait before giving you a new image; lowering this value could fix laggy video feeds
-
         :return: Cv2 image object
         """
-        if docallcount:
-            if self._calls == callcounts:
-                self._calls = 1
-            else:
-                self._calls += 1
-                return self._bufferframe
-
-        ret, frame = self.capture.read()
-        while not ret:
-            ret, frame = self.capture.read()
-        self._bufferframe = frame
-        return frame
+        return self.frame
 
     @staticmethod
     def encode(image, quality: int):
@@ -389,9 +382,18 @@ class Camera:
         """
         return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
 
-    def __init__(self):
+    def __init__(self, size: tuple = (1248, 702)):
         self.capture = cv2.VideoCapture(0)
-        self._bufferframe = self.readCameraData(False)
+        self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, size[0])
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, size[1])
+
+        ret, frame = self.capture.read()
+        while not ret:
+            ret, frame = self.capture.read()
+        self.frame = frame
+
+        Thread(target=self._queryCamera, args=()).start()
 
 
 # all the GUI stuff
@@ -489,7 +491,6 @@ class UI:
         diff = datetime.datetime.now() - self.frameTimeLast
         self.fps = round((1000 / (diff.microseconds / 1000 + .01) + (self.fps * 10)) / 11)
         self.frameTimeLast = datetime.datetime.now()
-
 
     def _ui(self):
         win = Tk()
@@ -879,6 +880,7 @@ def rgbFromHex(hex_string):
     b = int(hex_string[5:7], 16)
 
     return r, g, b
+
 
 def clamp(i, max, min):
     if i > max:
