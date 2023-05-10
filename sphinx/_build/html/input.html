@@ -192,11 +192,11 @@ input detection by kevinhughes27 on GitHub.</cite></p>
 <p>Controllers are currently tested to work with XInput designed controllers,
 however controls should be relatively normalized for other types of controllers.
 The class runs in a separate thread to read controller input and assigns read values to an internal
-buffer in the object. Reading the controllers in your main loop is as simple as referencing that buffer such as:</p>
-<p>``
-controller = Controller()</p>
-<p>values = controller.controllerValues
-``</p>
+buffer in the object.</p>
+<p>Reading the controllers in your main loop is as simple as creating a controller object:
+<code class="docutils literal notranslate"><span class="pre">controller</span> <span class="pre">=</span> <span class="pre">Controller()</span></code></p>
+<p>and then gabbing the controllerValue buffer:
+<code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">controller.controllerValues</span></code></p>
 <p>These values are returned as a ControllerValue object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -213,15 +213,9 @@ controller = Controller()</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">ControllerValues</span></span><a class="headerlink" href="#seamoth.ControllerValues" title="Permalink to this definition"></a></dt>
 <dd><p>A class primarily used to store the values of the controller. It is returned by the controller class when you try to access its values.</p>
 <p>To send it over a data connection you can access its value in a dictionary format with:</p>
-<p>``
-controllerVaues = ControllerValues()</p>
-<p>dict = controllerValues.getDict()
-``</p>
+<p><code class="docutils literal notranslate"><span class="pre">dict</span> <span class="pre">=</span> <span class="pre">values.getDict()</span></code></p>
 <p>and you can turn this dict back into a Controller values object using from dict as such:</p>
-<p>``
-controllerVaues = ControllerValues()</p>
-<p>controllerValues = ControllerValues.fromDict(dict)
-``</p>
+<p><code class="docutils literal notranslate"><span class="pre">values</span> <span class="pre">=</span> <span class="pre">ControllerValues.fromDict(dict)</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.ControllerValues.fromString">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">controllerValueString</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.ControllerValues.fromString" title="Permalink to this definition"></a></dt>

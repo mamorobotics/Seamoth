@@ -186,11 +186,8 @@ This buffer stores the main message and the specified header as <code class="doc
 <span class="sig-name descname"><span class="pre">onReceive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.onReceive" title="Permalink to this definition"></a></dt>
 <dd><p>Calls function <code class="docutils literal notranslate"><span class="pre">func</span></code> whenever a message is received. The message is passed into the function.
 This can be done as such:</p>
-<dl class="simple">
-<dt>def setFrame(output):</dt><dd><p>ui.setFrame(output[1])</p>
-</dd>
-</dl>
-<p>conn.onRecieve(setFrame)</p>
+<p><code class="docutils literal notranslate"><span class="pre">conn.onRecieve(setFrame)</span></code>
+Where <code class="docutils literal notranslate"><span class="pre">setFrane</span></code> is a function that handles your frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>func</strong> – function to be called. must contain a input for a message value</p>
