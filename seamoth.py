@@ -44,20 +44,12 @@ class ControllerValues:
     A class primarily used to store the values of the controller. It is returned by the controller class when you try to access its values.
 
     To send it over a data connection you can access its value in a dictionary format with:
-
-    ``
-    controllerVaues = ControllerValues()
-
-    dict = controllerValues.getDict()
-    ``
+    
+    ``dict = values.getDict()``
 
     and you can turn this dict back into a Controller values object using from dict as such:
-
-    ``
-    controllerVaues = ControllerValues()
-
-    controllerValues = ControllerValues.fromDict(dict)
-    ``
+    
+    ``values = ControllerValues.fromDict(dict)``
     """
 
     LeftJoystickY = 0
@@ -131,13 +123,13 @@ class Controller:
     Controllers are currently tested to work with XInput designed controllers,
     however controls should be relatively normalized for other types of controllers.
     The class runs in a separate thread to read controller input and assigns read values to an internal
-    buffer in the object. Reading the controllers in your main loop is as simple as referencing that buffer such as:
-
-    ``
-    controller = Controller()
-
-    values = controller.controllerValues
-    ``
+    buffer in the object. 
+    
+    Reading the controllers in your main loop is as simple as creating a controller object:
+    ``controller = Controller()``
+    
+    and then gabbing the controllerValue buffer:
+    ``values = controller.controllerValues``
 
     These values are returned as a ControllerValue object.
 
@@ -788,11 +780,9 @@ class DataConnection:
         """
         Calls function ``func`` whenever a message is received. The message is passed into the function.
         This can be done as such:
-
-        def setFrame(output):
-            ui.setFrame(output[1])
-
-        conn.onRecieve(setFrame)
+        
+        ``conn.onRecieve(setFrame)``
+        Where ``setFrane`` is a function that handles your frame.
 
         :param func: function to be called. must contain a input for a message value
         :return:
