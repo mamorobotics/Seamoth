@@ -85,27 +85,26 @@
 <p>The following is an example of the code that could be used on the home base:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seamoth</span>
 
-
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">DataConnection</span><span class="p">()</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">DataConnection</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">controller</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">Controller</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">ui</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">UI</span><span class="p">()</span>
 
     <span class="n">ui</span><span class="o">.</span><span class="n">connInfo</span> <span class="o">=</span> <span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">IP</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
     <span class="n">ui</span><span class="o">.</span><span class="n">connectionStatus</span> <span class="o">=</span> <span class="s2">&quot;Waiting for Connection&quot;</span>
-    <span class="n">conn</span><span class="o">.</span><span class="n">serverStart</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">processFrame</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
+            <span class="n">ui</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span><span class="p">))</span>
+
+    <span class="n">conn</span><span class="o">.</span><span class="n">onReceive</span><span class="p">(</span><span class="n">processFrame</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">ui</span><span class="o">.</span><span class="n">connectionStatus</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Connected with </span><span class="si">{</span><span class="n">conn</span><span class="o">.</span><span class="n">connectionAddress</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> on port </span><span class="si">{</span><span class="n">conn</span><span class="o">.</span><span class="n">PORT</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">ui</span><span class="o">.</span><span class="n">connectionStatus</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Connected with </span><span class="si">{</span><span class="n">conn</span><span class="o">.</span><span class="n">IP</span><span class="si">}</span><span class="s2"> on port </span><span class="si">{</span><span class="n">conn</span><span class="o">.</span><span class="n">PORT</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="k">if</span> <span class="n">conn</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">conn</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
-                <span class="n">ui</span><span class="o">.</span><span class="n">setFrame</span><span class="p">(</span><span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-
-            <span class="n">ui</span><span class="o">.</span><span class="n">controllerValues</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">controllerValues</span>
-            <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">controllerValues</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="mi">12</span><span class="p">)</span>
-
+        <span class="n">ui</span><span class="o">.</span><span class="n">controllerValues</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">controllerValues</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">controllerValues</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="mi">12</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
@@ -117,31 +116,28 @@
 <p>The following is an example of the code that could be used on the submarine:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seamoth</span>
 
-
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">camera</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="p">()</span>
-    <span class="n">conn</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">DataConnection</span><span class="p">()</span>
+    <span class="n">camera</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">Cv2Camera</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">960</span><span class="p">,</span> <span class="mi">540</span><span class="p">))</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">DataConnection</span><span class="p">(</span><span class="s2">&quot;10.11.104.90&quot;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="n">server</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">controllerValues</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">ControllerValues</span><span class="p">()</span>
 
     <span class="n">testMotor</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">Motor</span><span class="p">()</span>
     <span class="n">testServo</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">Servo</span><span class="p">()</span>
 
-    <span class="n">controllerValues</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">ControllerValues</span><span class="p">()</span>
-
     <span class="n">testMotor</span><span class="o">.</span><span class="n">setMotor</span><span class="p">(</span><span class="s2">&quot;testMotor&quot;</span><span class="p">)</span>
     <span class="n">testServo</span><span class="o">.</span><span class="n">setServo</span><span class="p">(</span><span class="s2">&quot;testServo&quot;</span><span class="p">)</span>
 
-    <span class="n">conn</span><span class="o">.</span><span class="n">clientStart</span><span class="p">(</span><span class="s2">&quot;10.11.105.44&quot;</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">processController</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="n">controllerValues</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">ControllerValues</span><span class="o">.</span><span class="n">fromString</span><span class="p">(</span><span class="n">message</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+    <span class="n">conn</span><span class="o">.</span><span class="n">onReceive</span><span class="p">(</span><span class="n">processController</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">readCameraData</span><span class="p">(),</span> <span class="mi">1248</span><span class="p">,</span> <span class="mi">702</span><span class="p">),</span> <span class="mi">90</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">conn</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
-            <span class="n">controllerValues</span> <span class="o">=</span> <span class="n">seamoth</span><span class="o">.</span><span class="n">ControllerValues</span><span class="o">.</span><span class="n">fromString</span><span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">seamoth</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">readCameraData</span><span class="p">(),</span> <span class="mi">60</span><span class="p">),</span> <span class="mi">11</span><span class="p">)</span>
 
         <span class="n">testServo</span><span class="o">.</span><span class="n">setPosition</span><span class="p">(</span><span class="n">controllerValues</span><span class="o">.</span><span class="n">RightTrigger</span><span class="p">)</span>
-
         <span class="n">testMotor</span><span class="o">.</span><span class="n">setSpeed</span><span class="p">(</span><span class="n">controllerValues</span><span class="o">.</span><span class="n">LeftJoystickY</span><span class="p">)</span>
-
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>

@@ -7,32 +7,30 @@ Home Base
 The following is an example of the code that could be used on the home base:
 ::
     import seamoth
-    
 
     def main():
-        conn = seamoth.DataConnection()
+        conn = seamoth.DataConnection(port=2000, server=True)
         controller = seamoth.Controller(0)
 
         ui = seamoth.UI()
 
         ui.connInfo = (conn.IP, 2000)
         ui.connectionStatus = "Waiting for Connection"
-        conn.serverStart(2000)
+
+        def processFrame(message):
+            if message[0] == 11:
+                ui.setFrame(seamoth.Camera.resize(seamoth.Camera.decode(message[1]), 1280, 720))
+
+        conn.onReceive(processFrame)
 
         while True:
-            ui.connectionStatus = f"Connected with {conn.connectionAddress[0]} on port {conn.PORT}"
+            ui.connectionStatus = f"Connected with {conn.IP} on port {conn.PORT}"
 
-            if conn.output[0] > 0:
-                if conn.output[0] == 11:
-                    ui.setFrame(seamoth.Camera.decode(conn.output[1]))
-
-                ui.controllerValues = controller.controllerValues
-                conn.send(controller.controllerValues.toString().encode('utf-8'), 12)
-
+            ui.controllerValues = controller.controllerValues
+            conn.send(controller.controllerValues.toString().encode('utf-8'), 12)
 
     if __name__ == "__main__":
         main()
-
 
 Submarine
 -----------------
@@ -41,33 +39,28 @@ The following is an example of the code that could be used on the submarine:
 ::
     import seamoth
 
-    
     def main():
-        camera = seamoth.Camera()
-        conn = seamoth.DataConnection()
+        camera = seamoth.Cv2Camera(size=(960, 540))
+        conn = seamoth.DataConnection("10.11.104.90", 2000, server=False)
+        controllerValues = seamoth.ControllerValues()
 
         testMotor = seamoth.Motor()
         testServo = seamoth.Servo()
 
-        controllerValues = seamoth.ControllerValues()
-
         testMotor.setMotor("testMotor")
         testServo.setServo("testServo")
 
-        conn.clientStart("10.11.105.44", 2000)
+        def processController(message):
+            if message[0] == 12:
+                controllerValues = seamoth.ControllerValues.fromString(message[1].decode('utf-8'))
+
+        conn.onReceive(processController)
 
         while True:
-            conn.send(seamoth.Camera.encode(seamoth.Camera.resize(camera.readCameraData(), 1248, 702), 90))
-
-            if conn.output[0] == 12:
-                controllerValues = seamoth.ControllerValues.fromString(conn.output[1].decode('utf-8'))
+            conn.send(seamoth.Camera.encode(camera.readCameraData(), 60), 11)
 
             testServo.setPosition(controllerValues.RightTrigger)
-
             testMotor.setSpeed(controllerValues.LeftJoystickY)
-
 
     if __name__ == "__main__":
         main()
-
-
