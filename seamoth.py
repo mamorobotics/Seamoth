@@ -8,6 +8,7 @@ import numpy
 import socket
 import os
 import time
+import zlib
 from PIL import ImageTk, Image, ImageOps
 from inputs import devices
 from threading import Thread
@@ -15,17 +16,26 @@ from tkinter import *
 
 ResourcesPath = "resources"
 
+isServer = False
+
+connection = ''
+
 logs = []
 
 telemetryLog = {}
+
+try:
+    from picamera import PiCamera
+
+except ImportError or ImportWarning:
+    logs.append("[ERROR] Picamera not found; Picamera not possible\n")
 
 try:
     from ctypes import windll
 
     windll.shcore.SetProcessDpiAwareness(1)
 except ImportError or ImportWarning:
-    logs.append("[ERROR] ctypes not found; window sharpening not possible\n")
-    print('[ERROR] ctypes not found; window sharpening not possible')
+    logs.append("[ERROR] Ctypes not found; window sharpening not possible\n")
 
 try:
     os.system("sudo pigpiod")
@@ -36,7 +46,19 @@ try:
     PI = pigpio.pi()
 except:
     logs.append('[ERROR] RPi.GPIO not found; hardware control not possible\n')
-    print('[ERROR] RPi.GPIO not found; hardware control not possible')
+
+
+def warn(msg: str):
+    if isServer:
+        logs.append(f'[WARNING] {msg}\n')
+    else:
+        DataConnection.sendWarning(msg)
+
+def error(msg: str):
+    if isServer:
+        logs.append(f'[ERROR] {msg}\n')
+    else:
+        DataConnection.sendError(msg)
 
 
 class ControllerValues:
@@ -146,7 +168,7 @@ class Controller:
 
         # checking to make sure that controllers exist before initiated
         if len(devices.gamepads) < 1:
-            logs.append("[ERROR] unable to find a connected controller\n")
+            logs.append("[ERROR] Unable to find a connected controller\n")
 
         else:
             # controller value monitor thread start
@@ -250,7 +272,9 @@ class Motor:
         """
 
         speed = clamp(speed, -1, 1)
-        pwmSignal = ((speed + 1) / 2) * (self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + self.hardwareMap["MotorPWMConfig"][0]
+        pwmSignal = ((speed + 1) / 2) * (
+                    self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + \
+                    self.hardwareMap["MotorPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
 
@@ -305,35 +329,16 @@ class Servo:
         :param position: position of servo (0 - 1)
         """
         position = clamp(position, 0, 1)
-        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][1] - self.hardwareMap["ServoPWMConfig"][0]) + self.hardwareMap["ServoPWMConfig"][0]
+        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][1] - self.hardwareMap["ServoPWMConfig"][0]) + \
+                    self.hardwareMap["ServoPWMConfig"][0]
 
         PI.set_servo_pulsewidth(self.port, pwmSignal)
 
 
 class Camera:
     """
-    The controller class takes in no inputs, and instead reads from the first camera that it finds.
-    The class stores the active camera connection and reads on a function call.
-    Reading the camera data in your main loop is as simple as calling the read function such as:
-
-    ``image = camera.readCameraData()``
-
-    Which returns a Cv2 image array
-
-    The class also includes two functions for encoding and decoding the above image for transmission,
-    aptly named ``encode()`` and ``decode()``, and a function for resizing an image, named ``resize()``.
+    Camera wrapper class that includes functions for resizing, compressing, and querying the camera.
     """
-
-    _calls = 0
-    _bufferframe = ""
-
-    def _queryCamera(self):
-        while True:
-            ret, frame = self.capture.read()
-            while not ret:
-                ret, frame = self.capture.read()
-            self.frame = frame
-
     def readCameraData(self):
         """
         Reads the current camera image.
@@ -380,7 +385,20 @@ class Camera:
 
         :return: resized Cv2 image object
         """
-        return cv2.resize(image, (x, y), interpolation=cv2.INTER_AREA)
+        return cv2.resize(image, (x, y), interpolation=cv2.INTER_LINEAR)
+
+
+class Cv2Camera(Camera):
+    """
+    Creates a cv2 camera object. It inherits from the camera class and therefor can use all of its operations.
+    """
+
+    def _queryCamera(self):
+        while True:
+            ret, frame = self.capture.read()
+            while not ret:
+                ret, frame = self.capture.read()
+            self.frame = frame
 
     def __init__(self, size: tuple = (1248, 702)):
         self.capture = cv2.VideoCapture(0)
@@ -392,6 +410,30 @@ class Camera:
         while not ret:
             ret, frame = self.capture.read()
         self.frame = frame
+
+        Thread(target=self._queryCamera, args=()).start()
+
+
+class PiCamera(Camera):
+    """
+    Creates a raspberry pi camera object. It inherits from the camera class and therefor can use all of its operations.
+    """
+
+    def _queryCamera(self):
+        while True:
+            self.camera.capture(self.frame, 'rgb')
+            self.frame = self.frame.reshape((self.size[0], self.size[1], 3))
+
+    def __init__(self, size: tuple = (1248, 702)):
+        self.size = size
+        self.camera = PiCamera()
+        self.camera.resolution = size
+        self.camera.framerate = 15
+
+        self.frame = numpy.empty((size[0], size[1], 3), dtype=numpy.uint8)
+
+        self.camera.capture(self.frame, 'rgb')
+        self.frame = self.frame.reshape((self.size[0], self.size[1], 3))
 
         Thread(target=self._queryCamera, args=()).start()
 
@@ -489,7 +531,7 @@ class UI:
 
         self.frame = frame
         diff = datetime.datetime.now() - self.frameTimeLast
-        self.fps = round((1000 / (diff.microseconds / 1000 + .01) + (self.fps * 10)) / 11)
+        self.fps = round((1000 / (diff.microseconds / 1000 + .01) + (self.fps * 50)) / 51)
         self.frameTimeLast = datetime.datetime.now()
 
     def _ui(self):
@@ -520,8 +562,10 @@ class UI:
         if self.menus.get("connDetails", True):
             connDetailsFrame = Frame(details, bg=self.backgroundColor)
             connDetailsFrame.grid(row=0, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP, anchor=W)
-            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor, foreground=self.accentColor)
+            Label(connDetailsFrame, text="CONNECTION DETAILS:", bg=self.backgroundColor,
+                  foreground=self.accentColor).pack(side=TOP, anchor=W)
+            connDetailsIP = Label(connDetailsFrame, text="1.1.1.1", bg=self.backgroundColor,
+                                  foreground=self.accentColor)
             connDetailsIP.pack(side=TOP, anchor=W)
             connDetailsPORT = Label(connDetailsFrame, text="1111", bg=self.backgroundColor, foreground=self.accentColor)
             connDetailsPORT.pack(side=TOP, anchor=W)
@@ -532,43 +576,52 @@ class UI:
         if self.menus.get("connStatus", True):
             connStatusFrame = Frame(details, bg=self.backgroundColor)
             connStatusFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor, foreground=self.accentColor).pack(side=TOP, anchor=W)
-            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor, foreground=self.accentColor)
+            Label(connStatusFrame, text="CONNECTION STATUS:", bg=self.backgroundColor,
+                  foreground=self.accentColor).pack(side=TOP, anchor=W)
+            connStatus = Label(connStatusFrame, text=self.connectionStatus, bg=self.backgroundColor,
+                               foreground=self.accentColor)
             connStatus.pack(side=TOP, anchor=W)
 
         # input settings
         if self.menus.get("input", True):
             inputDetailsFrame = Frame(details, bg=self.backgroundColor)
             inputDetailsFrame.grid(row=2, column=0, sticky=W, ipadx=10, pady=5, padx=5)
-            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
+            Label(inputDetailsFrame, text="INPUT DETAILS:", bg=self.backgroundColor, foreground=self.accentColor).grid(
+                row=0, column=0, sticky=W)
 
             inputDetailsJoyFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsJoyFrame.grid(row=1, column=0, sticky=W, ipadx=10, pady=5, padx=5)
             inputJoyLeftX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy X", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
+                                  label="Left Joy X", showvalue=False, bg=self.backgroundColor,
+                                  foreground=self.accentColor,
                                   highlightthickness=0)
             inputJoyLeftX.pack(side=TOP, anchor=W)
             inputJoyLeftY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Left Joy Y", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
+                                  label="Left Joy Y", showvalue=False, bg=self.backgroundColor,
+                                  foreground=self.accentColor,
                                   highlightthickness=0)
             inputJoyLeftY.pack(side=TOP, anchor=W)
             inputJoyRightX = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy X", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
+                                   label="Right Joy X", showvalue=False, bg=self.backgroundColor,
+                                   foreground=self.accentColor,
                                    highlightthickness=0)
             inputJoyRightX.pack(side=TOP, anchor=W)
             inputJoyRightY = Scale(inputDetailsJoyFrame, from_=-1, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Right Joy Y", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
+                                   label="Right Joy Y", showvalue=False, bg=self.backgroundColor,
+                                   foreground=self.accentColor,
                                    highlightthickness=0)
             inputJoyRightY.pack(side=TOP, anchor=W)
 
             inputDetailsTrigFrame = Frame(inputDetailsFrame, bg=self.backgroundColor)
             inputDetailsTrigFrame.grid(row=1, column=1, sticky=NW, ipadx=10, pady=5, padx=5)
             inputTrigRight = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                   label="Left Trigger", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
+                                   label="Left Trigger", showvalue=False, bg=self.backgroundColor,
+                                   foreground=self.accentColor,
                                    highlightthickness=0)
             inputTrigRight.pack(side=TOP, anchor=W)
             inputTrigLeft = Scale(inputDetailsTrigFrame, from_=0, to=1, resolution=0.01, orient=HORIZONTAL,
-                                  label="Right Trigger", showvalue=False, bg=self.backgroundColor, foreground=self.accentColor,
+                                  label="Right Trigger", showvalue=False, bg=self.backgroundColor,
+                                  foreground=self.accentColor,
                                   highlightthickness=0)
             inputTrigLeft.pack(side=TOP, anchor=W)
 
@@ -576,7 +629,9 @@ class UI:
         if self.menus.get("output", True):
             logDetailsFrame = Frame(details, bg=self.backgroundColor, bd=1)
             logDetailsFrame.grid(row=3, column=0, sticky=W, pady=5, padx=5)
-            Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
+            Label(logDetailsFrame, text="OUTPUT:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0,
+                                                                                                              column=0,
+                                                                                                              sticky=W)
             logBox = Text(logDetailsFrame, bg=self.backgroundColor, foreground=self.accentColor, height=15, width=60)
             logBox.grid(row=1, column=0, sticky=W)
 
@@ -606,7 +661,8 @@ class UI:
             customSettingsFrame = Frame(settings, bg=self.backgroundColor)
             customSettingsFrame.grid(row=0, column=0, sticky=W, pady=5, padx=5)
 
-            Label(customSettingsFrame, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
+            Label(customSettingsFrame, text="CUSTOMIZABLE VALUES:", bg=self.backgroundColor,
+                  foreground=self.accentColor).grid(row=0, column=0, sticky=W)
 
             customSettingsSlidersFrame = Frame(customSettingsFrame, bg=self.backgroundColor)
             customSettingsSlidersFrame.grid(row=1, column=0, sticky=W, pady=5, padx=5)
@@ -632,22 +688,31 @@ class UI:
             videoSettingsFrame = Frame(settings, bg=self.backgroundColor)
             videoSettingsFrame.grid(row=0, column=1, sticky=N, pady=5, padx=5)
 
-            Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
+            Label(videoSettingsFrame, text="VIDEO SETTINGS:", bg=self.backgroundColor,
+                  foreground=self.accentColor).grid(row=0, column=0, sticky=W)
 
-            Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=1, column=0, sticky=W)
-            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0, command=fullscreenChange)
+            Label(videoSettingsFrame, text="Open fullscreen window:", bg=self.backgroundColor,
+                  foreground=self.accentColor).grid(row=1, column=0, sticky=W)
+            fullscreenSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL,
+                                     bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0,
+                                     command=fullscreenChange)
             fullscreenSlider.grid(row=1, column=1, sticky=W)
 
-            Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=2, column=0, sticky=W)
-            pauseSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL, bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
+            Label(videoSettingsFrame, text="Pause video feed:", bg=self.backgroundColor,
+                  foreground=self.accentColor).grid(row=2, column=0, sticky=W)
+            pauseSlider = Scale(videoSettingsFrame, from_=0, to=1, resolution=1, orient=HORIZONTAL,
+                                bg=self.backgroundColor, foreground=self.accentColor, highlightthickness=0)
             pauseSlider.grid(row=2, column=1, sticky=W)
 
         # telemetry
         if self.menus.get("telemetry", True):
             telemetryFrame = Frame(settings, bg=self.backgroundColor)
             telemetryFrame.grid(row=0, column=2, sticky=N, pady=5, padx=5)
-            Label(telemetryFrame, text="TELEMETRY:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0, column=0, sticky=W)
-            telemetryBox = Text(telemetryFrame, bg=self.backgroundColor, foreground=self.accentColor, height=4, width=32)
+            Label(telemetryFrame, text="TELEMETRY:", bg=self.backgroundColor, foreground=self.accentColor).grid(row=0,
+                                                                                                                column=0,
+                                                                                                                sticky=W)
+            telemetryBox = Text(telemetryFrame, bg=self.backgroundColor, foreground=self.accentColor, height=4,
+                                width=32)
             telemetryBox.grid(row=1, column=0, sticky=W)
 
         # main loop
@@ -709,7 +774,8 @@ class UI:
         updateFrame()
         win.mainloop()
 
-    def __init__(self, videoSize: tuple = (1248, 702), menus=None, accentColor: str = "#187082", backgroundColor: str = "#eeeeee", teamName: str = "MHS Tiger Sharks"):
+    def __init__(self, videoSize: tuple = (1280, 720), menus=None, accentColor: str = "#187082",
+                 backgroundColor: str = "#eeeeee", teamName: str = "MHS Tiger Sharks"):
         if menus is None:
             menus = {}
         self.running = True
@@ -729,10 +795,9 @@ class UI:
         self.teamName = teamName
 
 
-# black magic voodoo, don't really feel like commenting all of it
 class DataConnection:
     """
-    The controller class is separated into two types, server and client, and is built on a UDP based architecture.
+    The connection class is separated into two types, server and client, and is built on a UDP based architecture.
     All data received by the server is stored within its internal ``output`` buffer for asynchronous reading.
     This buffer stores the main message and the specified header as ``(header, message)``.
 
@@ -741,47 +806,65 @@ class DataConnection:
     **header values 0-10 are reserved for system functions**
     """
 
-    output = (0, b'')
-    connected = False
     recvFunctions = []
-
-    def __init__(self):
-        self.IP = socket.gethostbyname(socket.gethostname())
 
     def _listen(self):
         while True:
-            msg_len = None
-            while not msg_len:
-                try:
-                    msg_len = self.connection.recv(64).decode('utf-8')
-                except:
-                    pass
+            try:
+                msg_len_msg, addr = self.connection.recvfrom(64)
+            except OSError:
+                continue
 
-            header = int(self.connection.recv(16).decode('utf-8'))
+            msg_len = msg_len_msg.decode('utf-8')
 
-            message = bytearray()
-            while len(message) < int(msg_len):
-                packet = self.connection.recv(int(msg_len) - len(message))
-                message.extend(packet)
+            received, addr = self.connection.recvfrom(int(msg_len))
 
-            if header == 1:
+            self.ADDR = addr
+
+            try:
+                message = pickle.loads(received)
+            except pickle.UnpicklingError or zlib.error:
+                continue
+
+            if message[0] == 1:
                 logs.append("[ERROR]" + message.decode('utf-8') + "\n")
-            if header == 2:
+            if message[0] == 2:
                 logs.append("[WARNING]" + message.decode('utf-8') + "\n")
-            if header == 3:
+            if message[0] == 3:
                 msgParts = message.decode('utf-8').split("!")
-                telemetryLog[msgParts[0]] = msgParts[1]
-            if header > 10:
-                self.output = (header, message)
-
+                telemetryLog[msgParts[0]] = msgParts[1] + "\n"
+            if message[0] > 10:
                 for func in self.recvFunctions:
-                    func((header, message))
+                    func(message)
+
+    def __init__(self, ip: str = "", port: int = 0, server: bool = False):
+        self.connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        global isServer
+        isServer = server
+
+        if server:
+            self.connection.bind((socket.gethostbyname(socket.gethostname()), port))
+            msg, addr = self.connection.recvfrom(4)
+            self.IP = addr[0]
+            self.PORT = addr[1]
+            self.ADDR = addr
+            if msg != b'0110':
+                logs.append("[WARNING] Handshake with client failed\n")
+        else:
+            self.IP = ip
+            self.PORT = port
+            self.ADDR = (ip, port)
+            self.connection.sendto(b'0110', (self.IP, self.PORT))
+
+        self.thread = Thread(target=self._listen, args=())
+        self.thread.start()
 
     def onReceive(self, func):
         """
         Calls function ``func`` whenever a message is received. The message is passed into the function.
         This can be done as such:
-        
+
         ``conn.onRecieve(setFrame)``
         Where ``setFrane`` is a function that handles your frame.
 
@@ -789,41 +872,6 @@ class DataConnection:
         :return:
         """
         self.recvFunctions.append(func)
-
-    def clientStart(self, ip: str, port: int):
-        """
-        Starts a client to connect to a server and will send received messages to the objects ``output`` buffer.
-
-        :param ip: ip of the server
-        :param port: port of the server
-        """
-
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.connect((ip, port))
-
-        self.thread = Thread(target=self._listen, args=())
-        self.thread.start()
-
-    def serverStart(self, port: int):
-        """
-        Starts a server and will send received messages to the objects ``output`` buffer.
-
-        :param port: port of the server
-        """
-
-        self.PORT = int(port)
-        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.IP, self.PORT))
-
-        self.server.listen()
-        self.connection, self.connectionAddress = self.server.accept()
-
-        self.connected = True
-
-        self.thread = Thread(target=self._listen, args=())
-        self.thread.start()
-
-        return self.IP
 
     def sendError(self, msg: str):
         """
@@ -855,23 +903,23 @@ class DataConnection:
         else:
             self.sendWarning(f"Telemetry message {msg} cannot be sent")
 
-    def send(self, msg: bytes, header: int = 11):
+    def send(self, message, header: int = 11):
         """
-        Sends a message to all servers or clients connected to the program.
+        Sends a message to the connected machine.
 
         :param msg: message that you want to send in a byte form
         :param header: message header value **header values 0-10 are reserved for system functions**
         """
+        msg = pickle.dumps((header, message))
 
-        send_length = str(len(msg)).encode('utf-8')
-        send_length += b' ' * (64 - len(send_length))
+        print(len(msg))
 
-        header = str(header).encode('utf-8')
-        header += b' ' * (16 - len(header))
+        if len(msg) < 65500:
+            msg_length = str(len(msg)).encode('utf-8')
+            msg_length += b' ' * (64 - len(msg_length))
 
-        self.connection.send(send_length)
-        self.connection.send(header)
-        self.connection.send(msg)
+            self.connection.sendto(msg_length, self.ADDR)
+            self.connection.sendto(msg, self.ADDR)
 
 
 def rgbFromHex(hex_string):
@@ -882,9 +930,5 @@ def rgbFromHex(hex_string):
     return r, g, b
 
 
-def clamp(i, max, min):
-    if i > max:
-        return max
-    if i < min:
-        return min
-    return i
+def clamp(i, max_num, min_num):
+    return max(min(i, max_num), min_num)
