@@ -57,13 +57,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#dataconnection">DataConnection</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#seamoth.DataConnection"><code class="docutils literal notranslate"><span class="pre">DataConnection</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.clientStart"><code class="docutils literal notranslate"><span class="pre">DataConnection.clientStart()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.onReceive"><code class="docutils literal notranslate"><span class="pre">DataConnection.onReceive()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.send"><code class="docutils literal notranslate"><span class="pre">DataConnection.send()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.sendError"><code class="docutils literal notranslate"><span class="pre">DataConnection.sendError()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.sendTelemetry"><code class="docutils literal notranslate"><span class="pre">DataConnection.sendTelemetry()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.sendWarning"><code class="docutils literal notranslate"><span class="pre">DataConnection.sendWarning()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#seamoth.DataConnection.serverStart"><code class="docutils literal notranslate"><span class="pre">DataConnection.serverStart()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -103,7 +101,7 @@
 <h2>UI<a class="headerlink" href="#ui" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.UI">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">UI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">videoSize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1248,</span> <span class="pre">702)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">menus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accentColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#187082'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backgroundColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#eeeeee'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teamName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MHS</span> <span class="pre">Tiger</span> <span class="pre">Sharks'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.UI" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">UI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">videoSize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1280,</span> <span class="pre">720)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">menus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accentColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#187082'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backgroundColor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'#eeeeee'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teamName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'MHS</span> <span class="pre">Tiger</span> <span class="pre">Sharks'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.UI" title="Permalink to this definition"></a></dt>
 <dd><p>The class is currently uses tkinter and is meant to be used as your viewport to the submarine.
 The class runs entirely in a separate thread and shows the video from an internal buffer.
 You can write to the ui by referencing the internal buffer such as:</p>
@@ -161,26 +159,12 @@ by the Controller class</p>
 <h2>DataConnection<a class="headerlink" href="#dataconnection" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="seamoth.DataConnection">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">DataConnection</span></span><a class="headerlink" href="#seamoth.DataConnection" title="Permalink to this definition"></a></dt>
-<dd><p>The controller class is separated into two types, server and client, and is built on a UDP based architecture.
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">seamoth.</span></span><span class="sig-name descname"><span class="pre">DataConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">server</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection" title="Permalink to this definition"></a></dt>
+<dd><p>The connection class is separated into two types, server and client, and is built on a UDP based architecture.
 All data received by the server is stored within its internal <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer for asynchronous reading.
 This buffer stores the main message and the specified header as <code class="docutils literal notranslate"><span class="pre">(header,</span> <span class="pre">message)</span></code>.</p>
 <p>You can send messages with the <code class="docutils literal notranslate"><span class="pre">send()</span></code> function.</p>
 <p><strong>header values 0-10 are reserved for system functions</strong></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="seamoth.DataConnection.clientStart">
-<span class="sig-name descname"><span class="pre">clientStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.clientStart" title="Permalink to this definition"></a></dt>
-<dd><p>Starts a client to connect to a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ip</strong> – ip of the server</p></li>
-<li><p><strong>port</strong> – port of the server</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.onReceive">
 <span class="sig-name descname"><span class="pre">onReceive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.onReceive" title="Permalink to this definition"></a></dt>
@@ -200,8 +184,8 @@ Where <code class="docutils literal notranslate"><span class="pre">setFrane</spa
 
 <dl class="py method">
 <dt class="sig sig-object py" id="seamoth.DataConnection.send">
-<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.send" title="Permalink to this definition"></a></dt>
-<dd><p>Sends a message to all servers or clients connected to the program.</p>
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">11</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.send" title="Permalink to this definition"></a></dt>
+<dd><p>Sends a message to the connected machine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -244,17 +228,6 @@ Where <code class="docutils literal notranslate"><span class="pre">setFrane</spa
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>msg</strong> – warning msg</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="seamoth.DataConnection.serverStart">
-<span class="sig-name descname"><span class="pre">serverStart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#seamoth.DataConnection.serverStart" title="Permalink to this definition"></a></dt>
-<dd><p>Starts a server and will send received messages to the objects <code class="docutils literal notranslate"><span class="pre">output</span></code> buffer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>port</strong> – port of the server</p>
 </dd>
 </dl>
 </dd></dl>
