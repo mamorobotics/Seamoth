@@ -338,6 +338,8 @@ class Servo:
 class Camera:
     """
     Camera wrapper class that includes functions for resizing, compressing, and querying the camera.
+
+    Use ``PiCamera`` or ``Cv2Camera`` to create a camera, and then you can use any of these functions to work with the camera data.
     """
     def readCameraData(self):
         """
