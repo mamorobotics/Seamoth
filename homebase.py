@@ -2,12 +2,12 @@ import seamoth
 
 
 def main():
-    conn = seamoth.DataConnection(port=2000, server=True)
+    conn = seamoth.DataConnection(port=1951, server=True)
     controller = seamoth.Controller(0)
 
     ui = seamoth.UI()
 
-    ui.connInfo = (conn.IP, 2000)
+    ui.connInfo = (conn.IP, 1951)
     ui.connectionStatus = "Waiting for Connection"
 
     def processFrame(message):

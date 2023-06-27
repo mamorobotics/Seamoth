@@ -271,7 +271,7 @@ class Motor:
         :param speed: speed of motor (-1 - 1)
         """
 
-        speed = clamp(speed, -1, 1)
+        speed = clamp(speed, 1, -1)
         pwmSignal = ((speed + 1) / 2) * (
                     self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + \
                     self.hardwareMap["MotorPWMConfig"][0]
@@ -328,7 +328,7 @@ class Servo:
 
         :param position: position of servo (0 - 1)
         """
-        position = clamp(position, 0, 1)
+        position = clamp(position, 1, 0)
         pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][1] - self.hardwareMap["ServoPWMConfig"][0]) + \
                     self.hardwareMap["ServoPWMConfig"][0]
 
@@ -847,12 +847,14 @@ class DataConnection:
 
         if server:
             self.connection.bind((socket.gethostbyname(socket.gethostname()), port))
+            print(socket.gethostbyname(socket.gethostname()))
             msg, addr = self.connection.recvfrom(4)
             self.IP = addr[0]
             self.PORT = addr[1]
             self.ADDR = addr
             if msg != b'0110':
-                logs.append("[WARNING] Handshake with client failed\n")
+                print("[WARNING] Handshake with client failed")
+                logs.append("[WARNING] Handshake with client failed")
         else:
             self.IP = ip
             self.PORT = port
@@ -913,8 +915,6 @@ class DataConnection:
         :param header: message header value **header values 0-10 are reserved for system functions**
         """
         msg = pickle.dumps((header, message))
-
-        print(len(msg))
 
         if len(msg) < 65500:
             msg_length = str(len(msg)).encode('utf-8')
