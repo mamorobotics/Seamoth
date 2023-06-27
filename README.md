@@ -8,7 +8,7 @@ Seamoth is an OOP based, highly customisable and modular python library for the 
 
 <img src="https://pbs.twimg.com/media/EwqlbkAVcAI7Y3w.jpg:large" alt="Pat Presley on Twitter: Submersible I  designed for the game Subnautica. It was a great project to work on."/>
 
-Designed By: Miles Contopoulos (Year of 2025)
+Designed By: The MHS Tiger Sharks
 
 ## Resources:
 
