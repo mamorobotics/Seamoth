@@ -921,7 +921,7 @@ class DataConnection:
 
             self.connection.sendto(msg_length, self.ADDR)
             self.connection.sendto(str(header).encode(), self.ADDR)
-            self.connection.sendto(message, self.ADD)
+            self.connection.sendto(message, self.ADDR)
 
 
 def rgbFromHex(hex_string):
