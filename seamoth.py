@@ -25,7 +25,7 @@ logs = []
 telemetryLog = {}
 
 try:
-    from picamera import PiCamera
+    from picamera import PiCamera as RPiCamera
 
 except ImportError or ImportWarning:
     logs.append("[ERROR] Picamera not found; Picamera not possible\n")
@@ -428,7 +428,7 @@ class PiCamera(Camera):
 
     def __init__(self, size: tuple = (1248, 702)):
         self.size = size
-        self.camera = PiCamera()
+        self.camera = RPiCamera()
         self.camera.resolution = size
         self.camera.framerate = 15
 
