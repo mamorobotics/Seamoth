@@ -8,7 +8,7 @@ def main():
 
     def processController(message):
         if message[0] == 12:
-            controllerValues = seamoth.ControllerValues.fromString(message[1].decode('utf-8'))
+            controllerValues = seamoth.ControllerValues.fromString(message[1].decode('ut-8'))
 
     conn.onReceive(processController)
 
