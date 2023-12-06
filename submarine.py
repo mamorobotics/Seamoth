@@ -2,8 +2,8 @@ import seamoth
 
 
 def main():
-    camera = seamoth.Cv2Camera(size=(960, 540))
-    conn = seamoth.DataConnection("169.254.85.174", 1951, server=False)
+    camera = seamoth.PiCamera(size=(960, 540))
+    conn = seamoth.DataConnection("192.168.1.1", 8080, server=False)
     controllerValues = seamoth.ControllerValues()
 
     def processController(message):

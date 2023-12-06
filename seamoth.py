@@ -914,14 +914,14 @@ class DataConnection:
         :param msg: message that you want to send in a byte form
         :param header: message header value **header values 0-10 are reserved for system functions**
         """
-        msg = pickle.dumps((header, message))
 
-        if len(msg) < 65500:
-            msg_length = str(len(msg)).encode('utf-8')
-            msg_length += b' ' * (64 - len(msg_length))
+        if len(message) < 65500:
+            msg_length = str(len(message)).encode('utf-8')
+            msg_length += b' ' * (32 - len(msg_length))
 
             self.connection.sendto(msg_length, self.ADDR)
-            self.connection.sendto(msg, self.ADDR)
+            self.connection.sendto(str(header).encode(), self.ADDR)
+            self.connection.sendto(message, self.ADDR)
 
 
 def rgbFromHex(hex_string):
