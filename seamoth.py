@@ -7,11 +7,13 @@ import json
 import numpy
 import socket
 import os
+import io
 import time
 import zlib
 from PIL import ImageTk, Image, ImageOps
 from inputs import devices
 from threading import Thread
+from adafruit_servokit import ServoKit
 from tkinter import *
 
 ResourcesPath = "resources"
@@ -25,9 +27,10 @@ logs = []
 telemetryLog = {}
 
 try:
-    from picamera import PiCamera as RPiCamera
+    from picamera2 import Picamera2 as PiCamera2
 
 except ImportError or ImportWarning:
+    print("no cam")
     logs.append("[ERROR] Picamera not found; Picamera not possible\n")
 
 try:
@@ -102,27 +105,24 @@ class ControllerValues:
         :return: ControllerValues object
         """
 
-        controllerValueList = json.loads(controllerValueString)
+        controllerValueList = controllerValueString.split("!")
+        print(controllerValueList)
 
         controllerValues = ControllerValues()
-        controllerValues.LeftJoystickY = controllerValueList[0]
-        controllerValues.LeftJoystickX = controllerValueList[1]
-        controllerValues.RightJoystickY = controllerValueList[2]
-        controllerValues.RightJoystickX = controllerValueList[3]
+        controllerValues.LeftJoystickX = controllerValueList[0]
+        controllerValues.LeftJoystickY = controllerValueList[1]
+        controllerValues.RightJoystickX = controllerValueList[2]
+        controllerValues.RightJoystickY = controllerValueList[3]
         controllerValues.LeftTrigger = controllerValueList[4]
         controllerValues.RightTrigger = controllerValueList[5]
-        controllerValues.LeftBumper = controllerValueList[6]
-        controllerValues.RightBumper = controllerValueList[7]
-        controllerValues.A = controllerValueList[8]
-        controllerValues.X = controllerValueList[9]
-        controllerValues.Y = controllerValueList[10]
-        controllerValues.B = controllerValueList[11]
-        controllerValues.LeftThumb = controllerValueList[12]
-        controllerValues.RightThumb = controllerValueList[13]
-        controllerValues.Back = controllerValueList[14]
-        controllerValues.Start = controllerValueList[15]
-        controllerValues.DpadY = controllerValueList[16]
-        controllerValues.DpadX = controllerValueList[17]
+        controllerValues.LeftBumper = controllerValueList[10]
+        controllerValues.RightBumper = controllerValueList[11]
+        controllerValues.A = controllerValueList[6]
+        controllerValues.X = controllerValueList[8]
+        controllerValues.Y = controllerValueList[9]
+        controllerValues.B = controllerValueList[7]
+        controllerValues.DpadY = int(controllerValueList[12])-int(controllerValueList[13])
+        controllerValues.DpadX = int(controllerValueList[14])-int(controllerValueList[15])
         return controllerValues
 
     def toString(self) -> str:
@@ -241,6 +241,13 @@ class Motor:
     def __init__(self):
         self.hardwareMap = json.loads(open(f"{ResourcesPath}/hardwareMap.txt", "r").read())
         self.port = 0
+        self.kit = ServoKit(channels=16)
+
+    def calibrateMotor(self):
+        """
+        Calibrates/initializes the esc. In most cases this shouldn't really be used.
+        """
+        self.kit.servo[self.port].angle = 90
 
     def setMotor(self, name: str):
         """
@@ -251,18 +258,10 @@ class Motor:
 
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
-            PI.set_mode(self.port, pigpio.OUTPUT)
-            PI.set_servo_pulsewidth(self.port, self.hardwareMap["MotorPWMConfig"][1])
-            self.calibrateMotor()
+            self.kit.servo[self.port].set_pulse_width_range(self.hardwareMap["MotorPWMConfig"][0], self.hardwareMap["MotorPWMConfig"][2])
         else:
             logs.append("[ERROR] Cannot find motor \"" + name + "\" on hardware map.\n")
-
-    def calibrateMotor(self):
-        """
-        Calibrates/initializes the esc. In most cases this shouldn't really be used.
-        """
-        PI.set_servo_pulsewidth(self.port, self.hardwareMap["MotorPWMConfig"][1])
-        time.sleep(3)
+        self.calibrateMotor()
 
     def setSpeed(self, speed: float):
         """
@@ -270,13 +269,9 @@ class Motor:
 
         :param speed: speed of motor (-1 - 1)
         """
-
-        speed = clamp(speed, 1, -1)
-        pwmSignal = ((speed + 1) / 2) * (
-                    self.hardwareMap["MotorPWMConfig"][2] - self.hardwareMap["MotorPWMConfig"][0]) + \
-                    self.hardwareMap["MotorPWMConfig"][0]
-
-        PI.set_servo_pulsewidth(self.port, pwmSignal)
+        s = clamp((speed + 1) * 90, 180, 0)
+        self.kit.servo[self.port].angle = s
+        print(s)
 
 
 class Servo:
@@ -299,6 +294,7 @@ class Servo:
     def __init__(self):
         self.hardwareMap = json.loads(open(f"{ResourcesPath}/hardwareMap.txt", "r").read())
         self.port = 0
+        self.kit = ServoKit(channels=16)
 
     def setServo(self, name: str):
         """
@@ -309,9 +305,7 @@ class Servo:
 
         if name in self.hardwareMap:
             self.port = int(self.hardwareMap[name])
-            PI.set_mode(self.port, pigpio.OUTPUT)
-            PI.set_servo_pulsewidth(self.port, self.hardwareMap["ServoPWMConfig"][0])
-            self.calibrateServo()
+            #kit.servo[self.port].set_pulse_width_range(self.hardwareMap["ServoPWMConfig"][0], self.hardwareMap["ServoPWMConfig"][1])
         else:
             logs.append("[ERROR] Cannot find servo \"" + name + "\" on hardware map.\n")
 
@@ -319,8 +313,7 @@ class Servo:
         """
         Calibrates/initializes the esc. In most cases this shouldn't really be used.
         """
-        PI.set_servo_pulsewidth(self.port, self.hardwareMap["ServoPWMConfig"][0])
-        time.sleep(3)
+        self.kit.servo[self.port].angle =  self.hardwareMap["ServoPWMConfig"][0]
 
     def setPosition(self, position: float):
         """
@@ -328,29 +321,38 @@ class Servo:
 
         :param position: position of servo (0 - 1)
         """
-        position = clamp(position, 1, 0)
-        pwmSignal = position * (self.hardwareMap["ServoPWMConfig"][1] - self.hardwareMap["ServoPWMConfig"][0]) + \
-                    self.hardwareMap["ServoPWMConfig"][0]
-
-        PI.set_servo_pulsewidth(self.port, pwmSignal)
-
+        self.kit.servo[self.port].angle = position * 180
 
 class Camera:
     """
     Camera wrapper class that includes functions for resizing, compressing, and querying the camera.
 
     Use ``PiCamera`` or ``Cv2Camera`` to create a camera, and then you can use any of these functions to work with the camera data.
+    
     """
-    def readCameraData(self):
+    camQual = 60
+    camNum = 1
+    
+    @staticmethod
+    def setCamQual(qual):
+        Camera.camQual = qual
+    @staticmethod
+    def setCamNum(num):
+        Camera.camNum = num
+        
+    def readCameraData(cam1, cam2):
         """
         Reads the current camera image.
 
         :return: Cv2 image object
         """
-        return self.frame
+        if Camera.camNum == 0:
+            return cam2.frame.getvalue()
+        elif Camera.camNum == 1:
+            return Camera.encode(cam1.frame)
 
     @staticmethod
-    def encode(image, quality: int):
+    def encode(image):
         """
         Encodes and compressed a Cv2 image to make it possible to send over the internet.
 
@@ -360,8 +362,8 @@ class Camera:
         :return: Compressed byte array representation of input image
         """
 
-        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), int(quality)]
-        return blosc.compress(pickle.dumps(cv2.imencode('.jpg', image, encode_param)[1]))
+        encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), Camera.camQual]
+        return cv2.imencode('.jpg', image, encode_param)[1].tobytes()
 
     @staticmethod
     def decode(image):
@@ -400,17 +402,18 @@ class Cv2Camera(Camera):
             ret, frame = self.capture.read()
             while not ret:
                 ret, frame = self.capture.read()
-            self.frame = frame
+            self.frame = cv2.flip(frame, 0)
 
-    def __init__(self, size: tuple = (1248, 702)):
-        self.capture = cv2.VideoCapture(0)
-        self.capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
-        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, size[0])
-        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, size[1])
+    def __init__(self, width, height):
+        self.capture = cv2.VideoCapture(1)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, height);
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, width);
+        #self.capture.set(cv2.CAP_PROP_FPS, 20);
 
         ret, frame = self.capture.read()
         while not ret:
             ret, frame = self.capture.read()
+            #print(frame)
         self.frame = frame
 
         Thread(target=self._queryCamera, args=()).start()
@@ -421,21 +424,28 @@ class PiCamera(Camera):
     Creates a raspberry pi camera object. It inherits from the camera class and therefor can use all of its operations.
     """
 
+    camQual = 60
+
     def _queryCamera(self):
         while True:
-            self.camera.capture(self.frame, 'rgb')
-            self.frame = self.frame.reshape((self.size[0], self.size[1], 3))
+            fr = io.BytesIO()
+            while len(fr.getvalue()) == 0:
+                self.camera.capture_file(fr, format='jpeg')
+            self.frame = fr
+            self.camera.options["quality"] = self.camQual
 
-    def __init__(self, size: tuple = (1248, 702)):
-        self.size = size
-        self.camera = RPiCamera()
-        self.camera.resolution = size
-        self.camera.framerate = 15
+    def __init__(self, size: tuple = (1240, 700)):
+        self.camera = PiCamera2()
+        camera_config = self.camera.create_still_configuration(main={"size":size})
+        self.camera.configure(camera_config)
+        self.camera.options["quality"] = self.camQual
+        self.camera.start()
+        
+        time.sleep(1)
 
-        self.frame = numpy.empty((size[0], size[1], 3), dtype=numpy.uint8)
+        self.frame = io.BytesIO()
 
-        self.camera.capture(self.frame, 'rgb')
-        self.frame = self.frame.reshape((self.size[0], self.size[1], 3))
+        self.camera.capture_file(self.frame, format='jpeg')
 
         Thread(target=self._queryCamera, args=()).start()
 
@@ -809,39 +819,42 @@ class DataConnection:
     """
 
     recvFunctions = []
+    msg_buff = ([],[])
 
     def _listen(self):
+        global msg_buff
         while True:
             try:
-                msg_len_msg, addr = self.connection.recvfrom(64)
+                msg_init_encoded, addr = self.connection.recvfrom(64)
             except OSError:
                 continue
 
-            msg_len = msg_len_msg.decode('utf-8')
+            msg_init = msg_init_encoded.decode('utf-8').split("!")
+            
+            msg_len = int(msg_init[0])
+            msg_head = msg_init[1].split("?")
 
-            received, addr = self.connection.recvfrom(int(msg_len))
+            msg_encoded, addr = self.connection.recvfrom(msg_len)
+            message = msg_encoded.decode("utf-8").split("?")
+            
 
             self.ADDR = addr
 
-            try:
-                message = pickle.loads(received)
-            except pickle.UnpicklingError or zlib.error:
-                continue
-
-            if message[0] == 1:
-                logs.append("[ERROR]" + message.decode('utf-8') + "\n")
-            if message[0] == 2:
-                logs.append("[WARNING]" + message.decode('utf-8') + "\n")
-            if message[0] == 3:
-                msgParts = message.decode('utf-8').split("!")
+            if msg_head[0] == 1:
+                logs.append("[ERROR]" + message[0] + "\n")
+            if msg_head[0] == 2:
+                logs.append("[WARNING]" + message[0] + "\n")
+            if msg_head[0] == 3:
+                msgParts = message[0].split("!")
                 telemetryLog[msgParts[0]] = msgParts[1] + "\n"
-            if message[0] > 10:
+            else:
+                self.msg_buff = (msg_head, message)
                 for func in self.recvFunctions:
-                    func(message)
+                    func(msg_head, message)
 
     def __init__(self, ip: str = "", port: int = 0, server: bool = False):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+        self.i = 0
         global isServer
         isServer = server
 
@@ -860,6 +873,7 @@ class DataConnection:
             self.PORT = port
             self.ADDR = (ip, port)
             self.connection.sendto(b'0110', (self.IP, self.PORT))
+            print("sent")
 
         self.thread = Thread(target=self._listen, args=())
         self.thread.start()
@@ -915,13 +929,32 @@ class DataConnection:
         :param header: message header value **header values 0-10 are reserved for system functions**
         """
 
-        if len(message) < 65500:
-            msg_length = str(len(message)).encode('utf-8')
-            msg_length += b' ' * (32 - len(msg_length))
+        #if len(message) < 65500:
+        self.i += 1
+        
+        msg_init = (str(len(message)) + "!" +  str(header)).encode("utf-8")
+        msg_init += b' ' * (32 - len(msg_init))
+        
+        #msg_length = str(len(message)).encode('utf-8')
+        #msg_length += b' ' * (32 - len(msg_length))
+        
+        #header_buff = str(header).encode('utf-8')
+        #header_buff += b' ' * (32 - len(header_buff))
 
-            self.connection.sendto(msg_length, self.ADDR)
-            self.connection.sendto(str(header).encode(), self.ADDR)
+        #self.connection.sendto(msg_length, self.ADDR)
+        #self.connection.sendto(header_buff, self.ADDR)
+        self.connection.sendto(msg_init, self.ADDR)
+        if(len(message)>65500):
+            while(len(message)>65500):
+                temp = message[0:65500]
+                message = message[65500:]
+            
+                self.connection.sendto(temp, self.ADDR)
+        if(len(message)!=0):
             self.connection.sendto(message, self.ADDR)
+        
+        #else:
+            #print("MSG TOO LONG: " + len(message))
 
 
 def rgbFromHex(hex_string):
@@ -933,4 +966,9 @@ def rgbFromHex(hex_string):
 
 
 def clamp(i, max_num, min_num):
-    return max(min(i, max_num), min_num)
+    if i<min_num:
+            return min_num
+    elif i>max_num:
+            return max_num
+    else:
+            return i
